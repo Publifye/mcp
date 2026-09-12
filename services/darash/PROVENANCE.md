@@ -1,4 +1,4 @@
-# Darash — dataset provenance
+# Dataset provenance
 
 **Every dataset Darash serves records which printed work it is, which edition, how the text
 reached us, under what licence — and what is *not* established about it.**
@@ -43,18 +43,6 @@ Joseph Henry Thayer (translator, reviser, editor); after C. L. W. Grimm's revisi
 **What is and is not established.** 5,870 entries; 5,529 carry a Strong's number (3,779 by exact headword match, 1,648 normalised, 102 by a second pass over unambiguous lemma variants). 341 do not, and 14 of those carry candidates rather than a guess — an ambiguous headword REFUSES to resolve. Verification is not uniform: every entry has been read by a model reader and the corpus is census-proven against the published dictionary (Greek characters and terminal asterisks exactly equal, sha bijection 5,870/5,870), but only a small number of pages have been collated line by line against the image by eye. Measured on the 13 pages that were independently transcribed twice, Greek-bearing token disagreement runs at 0.19% — roughly two per page — mostly accent, iota subscript and συν-/συγ- assimilation. One illegible Josephus digit is kept as "?": flagged, never filled. Reference modernisation is not uniform either: 5,776 entries are gemini-dual-witnessed, 94 carry the deterministic expander's baseline because no rewrite passed the prose invariant, and each entry says which it is. Citation triage found and fixed four real ink-fill digit errors (3 read as 8), each proven against the second copy's page image and never against Scripture; the residual ~660 citation flags are the measured benign classes — Thayer follows the critical text, darash indexes the Received Text.
 
 **A note on the asterisk.** Thayer's terminal asterisk is CONTENT, not punctuation: it asserts that every New Testament occurrence of the word is cited in the entry. It is preserved, and the corpus build disqualifies any rewrite that changes an entry's asterisk count — a model once pattern-completed twelve of them onto entries whose pages have none. Thayer held Unitarian views; on deity-of-Christ passages (G2316, G166) read him as the careful philologist he was and take the theology elsewhere.
-
-**Verification, in numbers.** 716 body pages. 5,870 entries, every one read in full. Four
-transcription routes (page, column, tiles, a second model family) plus hand adjudication; two
-collated passes at **98.91% agreement across 856,793 tokens over 685 pages**, with an unrelated
-model family as a third witness. Five rounds of adversarial review, which found **7 silent entry
-losses** (restored) and **13 fabrications** — one invented letter and twelve fabricated asterisks —
-all removed. Token-level disagreement on the thirteen pages transcribed independently twice:
-**0.19%**. Characters in the shipped text that are not on the page: **0**.
-
-The full account of how it was done, and why every open digital Thayer we could find is lossy:
-[Thayer's Greek Lexicon, rebuilt from the 1889 page scans](https://blog.publifye.com/p/rebuilding-thayer-s-greek-lexicon-entry-by-entry-against-the-1889-page)
-— also in Norwegian, Spanish, Chinese and Korean.
 
 **Per-entry ledger.** out/verified.jsonl in git.dixt.io/nor/thayer-lexicon — per entry: the printed-text sha256, the pages, and what verified it. The same per-entry sha256 and pdf_pages travel on every DictEntry served here, so one definition can be checked against one page.
 
