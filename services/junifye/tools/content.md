@@ -1,7 +1,7 @@
-# Blocks and spans — Junifye MCP tools
+# Blocks and spans
 
-**The authoring surface: paragraphs, headings, quotations, lists, tables, figures, and inline markup.** 34 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**The authoring surface: paragraphs, headings, quotations, lists, tables, figures, and inline markup.** 34 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

@@ -1,7 +1,7 @@
-# Chapters — Junifye MCP tools
+# Chapters
 
-**Create, order, version, diff and revert chapters.** 14 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**Create, order, version, diff and revert chapters.** 14 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

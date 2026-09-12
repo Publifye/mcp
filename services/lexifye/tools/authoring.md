@@ -1,7 +1,7 @@
-# Markup and recovery — Lexifye MCP tools
+# Markup and recovery
 
-**The round-trippable source grammar, house style, and the trash.** 3 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
+**The round-trippable source grammar, house style, and the trash.** 3 Lexifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

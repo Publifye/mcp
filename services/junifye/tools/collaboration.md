@@ -1,7 +1,7 @@
-# Groups, guests and notes — Junifye MCP tools
+# Groups, guests and notes
 
-**Share a book, invite an editor, keep private working notes.** 38 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**Share a book, invite an editor, keep private working notes.** 38 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

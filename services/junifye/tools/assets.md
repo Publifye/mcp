@@ -1,7 +1,7 @@
-# Covers, images and figures — Junifye MCP tools
+# Covers, images and figures
 
-**Covers, logos, figures and uploads.** 22 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**Covers, logos, figures and uploads.** 22 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

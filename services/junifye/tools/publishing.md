@@ -1,7 +1,7 @@
-# Print, ISBN and store — Junifye MCP tools
+# Print, ISBN and store
 
-**Press-ready output, real ISBN-13 assignment, and retail publishing.** 9 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**Press-ready output, real ISBN-13 assignment, and retail publishing.** 9 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

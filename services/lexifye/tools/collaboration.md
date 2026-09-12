@@ -1,7 +1,7 @@
-# Groups, guests and notes — Lexifye MCP tools
+# Groups, guests and notes
 
-**Share a dictionary, invite an editor, keep private notes.** 26 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
+**Share a dictionary, invite an editor, keep private notes.** 26 Lexifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

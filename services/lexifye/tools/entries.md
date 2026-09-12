@@ -1,7 +1,7 @@
-# Entries and definitions — Lexifye MCP tools
+# Entries and definitions
 
-**The lemma and sense tree, with per-definition history, diff and revert.** 20 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
+**The lemma and sense tree, with per-definition history, diff and revert.** 20 Lexifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

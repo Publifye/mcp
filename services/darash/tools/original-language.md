@@ -1,7 +1,7 @@
-# Hebrew and Greek — Darash MCP tools
+# Hebrew and Greek
 
-**What is this word, grammatically and lexically — voice, person, stem, lemma, and what the lexicons say?** 9 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
+**What is this word, grammatically and lexically — voice, person, stem, lemma, and what the lexicons say?** 9 Darash MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

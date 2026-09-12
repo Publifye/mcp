@@ -1,7 +1,7 @@
-# Reading the text — Darash MCP tools
+# Reading the text
 
-**Which verse, chapter or book does the text actually contain, and how do translations differ?** 11 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
+**Which verse, chapter or book does the text actually contain, and how do translations differ?** 11 Darash MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

@@ -1,7 +1,7 @@
-# Books and editions — Junifye MCP tools
+# Books and editions
 
-**Create a book, read it back, publish it, link its translations.** 34 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
+**Create a book, read it back, publish it, link its translations.** 34 Junifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

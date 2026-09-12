@@ -1,7 +1,7 @@
-# Search — Darash MCP tools
+# Search
 
-**Find it by wording, by meaning, or by how rare it is.** 4 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
+**Find it by wording, by meaning, or by how rare it is.** 4 Darash MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

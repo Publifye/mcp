@@ -1,7 +1,7 @@
-# Study and cross-reference — Darash MCP tools
+# Study and cross-reference
 
-**What else does Scripture say about this, and which words move together?** 6 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
+**What else does Scripture say about this, and which words move together?** 6 Darash MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://darash-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |

@@ -1,7 +1,7 @@
-# Dictionaries — Lexifye MCP tools
+# Dictionaries
 
-**Create a dictionary, set its fields, freeze it, recover it.** 14 tools, listed below with the exact description and input
-schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
+**Create a dictionary, set its fields, freeze it, recover it.** 14 Lexifye MCP tools, listed below with the exact
+description and input schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
