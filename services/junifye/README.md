@@ -13,6 +13,23 @@ reader and more, from one source. It runs as a hosted MCP server over HTTPS.**
 | Product site | <https://junifye.publifye.com> |
 | Capability tools | **151** ([full schemas](tools.json)) |
 
+## What the tools do
+
+Every tool is documented with its exact description, annotations and input schema —
+151 in all, generated from the service's own `tools/list`, never written by hand.
+
+| Area | The question it answers | Tools |
+|---|---|---|
+| **[Books and editions](tools/books.md)** | Create a book, read it back, publish it, link its translations. | 34 |
+| **[Chapters](tools/chapters.md)** | Create, order, version, diff and revert chapters. | 14 |
+| **[Blocks and spans](tools/content.md)** | The authoring surface: paragraphs, headings, quotations, lists, tables, figures, and inline markup. | 34 |
+| **[Print, ISBN and store](tools/publishing.md)** | Press-ready output, real ISBN-13 assignment, and retail publishing. | 9 |
+| **[Groups, guests and notes](tools/collaboration.md)** | Share a book, invite an editor, keep private working notes. | 38 |
+| **[Covers, images and figures](tools/assets.md)** | Covers, logos, figures and uploads. | 22 |
+
+Machine-readable: **[tools.json](tools.json)** carries all 151 callable tools (151 capability, 0 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
+
+
 ## Connect
 
 ```jsonc

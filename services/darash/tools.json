@@ -4,12 +4,12 @@
   "captured": "2026-09-13",
   "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
   "counts": {
-    "callable_by_a_customer": 46,
-    "capability_tools": 35,
-    "session_and_cache_plumbing": 11,
+    "callable_by_a_customer": 42,
+    "capability_tools": 34,
+    "session_and_cache_plumbing": 8,
     "excluded_ops_and_logging": 13,
     "excluded_admin_only": 0,
-    "excluded_els_wrr_research": 47,
+    "excluded_els_wrr_research": 51,
     "total_on_the_wire": 106
   },
   "excluded": {
@@ -29,6 +29,10 @@
       "tool_status"
     ],
     "els": [
+      "cache_control",
+      "cache_status",
+      "corpus_status",
+      "corpus_top_verses",
       "els_blind_probe_by_verse",
       "els_blind_probe_investigate",
       "els_blind_probe_lemma",
@@ -79,61 +83,6 @@
     ]
   },
   "tools": [
-    {
-      "name": "cache_control",
-      "title": "Cache Control",
-      "kind": "plumbing",
-      "description": "Controls the disk scan cache generator at runtime via the Redis-backed control plane. Actions: action=enable (start/resume the generator — default state), action=freeze (pause without losing state — generator keeps loop alive but stops working), action=resume (alias for enable), action=disable (stop generator entirely, exits goroutine), action=set_scope (update windows/max_skip/kinds without changing state). Optional scope params: windows (comma-separated, e.g., '0,1,2'), max_skip (integer, e.g., 49), kinds (comma-separated, e.g., 'real,sh_baseline'). Changes propagate within ~5 seconds. Survives restart (state persists in Redis).[END]",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Cache Control"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "description": "Required. One of: enable, freeze, resume, disable, set_scope.",
-            "type": "string"
-          },
-          "kinds": {
-            "description": "Optional. Comma-separated cache kinds (e.g., 'real,sh_baseline').",
-            "type": "string"
-          },
-          "max_skip": {
-            "description": "Optional. Maximum scan skip to cache (integer as string, e.g., '49').",
-            "type": "string"
-          },
-          "windows": {
-            "description": "Optional. Comma-separated window values to cache (e.g., '0,1,2').",
-            "type": "string"
-          }
-        },
-        "required": [
-          "action"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "cache_status",
-      "title": "Cache Status",
-      "kind": "plumbing",
-      "description": "Returns the live state of the els_discover scan cache: file counts, fill percentage, per-book/per-kind breakdown, hit/miss metrics, generator state (enabled/frozen/disabled, ETA, scan throughput), and Redis-backed control config. Use this to check if the cache is healthy, observe fill progress, and diagnose any disk/Redis issues. Read-only.[END]",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Cache Status"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "type": "object"
-      }
-    },
     {
       "name": "co_occurrence",
       "title": "Co Occurrence",
@@ -197,62 +146,6 @@
           "ref",
           "bibles"
         ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "corpus_status",
-      "title": "Corpus Status",
-      "kind": "plumbing",
-      "description": "Reports whether the Torah corpus calibration is ready and, when ready, summarises its distribution (min/p25/median/p75/p90/p95/p99/max of real_tds across all Torah verses). Use this BEFORE relying on els_thematic_score's tds_percentile_in_torah field — when the calibration is still building (first boot only, ~1-10 min) the percentile field is omitted. The percentile cut-points let an AI consumer interpret a per-verse score in plain language: 'this verse's TDS of 19 is above p95=18, so it's in the top 5% of the Torah'. Pairs with corpus_top_verses for discovery (\"which verses populate the 95th-percentile band?\").[END]",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Corpus Status"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "type": "object"
-      }
-    },
-    {
-      "name": "corpus_top_verses",
-      "title": "Corpus Top Verses",
-      "kind": "capability",
-      "description": "Discovery query against the Torah-wide thematic-density distribution. Returns Torah verses whose real_tds (the same metric reported by els_thematic_score) falls in a requested percentile band, optionally filtered by book. Use this to ANSWER QUESTIONS LIKE: 'which Torah verses have the strongest watermark signal?' (min_percentile=99 returns the top 1%); 'which Numbers verses sit at the 95th percentile or higher?' (book=4, min_percentile=95). Backed by the precomputed corpus calibration — microsecond response, no live scans. Each returned record carries book/chapter/verse, real_tds, and percentile. Drill in with els_thematic_score on any returned ref to see the specific encoded vocabulary. REQUIRES corpus calibration to be ready; check with corpus_status first if unsure.[END]",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Corpus Top Verses"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book": {
-            "description": "Optional Torah book filter: 1=Genesis, 2=Exodus, 3=Leviticus, 4=Numbers, 5=Deuteronomy. 0 or omitted = all five books.",
-            "type": "integer"
-          },
-          "limit": {
-            "description": "Maximum results returned (default 50, max 1000).",
-            "type": "integer"
-          },
-          "max_percentile": {
-            "description": "Upper bound of the percentile band, 0-100. Default 100 (no upper bound).",
-            "type": "integer"
-          },
-          "min_percentile": {
-            "description": "Lower bound of the percentile band, 0-100. Default 0 (no lower bound). E.g. 95 returns the top 5%.",
-            "type": "integer"
-          },
-          "order": {
-            "description": "'desc' (default) returns highest-TDS first — most useful for finding strongest signals. 'asc' returns lowest first.",
-            "type": "string"
-          }
-        },
         "type": "object"
       }
     },
