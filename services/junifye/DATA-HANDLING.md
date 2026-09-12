@@ -45,11 +45,21 @@ From the [Privacy Policy](https://publifye.com/privacy.html):
 Procedure: <https://publifye.com/data-deletion.html>. GDPR rights, including portability — "the data
 you gave us, in a machine-readable form" — are set out in the same policy.
 
-## AI providers
+## AI training
 
-The Privacy Policy discloses that some services send the content you give them to a third-party AI
-provider in order to perform the operation you asked for — a translation, a draft, a check. That is
-what makes the assistant work.
+**Publifye does not use your content to train AI models.** Not your book, not your dictionary, not
+your notes — no part of what you write here is used as training data for any model, ours or anyone
+else's.
+
+What does happen, and the [Privacy Policy](https://publifye.com/privacy.html) says so: when you ask
+the assistant to do something — a translation, a draft, a check — the content needed for that
+request is sent to a third-party AI provider to perform it. That is inference, not training: the
+provider answers the request and the exchange is over. It is how the assistant works at all, and
+nothing reaches a provider except in service of something you asked for.
+
+We state the limits of that honestly. We control what we send and why. We do not control, and
+therefore do not speak for, what any third-party provider does under its own terms — so read this
+as our commitment about our own handling, which is the part we can stand behind.
 
 ## What governs what
 
