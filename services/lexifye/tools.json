@@ -1,0 +1,2456 @@
+{
+  "service": "lexifye",
+  "endpoint": "https://lexifye.publifye.com/mcp",
+  "captured": "2026-09-13",
+  "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
+  "counts": {
+    "callable_by_a_customer": 63,
+    "capability_tools": 63,
+    "session_and_cache_plumbing": 0,
+    "excluded_ops_and_logging": 13,
+    "excluded_admin_only": 13,
+    "excluded_els_wrr_research": 0,
+    "total_on_the_wire": 89
+  },
+  "excluded": {
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_bridge_logs",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "service_status",
+      "set_log_capacity",
+      "set_log_level",
+      "tool_status"
+    ],
+    "admin": [
+      "admin_audit_list",
+      "admin_dict_delete",
+      "admin_dict_list",
+      "admin_dict_transfer",
+      "admin_guest_remove",
+      "admin_purge_tombstone",
+      "admin_reindex_terms",
+      "admin_rerender",
+      "admin_s3_restore",
+      "admin_s3_status",
+      "admin_s3_sync",
+      "admin_s3_verify",
+      "admin_system_status"
+    ]
+  },
+  "tools": [
+    {
+      "name": "audit_list",
+      "title": "Audit List",
+      "kind": "capability",
+      "description": "The dict's CHANGE HISTORY: who changed what, and when. Newest first, paginated. EDITOR-level (write), exactly like trash_list and for the same reason: this is editorial history, not content — it names the people who edited the dictionary — so it is limited to those who could have made the edits (owner, guest editors, group members). Reading a dictionary and knowing who worked on it are separate questions, and the read tier also carries the service-to-service lane, which exists to pull content and not personnel. A soft-deleted dict's history is unreadable until dict_restore brings it back.\n  This is the companion to trash_list: that one says what is still recoverable, this one says who deleted it and when (and, for a row purged after its grace window, that it was the retention sweep rather than a person).\n\n--- EVENT SHAPE ---\n  id — the stream cursor; pass it back as `before` for the next (older) page, or as `after` to poll for what has happened since.\n  ts — unix seconds. op — the mutation (dict_create, entry_add, entry_delete, entry_restore, entry_purge, definition_add/update/move/delete/restore/purge, dict_set_*, dict_delete/restore, dict_import, guest_add/remove, group_add/remove).\n  actor / actor_name — the pubhub user who made the change, resolved to a display name where one is known. Background work names itself: system:sweep (a trash row purged after its 30-day grace), system:enrich (darash auto-entries), system:import (a rebuild from the S3 export).\n  entry_id / def_id / fields — what the op touched; `fields` carries the op-specific payload (term, defs, notes_promoted, …).\n\n--- RETENTION ---\n  The stream is capped at the newest 2000 events per dict, so it is an operational log, not an archive; `trimmed:true` means older rows have been dropped. What a dict CONTAINED is durable elsewhere (the <uuid>.json export + its versioned S3 object); how a definition changed is definition_history.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Audit List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "actor": {
+            "description": "Optional exact actor filter (an idu... user id, or system:sweep / system:enrich / system:import).",
+            "type": "string"
+          },
+          "after": {
+            "description": "An event id; returns events strictly NEWER than it (polling for what has changed since).",
+            "type": "string"
+          },
+          "before": {
+            "description": "An event id from a previous page; returns events strictly OLDER than it.",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "1-200 events (default 50).",
+            "type": "integer"
+          },
+          "op": {
+            "description": "Optional exact op filter, e.g. entry_delete.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_add",
+      "title": "Definition Add",
+      "kind": "capability",
+      "description": "Add a definition to an entry. content is an array of blocks (paragraph|heading|list) each holding spans (text, emph, bold, hebrew, greek, strong, bref, link). A list block may also carry items — the per-item span groups, so one bullet can hold emphasis, a Strong's code and a Greek word; concatenated they must equal spans, and you omit items when every item is a single span. Prefer definition_add_source, which writes this shape for you from the markup grammar. Returns the created definition including its sha256 token.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Add"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "items": {
+              "properties": {
+                "items": {
+                  "description": "LIST BLOCKS ONLY: the per-item span groups, so one authored item can hold several spans. Concatenated they must equal spans exactly. Omit it when every item is a single span.",
+                  "items": {
+                    "items": {
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "strong": {
+                          "type": "string"
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "translit": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "text",
+                            "emph",
+                            "bold",
+                            "hebrew",
+                            "greek",
+                            "strong",
+                            "bref",
+                            "link"
+                          ],
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "type": "array"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "spans": {
+                  "description": "The block's complete inline run, in reading order.",
+                  "items": {
+                    "properties": {
+                      "ref": {
+                        "type": "string"
+                      },
+                      "strong": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "translit": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "text",
+                          "emph",
+                          "bold",
+                          "hebrew",
+                          "greek",
+                          "strong",
+                          "bref",
+                          "link"
+                        ],
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "type": {
+                  "enum": [
+                    "paragraph",
+                    "heading",
+                    "list"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "spans"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "content"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_add_source",
+      "title": "Definition Add Source",
+      "kind": "capability",
+      "description": "Create a definition from markup source in ONE call — the definition_add twin for the source grammar (source_syntax). Parses the markup into content blocks, validates, and appends the definition to the entry. Returns the created definition including its sha256.\n  WHAT GOES IN source: the definition's whole text as MARKUP, which is PARSED into content blocks (blank lines split paragraphs; *emph*, **bold**, [H1234], [h:…], [g:…], [ref:…], [a:text|url], # headings, - lists) rather than stored verbatim — call source_syntax for the grammar. `body` and `content` are accepted aliases for this same field; passing two spellings at once is refused, and structured block arrays go to definition_add, not here.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Add Source"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "content": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "source": {
+            "description": "The definition's full text as markup source; PARSED, not stored verbatim. See source_syntax.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "source"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_delete",
+      "title": "Definition Delete",
+      "kind": "capability",
+      "description": "Delete a definition. sha256_of_old MUST match the current stored sha256.\n\n--- SOFT BY DEFAULT ---\n  The definition moves to the entry's trash: it leaves the sense order and every rendered artifact, but its content and its WHOLE VERSION HISTORY stay — definition_history and definition_diff go on answering for it, and definition_restore puts it back at its original position for 30 days. (That is the point: before this, history protected you against a bad edit and gave you nothing at all against a delete.)\n  Browse the bin with trash_list.\n\n--- purge=true ---\n  IRREVERSIBLE. Destroys the definition and every retained version of it, right now.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "def_id": {
+            "description": "DEPRECATED ALIAS for definition_id. Still accepted; pass definition_id instead.",
+            "type": "string"
+          },
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "purge": {
+            "default": false,
+            "description": "IRREVERSIBLE hard delete, version history included. Omit for the recoverable default.",
+            "type": "boolean"
+          },
+          "sha256": {
+            "description": "Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors from this tool name sha256_of_old.",
+            "type": "string"
+          },
+          "sha256_of_old": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "sha256_of_old"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_diff",
+      "title": "Definition Diff",
+      "kind": "capability",
+      "description": "Compare two versions of a definition (from/to version numbers via definition_history), returning each version's markup source plus a unified line diff (lines prefixed ' ' unchanged, '-' removed, '+' added). Read-level for a LIVE definition; a soft-deleted one requires editor access, since the diff renders content the author has already deleted.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition Diff"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "from": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "to": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "from",
+          "to"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_get_source",
+      "title": "Definition Get Source",
+      "kind": "capability",
+      "description": "Return a definition's content as round-trippable markup source (the grammar source_syntax documents). Pair with definition_set_source for edit-and-push revision. Returns {dict_id, entry_id, definition_id, source, sha256} — quote sha256 on definition_set_source so a concurrent edit is caught. Read-level for a LIVE definition; one whose entry is in the trash requires editor access.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition Get Source"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_history",
+      "title": "Definition History",
+      "kind": "capability",
+      "description": "List the retained version history of a definition (the last 20 saves, 7-day window), newest first. Each version carries {n, sha256, author_name, ts} — NO content (call definition_diff to compare, or definition_revert to restore). Read-level for a LIVE definition; a soft-deleted one requires editor access, since its history is content the author has already deleted.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition History"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_move",
+      "title": "Definition Move",
+      "kind": "capability",
+      "description": "Reorder a definition within its entry's sense order (rendered 1., 2., 3.). to_index is 0-based (0 = first) and clamped. Returns {ok, definition_id, to_index} where to_index is where the definition ACTUALLY landed — when the request was out of range the reply also carries requested_index, clamped:true and a note.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Move"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "def_id": {
+            "description": "DEPRECATED ALIAS for definition_id. Still accepted; pass definition_id instead.",
+            "type": "string"
+          },
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "to_index": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "to_index"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_restore",
+      "title": "Definition Restore",
+      "kind": "capability",
+      "description": "Restore a soft-deleted definition to its original position in its entry's sense order, with its version history intact. Works for 30 days after definition_delete. Call trash_list for what is restorable.\n  If the ENTRY is in the trash too, this is refused and entry_restore is the call to make — it brings every definition back with it, and restoring one alone would leave it invisible.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Restore"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "def_id": {
+            "description": "DEPRECATED ALIAS for definition_id. Still accepted; pass definition_id instead.",
+            "type": "string"
+          },
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_revert",
+      "title": "Definition Revert",
+      "kind": "capability",
+      "description": "Restore a definition to a past version n (from definition_history), recorded as a NEW version — history is never destroyed. Carries the SAME optimistic lock as an edit: sha256 MUST match the definition's CURRENT sha256 (from dict_get). Returns the new current definition.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Revert"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "n": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "sha256": {
+            "description": "The definition's CURRENT sha256 (optimistic lock).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "n",
+          "sha256"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_set_source",
+      "title": "Definition Set Source",
+      "kind": "capability",
+      "description": "Replace a definition's content by parsing markup source (the grammar source_syntax documents). sha256 MUST match the current stored token (quote the one from definition_get_source / dict_get) — a mismatch means someone else edited it; refetch and retry. Parse errors name the offending block/construct. Returns the updated definition including its new sha256.\n  WHAT GOES IN source: the definition's whole text as MARKUP, which is PARSED into content blocks (blank lines split paragraphs; *emph*, **bold**, [H1234], [h:…], [g:…], [ref:…], [a:text|url], # headings, - lists) rather than stored verbatim — call source_syntax for the grammar. `body` and `content` are accepted aliases for this same field; passing two spellings at once is refused, and structured block arrays go to definition_update, not here.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Set Source"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "content": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "sha256": {
+            "description": "The current sha256 token (optimistic lock). From definition_get_source or dict_get.",
+            "type": "string"
+          },
+          "source": {
+            "description": "The definition's full text as markup source; PARSED, not stored verbatim. See source_syntax.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "source",
+          "sha256"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "definition_update",
+      "title": "Definition Update",
+      "kind": "capability",
+      "description": "Replace a definition's content. sha256_of_old MUST match the current stored sha256 — quote the one returned by dict_get. Mismatch is rejected (refetch and retry).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Update"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "items": {
+              "properties": {
+                "items": {
+                  "description": "LIST BLOCKS ONLY: the per-item span groups, so one authored item can hold several spans. Concatenated they must equal spans exactly. Omit it when every item is a single span.",
+                  "items": {
+                    "items": {
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "strong": {
+                          "type": "string"
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "translit": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "text",
+                            "emph",
+                            "bold",
+                            "hebrew",
+                            "greek",
+                            "strong",
+                            "bref",
+                            "link"
+                          ],
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "type": "array"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "spans": {
+                  "description": "The block's complete inline run, in reading order.",
+                  "items": {
+                    "properties": {
+                      "ref": {
+                        "type": "string"
+                      },
+                      "strong": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "translit": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "text",
+                          "emph",
+                          "bold",
+                          "hebrew",
+                          "greek",
+                          "strong",
+                          "bref",
+                          "link"
+                        ],
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "type": {
+                  "enum": [
+                    "paragraph",
+                    "heading",
+                    "list"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "spans"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "def_id": {
+            "description": "DEPRECATED ALIAS for definition_id. Still accepted; pass definition_id instead.",
+            "type": "string"
+          },
+          "definition_id": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "sha256": {
+            "description": "Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors from this tool name sha256_of_old.",
+            "type": "string"
+          },
+          "sha256_of_old": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "definition_id",
+          "content",
+          "sha256_of_old"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_create",
+      "title": "Dict Create",
+      "kind": "capability",
+      "description": "Create a new dictionary. Author is stamped from the caller's pubcontacts Contact. author_bio is an optional opt-in paragraph (<=500 chars) printed under the title-page date; default empty. language is an optional BCP-47 tag (e.g. 'grc', 'he', 'nb') for the dictionary's primary language.\n\n--- WHO CAN REACH IT ---\n  There is no visibility setting and no public dictionary. Every dictionary is readable AND editable by exactly one set: you, the guest editors you add, and members of a group you attach. Its artifact URLs (.json/.html/.epub/.tex/.pdf) require that same membership. Authorised Publifye services may READ it service-to-service (lexifye is the ecosystem's system of record); they can never write or administer it.\n\n--- OWNER (owner_id: SERVICE/ADMIN ONLY) ---\n  Normally omit it: the owner is stamped from the authenticated caller, and a user creating a dictionary owns it.\n  A TRUSTED SERVICE (a registered service key with no idu_ of its own — junifye's bridge is exactly this) has no identity to own a dictionary with, so it passes owner_id = the 'idu…' of the signed-in author it is creating on behalf of. Same trust boundary as dict_list_for_user, and the plan cap is charged to that owner, not the service. A regular user key passing owner_id is refused: you may only create dictionaries for yourself.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Create"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "author_bio": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "language": {
+            "maxLength": 35,
+            "type": "string"
+          },
+          "owner_id": {
+            "description": "SERVICE/ADMIN ONLY: the pubhub 'idu…' id to own the new dict (on-behalf create). Omit as a user — the owner is your own identity.",
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_delete",
+      "title": "Dict Delete",
+      "kind": "capability",
+      "description": "Delete a dict. Requires admin (owner).\n\n--- SOFT BY DEFAULT ---\n  The dict moves to the trash: it leaves every listing but keeps every entry, definition, version history and private note, and dict_restore brings it back whole for 30 days. List what is in there with dict_list(include_deleted=true) — you do not need to have kept the id.\n  The plan slot is freed immediately.\n\n--- purge=true ---\n  IRREVERSIBLE. Hard-purges the dict, every entry and definition, all indexes, the collab rosters, the audit stream, the rendered artifacts and the <uuid>.json export, right now. Use it only when the content genuinely must not remain — never as a tidier version of the default.\n  It also records a durable PURGE TOMBSTONE, so the dictionary does not come back from the disaster-recovery mirror the way it used to. The mirror is add-only, so the stored copy is SUPPRESSED rather than deleted; ask an operator for admin_purge_tombstone(action:\"redact\") if the content must actually leave it. The purge is refused outright if the tombstone cannot be recorded — nothing is destroyed in that case.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the dict.",
+            "type": "string"
+          },
+          "id": {
+            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
+            "type": "string"
+          },
+          "purge": {
+            "default": false,
+            "description": "IRREVERSIBLE hard delete. Omit for the recoverable default.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_enrich",
+      "title": "Dict Enrich",
+      "kind": "capability",
+      "description": "Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced original-language words (Strong's codes in `strong` spans, and hebrew/greek spans carrying a code), pull their lexicon data from darash, and add them as real auto entries (native lemma + SBL transliteration + a composed definition). Manually-authored entries always win a term collision; auto entries whose reference has vanished are reconciled away.\n\ndepth (optional, 0..4) overrides the dict's strongs_depth for THIS run only: 0 OFF · 1 referenced words only · 2 referenced + one derivation/related hop · 3-4 deeper. depth=0 really is off — nothing is scanned, created or reconciled, and the report says so in `note`; it is NOT the same as omitting depth, which uses the dict's own strongs_depth. A one-shot dict_enrich may go deeper (up to 4) than the automatic background enrich (which never exceeds 2). Also runs automatically (debounced) after definition edits — call this to force it or to request a deeper pass.\n\nA pass only ever removes what it could itself have CREATED. An auto entry made by a deeper pass, or one whose creating depth is unknown, is left alone and counted in `kept_deeper` — so a deliberate depth-4 enrichment survives every later depth-2 automatic pass instead of being destroyed by it. And if any single pass ever decides more than 50 entries went orphaned at once, it purges NONE of them and says so in `purge_refused` + `note`.\n\nReturns a report: {dict_id, depth, codes_resolved, created, kept, removed, kept_deeper, purge_refused, skipped_manual, skipped_script_spans, capped} — plus `note` when the run deliberately did nothing (depth 0) or refused a mass purge.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Enrich"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "depth": {
+            "maximum": 4,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "dict_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_freeze",
+      "title": "Dict Freeze",
+      "kind": "capability",
+      "description": "ADMIN. Apply a CANONICAL LOCK to a dictionary — the recoverable take-down. Use this FIRST when responding to an abuse report: it stops the dictionary being changed while you investigate, and destroys nothing.\n  WHILE FROZEN, NOBODY may write to it — not a guest editor, not a group member, and NOT ITS OWNER. Content edits, guest and group management, transfer, delete AND restore are all refused, with a distinct 'frozen' reason so an author is not sent hunting for a permissions problem that does not exist.\n  READING IS UNAFFECTED. dict_get, entry_list and every artifact route keep working for the people already entitled to them. A freeze takes a dictionary out of PLAY, it does not hide it — hiding it is what dict_delete does, and destroying it is admin_dict_delete.\n  Locking the OWNER out of delete/transfer as well is a deliberate divergence from junifye's book_freeze (which locks writes only): a hold the subject of an investigation can dissolve by deleting the evidence, or by handing the dictionary to a second account, is not a hold.\n  An operator keeps every intervention — admin_dict_transfer, admin_guest_remove, admin_dict_delete and dict_unfreeze all still work on a frozen dictionary.\n  Reversible with dict_unfreeze, which puts everything back exactly as it was. Idempotent: re-freezing with the same reason writes no second audit row.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Freeze"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the dict to freeze (NOT the uuid). Find one with admin_dict_list.",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Why the hold exists — a ticket reference and one line (max 200 chars). Strongly recommended: it is shown to the owner in the refusal they will receive, and an unexplained lock generates a support ticket of its own.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_get",
+      "title": "Dict Get",
+      "kind": "capability",
+      "description": "Fetch a dict by id with a PAGE of its entries and their definitions inlined. Each definition includes sha256 — quote it on subsequent definition_update/delete calls.\n\n--- PAGINATION (entries) ---\n  limit (default 50, max 200) + offset walk the entries in display order. The reply always carries entry_total, limit, offset and has_more, so a truncated read is never silent: has_more=true means there ARE more entries and you have not seen them. This tool used to inline EVERY entry, which made it unusable on a large dictionary — a 14,153-entry dict failed outright while dict_list and entry_list stayed fast. For metadata only, pass limit=0. For headwords without definition bodies, entry_list is cheaper; to find an entry without knowing its headword, use entry_search.\n\n--- WHO MAY READ ---\n  Its owner, its guest editors, and members of any group attached to it — nobody else. There is no public dictionary and no anonymous read. Knowing the id is NOT access; a caller outside that set gets 'forbidden' whether or not the dict exists. Same rule for entry_list, entry_get, definition_get_source, audit_list and every artifact URL.\n\n--- CONDITIONAL FETCH (if_version) ---\n  Pass if_version = the `version` you last received and, when the dict has NOT changed since, the reply is the compact {id, version, not_modified:true} instead of the whole tree — the 304 of this API. version bumps on EVERY mutation that changes rendered output (entry add/rename/move/reorder/delete, definition add/update/move/delete/revert, and title/language/author_bio edits), so an unchanged version means unchanged content. Private notes deliberately do NOT bump it — they never render.\n  Omit if_version (or pass a stale one) and the response shape is exactly as before. The not-modified reply carries no artifact URLs, so omit if_version when you need those.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict Get"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the dict.",
+            "type": "string"
+          },
+          "id": {
+            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
+            "type": "string"
+          },
+          "if_version": {
+            "description": "Conditional fetch: the version you already hold. Equal to the dict's current version => {id, version, not_modified:true} instead of the payload.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 50,
+            "description": "How many entries to inline, in display order. 0 = metadata only. Check has_more.",
+            "maximum": 200,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "description": "Entry offset in display order.",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_group_add",
+      "title": "Dict Group Add",
+      "kind": "capability",
+      "description": "Attach a GROUP to a dict so every member of the group becomes a content editor of it (resolved live — membership changes take effect instantly). Dict owner only, and you must BELONG to the group you are attaching. Idempotent.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Group Add"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id from dict_create.id (NOT the uuid).",
+            "type": "string"
+          },
+          "group_id": {
+            "description": "The 'grp...' id of a group you belong to (group_list).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_group_remove",
+      "title": "Dict Group Remove",
+      "kind": "capability",
+      "description": "Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any who are ALSO individual guests, or members of another attached group, keep access via that path). Dict owner only. Idempotent.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Group Remove"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id from dict_create.id (NOT the uuid).",
+            "type": "string"
+          },
+          "group_id": {
+            "description": "The 'grp...' id to detach (guest_list shows attached groups).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_list",
+      "title": "Dict List",
+      "kind": "capability",
+      "description": "List the dictionaries you OWN, newest first. There is no public catalogue: filter=public no longer exists, and filter=all is accepted only as a synonym for 'own'. Dictionaries shared WITH you (via a group or a guest grant) are not in this list — the dashboard and the group/guest tools surface those. Paginates via limit (default 50, max 200) + offset. Response shape: {items, total, limit, offset, has_more}.\n\n--- TRASH (include_deleted) ---\n  Pass include_deleted=true to ALSO get your soft-deleted dictionaries in an added `deleted` array — id, title, entry/definition counts, deleted_at and days_remaining — so a dict_delete you want to undo can be found without having written its idy… id down. items/total/has_more keep meaning exactly what they meant (the live library); the deleted array is unpaginated and always OLDEST FIRST, so the one closest to grace expiry is at the top. Restore with dict_restore.\n  It is EDITOR-level and OWNER-SCOPED: it needs a write-capable credential and only ever lists dictionaries you own. filter does not apply to it.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "filter": {
+            "default": "own",
+            "description": "Accepted for compatibility; both values mean 'the dicts you own'.",
+            "enum": [
+              "all",
+              "own"
+            ],
+            "type": "string"
+          },
+          "include_deleted": {
+            "default": false,
+            "description": "Also return YOUR soft-deleted dicts in a 'deleted' array (the account trash bin). Requires a write-capable credential.",
+            "type": "boolean"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_list_for_user",
+      "title": "Dict List For User",
+      "kind": "capability",
+      "description": "SERVICE/ADMIN ONLY. List every dictionary a given user can work with — the union of dicts they OWN, are a GROUP member of, and are a GUEST editor of — deduped and each tagged with its relation ('owner' | 'group' | 'guest'), owner-first then by title. This is the on-behalf listing a trusted service (e.g. junifye authenticating as itself) calls to render a dictionary PICKER for a signed-in author, so a human never pastes a raw idy… id. LEAN projection for a dropdown: {id, uuid, title, language, entry_count, version, relation} — NO entries or definitions (use dict_get for those). A user with no dictionaries returns {dicts:[], count:0} — an empty list is a valid answer, not an error. NOT for a regular user asking about themselves: a user lists their own dicts with dict_list (default filter=own). Response: {user_id, dicts, count}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict List For User"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "user_id": {
+            "description": "The pubhub 'idu…' id of the user to list dictionaries for (the signed-in author). Resolve a name with guest_find_user; never an email.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_replace",
+      "title": "Dict Replace",
+      "kind": "capability",
+      "description": "Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring typo, rename a term, update a date. One call instead of one edit per definition.\n  ALWAYS PREVIEW FIRST: preview=true is a DRY RUN that reports what WOULD change and writes nothing. Then re-run without it.\n  WHOLE WORDS BY DEFAULT: find=\"Gen\" hits \"Gen\" and \"Gen.\" but NEVER \"Genesis\" — a rename thinks around words, not blind characters. Set whole_word=false for a raw substring replace. Case-SENSITIVE, literal, NOT a regular expression.\n  SPAN INTERNALS ARE PROTECTED, and this differs from junifye's book_replace on purpose. Only the PROSE a reader sees is rewritten (text, *emph*, **bold**, and a link's visible label). A Strong's code [H2617], the code/transliteration/original word inside [h:…] and [g:…], a [ref:John 3:16] target and a link's URL are STRUCTURE and are left untouched — so replacing \"John\" does not silently rewrite your Bible references, and replacing \"hesed\" does not rewrite a transliteration. To change a headword use entry_rename; to change a span's internals use definition_set_source.\n  PER-DEFINITION MANIFEST: units[] reports applied (with count) | would-apply (preview) | skipped-unchanged | rejected-invalid | not-editable | skipped. Each definition is ATOMIC: the result is re-validated first, and one whose result would be malformed (or over the 64 KB definition limit) is reported rejected-invalid and left exactly as it was.\n  UNDOABLE: every changed definition is checksum-gated against concurrent editors and creates a new revertable version — definition_history / definition_revert put any single one back.\n  Soft-deleted entries and definitions are not touched and are not listed; they are frozen by design (see trash_list).\n  The audit stream records ONE dict_replace row for the whole run, not one per definition — a 213-definition edit is one editorial decision, and per-definition detail lives in definition_history.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Replace"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the dict.",
+            "type": "string"
+          },
+          "find": {
+            "description": "Exact literal text to find (case-sensitive, not a regex).",
+            "minLength": 1,
+            "type": "string"
+          },
+          "preview": {
+            "default": false,
+            "description": "Dry run: report what would change and write NOTHING. Always preview a rename first.",
+            "type": "boolean"
+          },
+          "replace": {
+            "description": "Replacement text. May be empty to delete the word.",
+            "type": "string"
+          },
+          "whole_word": {
+            "default": true,
+            "description": "Match whole words only (DEFAULT true — the safe rename). false = raw substring replace.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dict_id",
+          "find",
+          "replace"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_restore",
+      "title": "Dict Restore",
+      "kind": "capability",
+      "description": "Restore a soft-deleted dict, with every entry, definition, version history and private note exactly as they were. Works for 30 days after dict_delete. Requires admin (owner), like dict_delete. Find the id with dict_list(include_deleted=true) — the trash bin of your account.\n  The PLAN CAP applies: a restore occupies a concurrent-dict slot exactly as a create does, so restoring while you are already at your limit is refused, naming what to delete or purge first. (It is refused, never partial — the dictionary stays in the trash for the rest of its 30 days.)",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Restore"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the soft-deleted dict, from dict_list(include_deleted=true).",
+            "type": "string"
+          },
+          "id": {
+            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_set_field",
+      "title": "Dict Set Field",
+      "kind": "capability",
+      "description": "Atomically set ONE field on a dict by key.\n  There is NO visibility key: dictionaries are never public, so there is nothing to publish. A dictionary is readable and editable by its owner, its guest editors, and members of an attached group — and by nobody else.\n\n--- PRESENTATION KEYS (OWNER ONLY) ---\n  How the dictionary TYPESETS, in every format. Owner-only for the same reason `language` is: they decide whether and how the document sets at all, so a guest editor must not be able to break every PDF of a dict they do not own.\n  page_size    a4 (screen default) | letter | 6x9 (trade print)\n  font_size    body size in points, 8..18. Below 8 a lexicon is unreadable; above 18 is a large-print edition, which is a different book.\n  entry_break  continuous (default) | page = a new page per entry. Suits a few long articles; ruinous for thousands of short ones.\n  interlink    true|false (on/off accepted). When on, a word used in a definition becomes a link to its own entry in this dictionary — in the reader, the EPUB and the reader PDF; suppressed in the print interior, where a hyperlink is invisible and still costs an annotation. Membership in this dictionary is the whole test: a Strong's code is linked exactly like a headword, and matching uses the same fold as entry_get (unpointed Hebrew finds the pointed lemma, g26/G0026 land on one entry). An entry never links to itself. Absent is OFF: it changes the text a reader sees.\n  interlink_scope  all (default) | first. Which occurrences link, once interlink is on. all = EVERY occurrence. first = only the first mention of a given entry within each entry. Absent means all. Measured on a 128-entry themed word-study dictionary, all vs first was 48 links against 43, over the same 25 pages, and moved not one line break. On a GENERAL dictionary it is a different matter: where the headwords are ordinary words (a, the, of, he, one, man, god, word, love, life…), a 50-entry sample simulated 3,328 links under `first` alone — one every ten words in the worst entry — and `all` is higher still. For that kind of content set `first`, or leave interlink off, and render ONE PAGE before rendering the rest.\n  Read them back in dict_get under `layout`. Omitted keys keep the shipped defaults — a dictionary that never sets one renders exactly as it always has.\n\n--- AUTHOR-BIO KEY (OWNER ONLY) ---\n  author_bio (string, 0..500 chars). Opt-in paragraph printed in italic below the title-page date. Empty clears it. NEVER auto-populate — only set when the author explicitly asks to.\n\n--- LANGUAGE KEY (OWNER ONLY) ---\n  language (BCP-47 tag, e.g. 'grc', 'he', 'nb'; empty clears). The dictionary's primary language, and the switch that decides how the document TYPESETS — an RTL tag flips the direction of every rendered format. A guest editor may change content but not that, so this key is owner-only (a guest gets 'forbidden'), unlike title and strongs_depth.\n\n--- TITLE KEY (editor level: owner, guest editors, group members) ---\n  title (1..200 chars). The dictionary's name, on every cover and dashboard row.\n\n--- STRONGS-DEPTH KEY (editor level) ---\n  strongs_depth ('0'..'4' as a string). Darash Strong's auto-enrichment depth: 0 off · 1 referenced words only · 2 default (automatic, content-driven) · 3-4 deeper on request. Depth >2 never runs automatically — the background enrich clamps to 2; request a deeper one-shot with dict_enrich.\n\nvalue is always a string.\n\n--- OPTIMISTIC LOCK ---\n  For the content fields title, language, and author_bio you MUST pass `expected` = the field's CURRENT value (from dict_get). Field-scoped: an unrelated field change never conflicts. A mismatch is rejected (stale) with the current value so you can refetch and retry. strongs_depth takes no expected.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Set Field"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the dict.",
+            "type": "string"
+          },
+          "expected": {
+            "description": "REQUIRED for title/language/author_bio: the field's current value (optimistic lock).",
+            "type": "string"
+          },
+          "id": {
+            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
+            "type": "string"
+          },
+          "key": {
+            "enum": [
+              "author_bio",
+              "title",
+              "language",
+              "strongs_depth"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "key",
+          "value"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_transfer",
+      "title": "Dict Transfer",
+      "kind": "capability",
+      "description": "Hand ownership of YOUR dictionary to another user. Owner only — the mirror of group_transfer, which already lets you hand over a group.\n  THE RECIPIENT MUST ALREADY BE A COLLABORATOR on this dict: an individual guest editor, or a member of a group attached to it. That is the same consent shape group_transfer uses (\"the new owner must already be a member\") and it is what stops a dictionary being pushed onto somebody who never agreed to hold it. Add them first with guest_add, or attach a group you both belong to with dict_group_add.\n  WHAT MOVES: the dictionary leaves your library and joins theirs, and every owner-only right goes with it — delete/restore, guest and group management, language, author_bio, and this tool. You keep NOTHING unless you are also a guest or in an attached group.\n  WHAT STAYS: guest editors and attached groups carry over, so the work in progress is not interrupted. The recipient's own guest grant becomes redundant and is dropped (an owner is not their own guest). The response reports both counts — the new owner can drop any of it with guest_remove / dict_group_remove.\n  The recipient is NOTIFIED (notice_list). This is not reversible by you afterwards: only the new owner can transfer it back.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Transfer"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of a dict you own (NOT the uuid).",
+            "type": "string"
+          },
+          "new_owner_id": {
+            "description": "DEPRECATED ALIAS for to_owner. Still accepted; pass to_owner instead.",
+            "type": "string"
+          },
+          "to_owner": {
+            "description": "The recipient's lexifye user id (pubhub 'idu...') from guest_list or guest_find_user. NOT an email. (admin_dict_transfer's to_owner also resolves a username; this owner-facing door takes the id.)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "to_owner"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "dict_unfreeze",
+      "title": "Dict Unfreeze",
+      "kind": "capability",
+      "description": "ADMIN. Lift a dict_freeze. Everything returns exactly as it was — the freeze changed no content, so there is nothing to restore. Idempotent: unfreezing a dictionary that is not frozen is a no-op and says so.\n  ADMIN-ONLY, with no owner-reopenable case. junifye's book_unfreeze is write-level because junifye ALSO auto-locks a book after 30 days of inactivity and an owner must be able to reopen their own soft lock. lexifye has no auto-lock: the only thing that ever freezes a dictionary here is an operator, so the only thing that lifts one is an operator. A write-level unfreeze would hand the subject of an investigation the key to their own hold.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Unfreeze"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id of the frozen dict. List open holds with admin_dict_list(frozen:true).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_add",
+      "title": "Entry Add",
+      "kind": "capability",
+      "description": "Add a term entry to a dict. term must be unique within the dict (case-insensitive). translit is an optional romanization of the term (e.g. 'logos' for λόγος) for glossary rendering.\n\n--- SOURCE (one-call authoring) ---\n  source is optional prose: pass it and the entry's FIRST definition is created in the same call, so a term with a gloss costs one call instead of entry_add + definition_add. WHAT GOES IN IT: the definition's text as MARKUP, which is PARSED rather than stored verbatim — blank lines split it into paragraphs, and the full markup grammar is available (*emph*, **bold**, [H1234], [h:…], [g:…], [ref:…], [a:text|url], # headings, - lists). It goes through exactly the same parser as definition_add_source, so anything valid there is valid here; call source_syntax (or house_style) for the grammar.\n  `body` and `content` are accepted aliases for this same field; passing two spellings at once is refused rather than resolved, because two bodies of prose are two documents.\n  Markup errors are reported BEFORE the entry is created, so a rejected source never leaves a bare entry behind. Omit source to create the term alone and add senses later with definition_add / definition_add_source.\n  A structured `content` BLOCK ARRAY is still refused: entry_add takes text, definition_add takes blocks.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Add"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "content": {
+            "description": "Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "source": {
+            "description": "Optional. The entry's first definition as markup source (blank-line-separated blocks); PARSED, not stored verbatim. See source_syntax.",
+            "type": "string"
+          },
+          "term": {
+            "type": "string"
+          },
+          "translit": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "term"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_delete",
+      "title": "Entry Delete",
+      "kind": "capability",
+      "description": "Delete an entry and all of its definitions from a dict.\n\n--- SOFT BY DEFAULT ---\n  The entry moves to the dict's trash: it disappears from entry_list, dict_get, the rendered PDF/HTML/EPUB and the JSON export, but nothing is destroyed. Its definitions, their full version history and the private notes anchored to it all wait with it, and entry_restore brings the lot back for 30 days. The TERM is released immediately, so you can re-add it at once.\n  Browse the bin with trash_list.\n\n--- purge=true ---\n  IRREVERSIBLE. Destroys the entry, every definition under it and every definition's version history, right now. Use it only when the content genuinely must not remain.\n  Its private notes are then PROMOTED to dict level rather than deleted — the research about a lemma outlives the lemma. Pass delete_notes=true to destroy them too.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "delete_notes": {
+            "default": false,
+            "description": "Only meaningful with purge=true: destroy the entry's private notes instead of promoting them to dict level.",
+            "type": "boolean"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "purge": {
+            "default": false,
+            "description": "IRREVERSIBLE hard delete. Omit for the recoverable default.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_get",
+      "title": "Entry Get",
+      "kind": "capability",
+      "description": "Look a term UP in a dict and return the matching entry (or entries) with their definitions inlined — the read you want when you know the word but not its idj_ id. Read-level: any caller with the dict id may look up.\n\n--- MATCHING ---\n  Identity first, then a folded fallback, so you find the word however you type it: Strong's ignores case and zero-padding (H0007 finds H7), Greek ignores accents/breathings and final-vs-medial sigma, Latin ignores case. Hebrew nikud folds for LOOKUP but not for identity — חֵסֵד (H2617, the noun) and חָסַד (H2616, the verb) are genuinely different words, so searching the unpointed חסד legitimately returns BOTH.\n\n--- RESULT ---\n  Always {dict_id, term, count, matches:[entry…]} with matches ordered by display order (seq). count is normally 1; count>1 means the folded fallback resolved to several distinct lemmas — pick by translit/definition, never assume matches[0]. A term with no match is an ERROR (not_found), like every other by-identifier read on this surface — it never comes back as an empty success you might mistake for an empty entry.\n  This tool needs the WHOLE term. If you only have a fragment, or you are looking for a word used INSIDE a definition, call entry_search instead.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry Get"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "term": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "term"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_list",
+      "title": "Entry List",
+      "kind": "capability",
+      "description": "List a dict's entries (summary only: id, term, translit, seq — NO definitions; use dict_get for the full tree). Paginated via limit (default 100, max 500) + offset. Response: {items, total, limit, offset, has_more, sort}. Read-level: any caller with the dict id may list.\n\n--- SORT ---\n  sort=seq (default) — the authored display order, the one entry_move / entry_reorder maintain.\n  sort=alpha — alphabetical by term. This is the SAME collation the rendered PDF/EPUB/HTML letter index uses, so an alpha page matches what a reader sees; for a multi-script lexicon it clusters by script (Latin, then Greek, then Hebrew, …) and by letter within each.\n  Pagination means the same thing under either sort: total is the whole entry count and has_more reports whether entries remain past this page.\n\n--- TRASH ---\n  Soft-deleted entries are NEVER in items. Pass include_deleted=true to get them alongside, in an added `deleted` array (unpaginated, each with deleted_at and days_remaining) — items/total/limit/offset/has_more keep meaning exactly what they meant. trash_list is the fuller view (it covers deleted definitions too).\n  include_deleted requires EDITOR access to the dict even though plain entry_list is read-level: the trash holds content the author has already removed from every reading surface.\n\n--- LOOKING FOR SOMETHING SPECIFIC? ---\n  Do not page a whole dictionary to find one word. entry_get resolves an EXACT term; entry_search finds entries by a text FRAGMENT (and, with content=true, by words inside definitions).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "include_deleted": {
+            "default": false,
+            "description": "Also return the dict's soft-deleted entries in a 'deleted' array (the trash bin).",
+            "type": "boolean"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "sort": {
+            "default": "seq",
+            "enum": [
+              "seq",
+              "alpha"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_move",
+      "title": "Entry Move",
+      "kind": "capability",
+      "description": "Reorder an entry within its dict's display order. to_index is 0-based (0 = first) and clamped to the valid range. Returns {ok, entry_id, to_index} where to_index is where the entry ACTUALLY landed — when the request was out of range the reply also carries requested_index, clamped:true and a note.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Move"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "to_index": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "to_index"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_rename",
+      "title": "Entry Rename",
+      "kind": "capability",
+      "description": "Rename an entry's term (and optionally its transliteration). term must stay unique within the dict (case-insensitive) — a collision with a DIFFERENT entry is rejected. Pass translit to also set/clear the romanization (empty string clears it); omit translit to leave it unchanged. Optimistic lock: pass sha256 = the entry's current lock token (the sha256 field on dict_get / entry_list entries, over term+translit); a mismatch is rejected (stale) with the current sha so you refetch and retry.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Rename"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          },
+          "sha256": {
+            "description": "The entry's current (term+translit) lock token from dict_get/entry_list.",
+            "type": "string"
+          },
+          "term": {
+            "type": "string"
+          },
+          "translit": {
+            "maxLength": 256,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id",
+          "term",
+          "sha256"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_reorder",
+      "title": "Entry Reorder",
+      "kind": "capability",
+      "description": "Set a dict's ENTIRE entry display order in one call — the bulk twin of entry_move (which repositions one entry and costs N calls to reorder N entries).\nentry_ids is the new order, first to last. It must name EVERY entry of the dict exactly once: an unknown id, a repeated id, or a missing one is rejected and NOTHING is written, so a partial list can never leave the dict in an order you did not ask for. Call entry_list (limit=500, sort=seq) for the current ids, reorder that array, and send it back. Returns {ok, dict_id, count}.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Reorder"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_ids": {
+            "description": "Every entry id of the dict exactly once, in the desired display order.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_ids"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_restore",
+      "title": "Entry Restore",
+      "kind": "capability",
+      "description": "Restore a soft-deleted entry to its original position, with every definition, every definition's version history, and the private notes that were anchored to it. Works for 30 days after entry_delete. Call trash_list for what is restorable.\n\n--- TERM COLLISIONS ---\n  A restore is NEVER refused. If another entry took the term while this one sat in the trash, the incumbent KEEPS the uniqueness slot and the response names it as term_taken_by (trash_list flags the same thing as term_taken before you restore). The restored entry still comes back complete — in entry_list, dict_get, the export and every rendered artifact — but entry_get for that exact term will resolve to the incumbent, since lookup is identity-first. Resolve it with entry_rename on whichever of the two should change.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Restore"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "entry_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_search",
+      "title": "Entry Search",
+      "kind": "capability",
+      "description": "Find entries in ONE dictionary by a text fragment — the way to locate an entry when you do NOT know its exact headword (entry_get needs the exact term; this does not).\n  MATCHING: literal substring, CASE- AND DIACRITIC-BLIND, so q=\"hesed\" finds \"ḥesed\", q=\"dap\" finds \"dāp\" and q=\"jorn\" finds \"Jørn\". Not a regular expression — a literal fragment is what you want here and it is what you get.\n  WHAT IS SEARCHED: entry terms and transliterations always (cheap). Pass content=true to ALSO search definition bodies — slower, since it reads every definition of the dictionary.\n  RESULTS ARE METADATA, NOT CONTENT. Each hit is an ADDRESS: {entry_id, term, translit, where, definition_id?, matches}. `where` is \"term\", \"translit\" or \"definition\"; one entry can produce several hits. There are deliberately NO bodies and no snippets — fetch the ones you want with entry_get (by term) or definition_get_source (by definition_id). That keeps a 200-hit search in kilobytes and lets you pay only for what you read.\n  Definition matching walks the WORDS A READER SEES, not the markup: a Strong's code, a [ref:…] target and a link URL are structure and are not searchable this way (so q=\"ref\" does not match every Bible reference). Look a Strong's code up with entry_get — enrichment materialises codes as real entries.\n  Soft-deleted entries and definitions are never returned; the trash is trash_list's job.\n  Paginates via limit (default 20, max 100) + offset, in the dictionary's display order. Response: {hits, total, limit, offset, has_more, scanned, truncated}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry Search"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "default": false,
+            "description": "Also search definition bodies (slower). Terms and transliterations are always searched.",
+            "type": "boolean"
+          },
+          "dict_id": {
+            "description": "The 'idy...' id of the dict to search. Required — there is no cross-dictionary search.",
+            "type": "string"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "q": {
+            "description": "Literal text to find. Case- and diacritic-blind; not a regex.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "scan_from": {
+            "default": 0,
+            "description": "Resume the SCAN here. When truncated=true the reply carries next_scan_from; pass it back to continue through the rest of the dictionary.",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id",
+          "q"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_accept",
+      "title": "Group Accept",
+      "kind": "capability",
+      "description": "Accept an invite to a group (you become a member and gain content-edit access to every dict the group is attached to). You must have a pending invite — see group_list.pending_invites.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Accept"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id of a group you were invited to (group_list.pending_invites).",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "ADMIN ONLY: accept/decline on behalf of this invited user (support operation). Omit to act as yourself.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_admin_set",
+      "title": "Group Admin Set",
+      "kind": "capability",
+      "description": "Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin members). Owner only. The target must already be a member.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Admin Set"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "admin": {
+            "description": "true = grant admin, false = revoke admin.",
+            "type": "boolean"
+          },
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The member's lexifye user id (from group_get.members).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "user_id",
+          "admin"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_autoshare_set",
+      "title": "Group Autoshare Set",
+      "kind": "capability",
+      "description": "Toggle YOUR autoshare on a group. With autoshare ON, every NEW dict you create is automatically attached to this group (its members can edit it). You must be a member. Pass apply_existing=true (with on=true) to ALSO attach the group to ALL dicts you currently own — the response reports how many were newly attached. Turning autoshare OFF only stops FUTURE auto-attach; it does NOT detach dicts already attached (use dict_group_remove for those).\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Autoshare Set"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "apply_existing": {
+            "description": "Only with on=true: also attach the group to every dict you already own now. Default false.",
+            "type": "boolean"
+          },
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "on": {
+            "description": "true = auto-attach this group to your future dicts; false = stop auto-attaching.",
+            "type": "boolean"
+          },
+          "user_id": {
+            "description": "ADMIN ONLY: set autoshare on behalf of this member (support operation). Omit to act as yourself.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "on"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_create",
+      "title": "Group Create",
+      "kind": "capability",
+      "description": "Create a GROUP — a named set of lexifye users you can later attach to a dict (dict_group_add) so every member becomes a content editor of that dict at once. You become the group's owner (and first member). Invite others with group_invite; they must group_accept before they are members. Returns {id:'grp...', name}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Create"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "A short human name for the group (required, max 80 chars), e.g. 'Lexicon Team'.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_decline",
+      "title": "Group Decline",
+      "kind": "capability",
+      "description": "Decline an invite to a group (drops the pending invite; you do NOT join). You must have a pending invite — see group_list.pending_invites.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Decline"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id of a group you were invited to (group_list.pending_invites).",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "ADMIN ONLY: accept/decline on behalf of this invited user (support operation). Omit to act as yourself.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_delete",
+      "title": "Group Delete",
+      "kind": "capability",
+      "description": "Delete a group. Owner only. This detaches the group from every dict it is attached to (those dicts lose group-editing) and removes it for all members. Irreversible.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_get",
+      "title": "Group Get",
+      "kind": "capability",
+      "description": "Get one group in detail: members (with display names), each member's admin/owner flag, member_count, attached_dicts_count, and YOUR role + autoshare. Owners/admins additionally see pending_invites and the attached_dict_ids. Only members (or someone you've invited) may view a group.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Group Get"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_create.id or group_list.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_invite",
+      "title": "Group Invite",
+      "kind": "capability",
+      "description": "Invite a lexifye user to a group. Owner or admin only. The invitee is NOT a member until they group_accept (find their user_id with guest_find_user). Rejects inviting an existing member.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The lexifye user id (pubhub 'idu...') from guest_find_user. NOT an email.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_invite_cancel",
+      "title": "Group Invite Cancel",
+      "kind": "capability",
+      "description": "Withdraw a pending group invite. Owner or admin only. Idempotent, and HONEST about it: the reply carries cancelled:true only when an invite was actually pending. With nothing pending it returns cancelled:false and the invitee is NOT notified — they never get a 'your invitation was withdrawn' notice for an invitation they never had.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite Cancel"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The invited user's lexifye user id (from group_get pending_invites).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_leave",
+      "title": "Group Leave",
+      "kind": "capability",
+      "description": "Leave a group you are a member of. Leaving also DETACHES the group from every dict YOU own. The owner cannot leave — transfer the group (group_transfer) or delete it (group_delete) first.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Leave"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_list",
+      "title": "Group List",
+      "kind": "capability",
+      "description": "List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role is owner/admin/member and autoshare is YOUR auto-attach opt-in — plus pending_invites: groups you have been invited to but not yet accepted (group_accept / group_decline).\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Group List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_member_remove",
+      "title": "Group Member Remove",
+      "kind": "capability",
+      "description": "Remove a member from a group. The OWNER may remove any member (except themselves — use group_transfer or group_delete); an ADMIN may remove only non-admin members. Removing a member also DETACHES the group from every dict that member OWNS (their dicts stop being group-editable); dicts owned by others stay attached.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Member Remove"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The member's lexifye user id (from group_get.members).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_rename",
+      "title": "Group Rename",
+      "kind": "capability",
+      "description": "Rename a group. Owner or admin only.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Rename"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "name": {
+            "description": "New name (required, max 80 chars).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "group_transfer",
+      "title": "Group Transfer",
+      "kind": "capability",
+      "description": "Hand ownership of a group to another MEMBER. Owner only. The new owner must already be a member; you (the old owner) stay a member and keep admin.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Transfer"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "group_id": {
+            "description": "The 'grp...' id from group_list.",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The new owner's lexifye user id — must already be a member (group_get.members).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "guest_add",
+      "title": "Guest Add",
+      "kind": "capability",
+      "description": "Invite a lexifye user as a GUEST EDITOR of a dict — they get CONTENT-edit access (entries/definitions) and the dict appears on THEIR dashboard; they never get delete/restore, group attach/detach, transfer, language, author_bio, or the ability to manage other guests. Owner-only. Find the user_id with guest_find_user. Idempotent (re-adding is a no-op).\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Add"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id from dict_create.id (NOT the uuid).",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The lexifye user id (pubhub 'idu...') from guest_find_user. NOT an email.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "guest_find_user",
+      "title": "Guest Find User",
+      "kind": "capability",
+      "description": "Find lexifye users by NAME to invite as guest editors or group members. Returns [{user_id, name, username}] for DISCOVERABLE users whose name/handle contains the query. Use the returned user_id with guest_add / group_invite. Empty/blank query returns nothing.\nMatching ignores case AND diacritics on both sides, so 'jorn', 'Jørn' and 'JØRN' all find the same person (æ→ae, ø→o, å→a, ß→ss, é→e …).\nTWO KINDS OF USER ARE NEVER RETURNED: (1) YOURSELF — the caller is always excluded, since you never need to invite yourself to your own dict; (2) anyone who has marked themselves not-findable, who never appears in anyone's search. So an empty result means 'nobody else discoverable matches', not 'no such user'.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Find User"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "description": "A name (or part of one) to search for among lexifye users.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "guest_list",
+      "title": "Guest List",
+      "kind": "capability",
+      "description": "List the collaborators of a dict. Returns guests: the individual GUEST EDITORS [{user_id, name}], AND groups: the GROUPS attached to the dict [{id, name, member_count}] (every member of an attached group is also an editor). Owner-only. The owner is NOT in either list.\n  READ level: seeing who can reach your own dictionary is reading, not writing, so a read-scope credential is enough. The OWNER-ONLY gate is unchanged and is what actually protects the roster — guest_add / guest_remove remain write.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Guest List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id from dict_create.id (NOT the uuid).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "guest_remove",
+      "title": "Guest Remove",
+      "kind": "capability",
+      "description": "Remove a GUEST EDITOR from a dict — revokes their content access and drops the dict from their library. Owner-only. Idempotent.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Remove"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "description": "The 'idy...' id from dict_create.id (NOT the uuid).",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "The guest's lexifye user id (from guest_list).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "user_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "house_style",
+      "title": "House Style",
+      "kind": "capability",
+      "description": "THE one-stop authoring guide — read this ONCE before writing a dictionary and you have everything: lexifye's conventions (the translit-always rule, Darash Strong's enrichment + strongs_depth/dict_enrich, universal optimistic locking, definition version history, private notes, and the access model — owner ∪ guest editors ∪ group members, with no public dictionary and nothing to make public) AND the complete markup grammar (the same content as source_syntax, appended). No arguments.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "House Style"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "note_delete",
+      "title": "Note Delete",
+      "kind": "capability",
+      "description": "Delete a PRIVATE note at (anchor, key). Editor-only.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "anchor"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "note_get",
+      "title": "Note Get",
+      "kind": "capability",
+      "description": "Fetch a PRIVATE note (summary + full body) at (anchor, key). Editor-only. Returns {note, content}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note Get"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "slot; default 'main'",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "anchor"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "note_list",
+      "title": "Note List",
+      "kind": "capability",
+      "description": "List PRIVATE note summaries (no bodies), newest first. Omit anchor to list the whole dict; pass a dict/entry id to filter to that anchor. Editor-only.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "description": "optional dict/entry id filter",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "note_patch",
+      "title": "Note Patch",
+      "kind": "capability",
+      "description": "Append text to an existing PRIVATE note's body (a convenience wrapper over note_set append=true). Optionally updates the subject. Editor-only.\n  WHAT GOES IN append: the text to ADD to the existing body, as PLAIN TEXT, stored verbatim. Notes are never parsed as markup and never rendered into any artifact, so [h:H2617:ḥesed:חֶסֶד] stays those literal characters. `content`, `body` and `source` are accepted aliases for this same field; passing two spellings at once is refused. The canonical name stays `append` because it says what the call DOES — note_set(content) replaces, note_patch(append) adds.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Patch"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "type": "string"
+          },
+          "append": {
+            "description": "The text to append to the note's body, as PLAIN TEXT — never parsed as markup, never rendered.",
+            "type": "string"
+          },
+          "body": {
+            "description": "Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "content": {
+            "description": "Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "source": {
+            "description": "Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 80,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "anchor",
+          "append"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "note_set",
+      "title": "Note Set",
+      "kind": "capability",
+      "description": "Set (upsert) a PRIVATE authoring note on a dict (anchor=idy…) or entry (anchor=idj…). Notes are editor-only and NEVER render into any artifact or the public JSON — use them for research, TODOs, provenance. key is an optional slot (default 'main') so one anchor can hold several notes. subject is a short one-line header. append=true concatenates onto the existing body instead of replacing.\n  WHAT GOES IN content: the note's body as PLAIN TEXT, stored and returned verbatim. It is NOT parsed as markup and NOT rendered anywhere — write [h:H2617:ḥesed:חֶסֶד] into a note and those literal characters are what you get back, so keep markup for definition_set_source. `body` and `source` are accepted aliases for this same field; passing two spellings at once is refused.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Set"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "description": "idy… (dict) or idj… (entry) — the note's owner",
+            "type": "string"
+          },
+          "append": {
+            "type": "boolean"
+          },
+          "body": {
+            "description": "Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "content": {
+            "description": "The note's body, stored as PLAIN TEXT — never parsed as markup, never rendered.",
+            "type": "string"
+          },
+          "dict_id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "slot; default 'main'",
+            "type": "string"
+          },
+          "source": {
+            "description": "Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than resolved.",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 80,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dict_id",
+          "anchor",
+          "content"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "notice_dismiss",
+      "title": "Notice Dismiss",
+      "kind": "capability",
+      "description": "Clear ALL of YOUR pending notices (after reading them with notice_list). Idempotent — dismissing an empty inbox succeeds. Returns {ok:true}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Notice Dismiss"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "notice_list",
+      "title": "Notice List",
+      "kind": "capability",
+      "description": "List YOUR pending notices (newest first) — the one-shot lines left when a group membership change affects you (invited to / removed from / handed / deleted-out-from-under a group). Non-destructive: call notice_dismiss to clear them. Returns {notices:[...], count}.\n\n--- IDENTIFIERS ---\nDict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Notice List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "source_syntax",
+      "title": "Source Syntax",
+      "kind": "capability",
+      "description": "Return the grammar of the round-trippable definition markup used by definition_get_source (read) and definition_set_source / definition_add_source (write): block prefixes (#/##/### headings, - list items, plain paragraphs) and inline spans (*emph*, **bold**, [H1234] Strong's — case- and zero-padding-insensitive on input, canonical on output, [h:hebrew], [g:greek], [ref:John 3:16]). Call this once before authoring so the source you write validates. No arguments.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Source Syntax"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "trash_list",
+      "title": "Trash List",
+      "kind": "capability",
+      "description": "The dict's TRASH BIN: everything soft-deleted and still recoverable, oldest first. EDITOR-level (write): a soft delete keeps the content, so the bin is visible only to someone who could edit the dict (owner, guest editor, group member). Deleting must not widen who can read what was deleted.\n  entries[] — each with deleted_at, days_remaining, how many definitions and private notes come back with it, and term_taken (true when another entry has since claimed the term; the restore still works, see entry_restore).\n  definitions[] — each with deleted_at, days_remaining, retained_versions (definition_history and definition_diff still answer for a deleted definition — that is the point of the soft delete) and entry_deleted (true when its entry is in the trash too, in which case entry_restore is the call to make; it brings the definition back with it).\n  Restore with entry_restore / definition_restore. After grace_days the background sweep purges the row for good — and, for an entry, promotes its private notes up to dict level so the research is not lost with the lemma.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Trash List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dict_id": {
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Bounds EACH of the two collections (entries, definitions) independently.",
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dict_id"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

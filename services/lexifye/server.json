@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/lexifye",
+  "title": "Lexifye",
+  "description": "Build dictionaries & glossaries with AI: entries, senses, versions, print PDF, EPUB, web reader, RTL",
+  "version": "1.0.2",
+  "websiteUrl": "https://lexifye.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/lexifye"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://lexifye.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon-1024.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    },
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

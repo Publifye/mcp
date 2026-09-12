@@ -1,0 +1,42 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/junifye",
+  "title": "Junifye",
+  "description": "Write books, studies & commentaries with your AI — EPUB, print-ready PDF, web reader, ISBN, RTL",
+  "version": "1.0.3",
+  "websiteUrl": "https://junifye.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/junifye"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://junifye.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon-1024.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    },
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

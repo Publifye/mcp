@@ -1,0 +1,1411 @@
+{
+  "service": "darash",
+  "endpoint": "https://darash-api.publifye.com/mcp",
+  "captured": "2026-09-13",
+  "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
+  "counts": {
+    "callable_by_a_customer": 46,
+    "capability_tools": 35,
+    "session_and_cache_plumbing": 11,
+    "excluded_ops_and_logging": 13,
+    "excluded_admin_only": 0,
+    "excluded_els_wrr_research": 47,
+    "total_on_the_wire": 106
+  },
+  "excluded": {
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_bridge_logs",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "service_status",
+      "set_log_capacity",
+      "set_log_level",
+      "tool_status"
+    ],
+    "els": [
+      "els_blind_probe_by_verse",
+      "els_blind_probe_investigate",
+      "els_blind_probe_lemma",
+      "els_blind_probe_list_completed",
+      "els_blind_probe_pause",
+      "els_blind_probe_reset",
+      "els_blind_probe_resume",
+      "els_blind_probe_search",
+      "els_blind_probe_set_concurrency",
+      "els_blind_probe_start",
+      "els_blind_probe_status",
+      "els_blind_probe_stop",
+      "els_blind_probe_top",
+      "els_corpus_scan",
+      "els_discover",
+      "els_distill_theme",
+      "els_geometric_mirror_scan",
+      "els_grid",
+      "els_grid_get",
+      "els_grid_image",
+      "els_grid_info",
+      "els_grid_lookup",
+      "els_grid_unique",
+      "els_grid_words",
+      "els_palindromic_mirrors",
+      "els_proximity",
+      "els_pvalue",
+      "els_pvalue_surface",
+      "els_scan",
+      "els_search",
+      "els_sentences",
+      "els_sentences_get",
+      "els_skip_coherence_map",
+      "els_skip_position_cluster",
+      "els_study",
+      "els_thematic_score",
+      "els_themed_scan",
+      "els_verse_codes",
+      "els_verse_overlay",
+      "els_verse_signal",
+      "els_verse_theme",
+      "search_gematria",
+      "trace_els_code",
+      "wrr_distance",
+      "wrr_load_sample",
+      "wrr_study_coherency",
+      "wrr_text_check"
+    ]
+  },
+  "tools": [
+    {
+      "name": "cache_control",
+      "title": "Cache Control",
+      "kind": "plumbing",
+      "description": "Controls the disk scan cache generator at runtime via the Redis-backed control plane. Actions: action=enable (start/resume the generator — default state), action=freeze (pause without losing state — generator keeps loop alive but stops working), action=resume (alias for enable), action=disable (stop generator entirely, exits goroutine), action=set_scope (update windows/max_skip/kinds without changing state). Optional scope params: windows (comma-separated, e.g., '0,1,2'), max_skip (integer, e.g., 49), kinds (comma-separated, e.g., 'real,sh_baseline'). Changes propagate within ~5 seconds. Survives restart (state persists in Redis).[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Cache Control"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "description": "Required. One of: enable, freeze, resume, disable, set_scope.",
+            "type": "string"
+          },
+          "kinds": {
+            "description": "Optional. Comma-separated cache kinds (e.g., 'real,sh_baseline').",
+            "type": "string"
+          },
+          "max_skip": {
+            "description": "Optional. Maximum scan skip to cache (integer as string, e.g., '49').",
+            "type": "string"
+          },
+          "windows": {
+            "description": "Optional. Comma-separated window values to cache (e.g., '0,1,2').",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cache_status",
+      "title": "Cache Status",
+      "kind": "plumbing",
+      "description": "Returns the live state of the els_discover scan cache: file counts, fill percentage, per-book/per-kind breakdown, hit/miss metrics, generator state (enabled/frozen/disabled, ETA, scan throughput), and Redis-backed control config. Use this to check if the cache is healthy, observe fill progress, and diagnose any disk/Redis issues. Read-only.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Cache Status"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "co_occurrence",
+      "title": "Co Occurrence",
+      "kind": "capability",
+      "description": "Find verses where two Strong's numbers appear together. Useful for studying word pairs — e.g., kentron (G2759) + thanatos (G2288) to find 'sting of death'.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Co Occurrence"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Maximum results (default: 50, max: 200)",
+            "type": "integer"
+          },
+          "number1": {
+            "description": "First Strong's number (e.g., 'G2759')",
+            "type": "string"
+          },
+          "number2": {
+            "description": "Second Strong's number (e.g., 'G2288')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number1",
+          "number2"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "compare_verses",
+      "title": "Compare Verses",
+      "kind": "capability",
+      "description": "Compare the same verse across multiple Bible translations in one call. Include 'kjs' for Strong's tagged text with clickable word study links. For Norwegian work nb2026 is the standard (Masoretic versification) — settle Norwegian usage against its text.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Compare Verses"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bibles": {
+            "description": "Comma-separated Bible translations to compare (e.g., 'kjv,asv,web,kjs')",
+            "type": "string"
+          },
+          "ref": {
+            "description": "Verse reference (e.g., 'John 3:16', 'Gen 1:1')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "bibles"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "corpus_status",
+      "title": "Corpus Status",
+      "kind": "plumbing",
+      "description": "Reports whether the Torah corpus calibration is ready and, when ready, summarises its distribution (min/p25/median/p75/p90/p95/p99/max of real_tds across all Torah verses). Use this BEFORE relying on els_thematic_score's tds_percentile_in_torah field — when the calibration is still building (first boot only, ~1-10 min) the percentile field is omitted. The percentile cut-points let an AI consumer interpret a per-verse score in plain language: 'this verse's TDS of 19 is above p95=18, so it's in the top 5% of the Torah'. Pairs with corpus_top_verses for discovery (\"which verses populate the 95th-percentile band?\").[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Corpus Status"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "corpus_top_verses",
+      "title": "Corpus Top Verses",
+      "kind": "capability",
+      "description": "Discovery query against the Torah-wide thematic-density distribution. Returns Torah verses whose real_tds (the same metric reported by els_thematic_score) falls in a requested percentile band, optionally filtered by book. Use this to ANSWER QUESTIONS LIKE: 'which Torah verses have the strongest watermark signal?' (min_percentile=99 returns the top 1%); 'which Numbers verses sit at the 95th percentile or higher?' (book=4, min_percentile=95). Backed by the precomputed corpus calibration — microsecond response, no live scans. Each returned record carries book/chapter/verse, real_tds, and percentile. Drill in with els_thematic_score on any returned ref to see the specific encoded vocabulary. REQUIRES corpus calibration to be ready; check with corpus_status first if unsure.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Corpus Top Verses"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "book": {
+            "description": "Optional Torah book filter: 1=Genesis, 2=Exodus, 3=Leviticus, 4=Numbers, 5=Deuteronomy. 0 or omitted = all five books.",
+            "type": "integer"
+          },
+          "limit": {
+            "description": "Maximum results returned (default 50, max 1000).",
+            "type": "integer"
+          },
+          "max_percentile": {
+            "description": "Upper bound of the percentile band, 0-100. Default 100 (no upper bound).",
+            "type": "integer"
+          },
+          "min_percentile": {
+            "description": "Lower bound of the percentile band, 0-100. Default 0 (no lower bound). E.g. 95 returns the top 5%.",
+            "type": "integer"
+          },
+          "order": {
+            "description": "'desc' (default) returns highest-TDS first — most useful for finding strongest signals. 'asc' returns lowest first.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "etymology_tree",
+      "title": "Etymology Tree",
+      "kind": "capability",
+      "description": "Trace the etymology of a Strong's number through multiple levels. Walks 'see' references and derivation links recursively, building a tree of related words up to 3 levels deep (configurable). One call replaces multiple get_related_strongs calls.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Etymology Tree"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "depth": {
+            "description": "Maximum tree depth (default: 3, max: 5)",
+            "type": "integer"
+          },
+          "language": {
+            "description": "Language: 'hebrew' or 'greek' (optional if using H/G prefix)",
+            "type": "string"
+          },
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H430' for Hebrew, 'G26' for Greek)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "export_bible",
+      "title": "Export Bible",
+      "kind": "capability",
+      "description": "Export an entire Bible translation as structured JSON. Returns a single-use download URL (expires in 10 minutes). Includes all available books (66 for full Bibles, 27 for NT-only like Vulgate). Output includes verse numbers: {\"verse\": 1, \"text\": \"...\"}.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Export Bible"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation abbreviation (e.g., 'kjv', 'asv', 'web', 'italian', 'vulgate')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "export_bible_book",
+      "title": "Export Bible Book",
+      "kind": "capability",
+      "description": "Export a single book from a Bible translation as structured JSON. Returns a single-use download URL (expires in 5 minutes). Output includes verse numbers: {\"verse\": 1, \"text\": \"...\"}.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Export Bible Book"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation abbreviation (e.g., 'kjv', 'asv', 'web', 'italian', 'vulgate')",
+            "type": "string"
+          },
+          "book": {
+            "description": "Book name (e.g., 'Genesis', 'John', 'Psalms', 'Revelation')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible",
+          "book"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_bible",
+      "title": "Get Bible",
+      "kind": "capability",
+      "description": "Get detailed metadata and complete structure for a Bible translation (books, chapters per book, verses per chapter)[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Bible"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "abbr": {
+            "description": "Bible abbreviation (e.g., 'kjv', 'asv', 'web')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "abbr"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_book",
+      "title": "Get Book",
+      "kind": "capability",
+      "description": "Get entire book with all chapters and verses[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Book"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation (e.g., 'kjv', 'asv', 'web')",
+            "type": "string"
+          },
+          "book": {
+            "description": "Book name (e.g., 'Genesis', 'John', 'Psalms')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible",
+          "book"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_chapter",
+      "title": "Get Chapter",
+      "kind": "capability",
+      "description": "Get entire chapter with all verses[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Chapter"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation",
+            "type": "string"
+          },
+          "ref": {
+            "description": "Chapter reference (e.g., 'John 3', 'Genesis 1')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible",
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_cross_refs",
+      "title": "Get Cross Refs",
+      "kind": "capability",
+      "description": "Get cross-references for a verse (related passages). Shared lemmas are usually the connection — strongs_in_verse on both ends often lights it up.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Cross Refs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "Bible reference (e.g., 'John 3:16')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_health",
+      "title": "Get Health",
+      "kind": "plumbing",
+      "description": "Get service info, health, statistics, product page URL, and documentation link. Call this first to understand what Darash is and what data is available.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Health"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_morphology",
+      "title": "Get Morphology",
+      "kind": "capability",
+      "description": "Get word-by-word morphological analysis (grammatical parsing) for a Bible verse. Returns each original Hebrew/Greek word with its Strong's number, morphology code, and human-readable description (e.g., 'Verb, Aorist, Active, Indicative, 3rd Person, Singular'). Covers all 66 books. For what a parsed word means across all its occurrences, follow it into word_study.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Morphology"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "Verse reference (e.g., 'Genesis 1:1', 'John 3:16')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_related_strongs",
+      "title": "Get Related Strongs",
+      "kind": "capability",
+      "description": "Get all words related to a Strong's number — synonyms, antonyms, derived forms, and root words. Walks the cross-reference and derivation graph in one call.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Related Strongs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "Language: 'hebrew' or 'greek' (optional if using H/G prefix)",
+            "type": "string"
+          },
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H430' for Hebrew, 'G26' for Greek agape)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_strongs",
+      "title": "Get Strongs",
+      "kind": "capability",
+      "description": "Get Strong's concordance entry with full scholarly lexicon data. Returns: def_short (one-line gloss), def_long (detailed definitions), usage (KJV translations), abbott_smith (full Abbott-Smith Greek lexicon for NT words, or Brown-Driver-Briggs for OT words — about half the Hebrew entries carry the OpenScriptures BDB article, the rest STEPBible's abridged BDB; where a Strong's number covers more than one homonym every branch is returned, each labelled with its extended Strong's key such as H2617a / H2617b), lsj (Liddell-Scott-Jones classical Greek lexicon showing usage in secular Greek literature — Greek words only), step_gloss (one-word translation), plus etymology, pronunciation, and morphology data. def_short orients you; the lexical case itself lives in lookup_dictionary('thayer', ...) (Greek) or word_study, and usage is settled by search_strongs.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Strongs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "Language: 'hebrew' or 'greek' (optional if using H/G prefix)",
+            "type": "string"
+          },
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H430' for Hebrew, 'G2316' for Greek)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_synonyms",
+      "title": "Get Synonyms",
+      "kind": "capability",
+      "description": "Get the semantic-neighbour set for a Strong's number, computed from the in-memory synonym graph built at startup. Three signals unioned: shared Hebrew/Greek root, definition-word overlap (≥3 shared content words in def_short+def_long), and KJV rendering overlap (≥2 shared translation tokens in the Usage field). Much denser than get_related_strongs (which is limited to the thin 'See' + derivation field) — typically 20-50 neighbours per common Hebrew verb vs 0-3 for get_related_strongs. Each edge is weighted 0..1 and tagged with its contributing source(s). Use this to expand a verse's thematic fingerprint for empirical tests.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Synonyms"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "'hebrew' or 'greek' (optional if using H/G prefix)",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Max neighbours returned (default 30, max 50)",
+            "type": "integer"
+          },
+          "min_weight": {
+            "description": "Drop edges below this weight (0..1). Default 0.3 = the same threshold the graph itself enforces.",
+            "type": "number"
+          },
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H2388' for chazak 'to be strong')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_verse",
+      "title": "Get Verse",
+      "kind": "capability",
+      "description": "Get verse(s) by reference. Supports single verse, verse range within chapter, or count-based cross-chapter fetching. Scripture interprets Scripture: follow a verse into get_cross_refs for its web of parallels, and into strongs_in_verse for the original words.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Verse"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation (e.g., 'kjv', 'asv', 'web')",
+            "type": "string"
+          },
+          "count": {
+            "description": "Number of verses to fetch starting from ref. Enables cross-chapter reading (e.g., ref='John 3:16', count=25 returns through John 4:2). If omitted, uses range from ref or returns single verse.",
+            "type": "integer"
+          },
+          "ref": {
+            "description": "Verse reference (e.g., 'John 3:16', 'Gen 1:1-5')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible",
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "hapax_list",
+      "title": "Hapax List",
+      "kind": "capability",
+      "description": "List all hapax legomena — words that appear exactly once in the Bible. Gold for word studies and identifying rare vocabulary. Filter by Hebrew, Greek, or both.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Hapax List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "Language filter: 'hebrew', 'greek', or 'both' (default: both)",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum results (default: 100, max: 500)",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "hebrew_pictographs",
+      "title": "Hebrew Pictographs",
+      "kind": "capability",
+      "description": "Get the ancient pictographic meanings of Hebrew letters. Each of the 22 Hebrew consonants originated as a picture (proto-Sinaitic script, c. 1800 BC). Pass a Hebrew word to see what each letter originally depicted. Example: תורה = Crossed sticks (covenant mark) → Tent peg (secure) → Head (person/first) → Man with arms raised (behold/reveal). Sources: proto-Sinaitic inscriptions, Egyptian hieroglyphic correspondences, traditional letter names preserved in the Talmud and Greek alphabet.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Hebrew Pictographs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "word": {
+            "description": "Hebrew word, letter, or Strong's number (e.g., 'תורה', 'א', 'H430', 'H8451')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "word"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_bibles",
+      "title": "List Bibles",
+      "kind": "capability",
+      "description": "List all 59 Bible translations with metadata (abbreviation, name, language, year)[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Bibles"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_books",
+      "title": "List Books",
+      "kind": "capability",
+      "description": "List all 66 books of the Bible with chapters and testament. LEAN by default (id, name, abbr, chapters, testament, genre — no alias arrays, ~3x smaller); pass detail=full to include each book's alias list. Optionally specify language to get localized book names (38 languages available including greek, hebrew, norwegian, german, spanish, etc.). Pass an invalid language to see all available options.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Books"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "description": "Per-book detail: 'lean' (default, browse fields only) or 'full' (adds the aliases array — the abbreviation variants get_verse/get_chapter accept)",
+            "type": "string"
+          },
+          "lang": {
+            "description": "Language for book names (e.g., 'greek', 'hebrew', 'norwegian', 'german', 'spanish'). Also accepts 'language' as alias. Defaults to 'english'",
+            "type": "string"
+          },
+          "language": {
+            "description": "Alias for 'lang' parameter",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_dict_topics",
+      "title": "List Dict Topics",
+      "kind": "capability",
+      "description": "List all topics in a dictionary with byte-based pagination. Use to build client-side linking of dictionary terms. Fetches topics until max_bytes reached.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Dict Topics"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dictionary": {
+            "description": "Dictionary name (easton, smith, hitchcock, fausset, navestb, torrey, hawker, wilsons, ats, isbe, webster, bullinger, thayer)",
+            "type": "string"
+          },
+          "max_bytes": {
+            "description": "Max bytes for topics (default: 80KB, max: 100KB). Pagination by size ensures MCP compatibility.",
+            "type": "integer"
+          },
+          "offset": {
+            "description": "Starting index (0-based, default: 0)",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dictionary"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_dicts",
+      "title": "List Dicts",
+      "kind": "capability",
+      "description": "List all 13 Bible dictionaries. Each carries its full provenance block (work, author, edition, source, method, licence, imported, identification, known gaps) — read it before quoting a definition as a named scholar's work. SHORTCUT: For Greek/Hebrew word study, use word_study tool instead — it combines get_strongs + Thayer + frequency + etymology in one call. For topical research: isbe (deep encyclopedia) → fausset (theology) → easton/smith (concise). For typology: wilsons (what symbols mean). For rhetoric: bullinger (figures of speech). For English: webster (unabridged; edition not pinned). NOTE: 'thayer' is Thayer's Greek-English Lexicon (Harper & Brothers, 1889 Corrected Edition), transcribed from the page images — installed 2026-09-02, replacing a short modern gloss set that had been served under Thayer's name and was not his text.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Dicts"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "lookup_dictionary",
+      "title": "Lookup Dictionary",
+      "kind": "capability",
+      "description": "Search 13 Bible dictionaries. Every response carries the dictionary's provenance block — read it before quoting a definition as a named scholar's work. WORKFLOW: For Greek words, start with get_strongs for the basic definition, then use 'thayer' here for the deep lexicon (numbered senses, classical citations, prepositional constructions — keyed by G number like 'G26' AND by Greek headword like 'ἀγάπη'). For topics/concepts, start with 'isbe' (deep encyclopedia), then 'fausset' (theology/typology), then 'easton'/'smith' (concise). For biblical symbols/types (what silver, bread, fire, water MEAN typologically): 'wilsons'. For rhetorical figures (irony, metaphor, hendiadys): 'bullinger'. For name meanings: 'hitchcock'. For topical verse lists: 'navestb'. For KJV-era English: 'webster'. For devotional: 'hawker'. For doctrinal outlines: 'torrey'. NOTE on thayer: this is the genuine 1889 Corrected Edition, transcribed from the page images and installed 2026-09-02; it REPLACED a short modern gloss set that had circulated under Thayer's name for 14+ years and was not his text. Each entry carries the printed pages it was read off and the sha256 of its verbatim printed text, and the entry's terminal asterisk is Thayer's own claim that every NT occurrence is cited. Thayer held Unitarian views — on deity-of-Christ passages (G2316, G166) read the philology, take the theology elsewhere. Meet the lexicon in the text afterwards: search_strongs for usage, get_morphology at a cited verse.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Lookup Dictionary"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "dictionary": {
+            "description": "Dictionary: thayer (Thayer's Greek-English Lexicon 1889 — the ONLY dict that takes G numbers like 'G26', and it also takes the Greek headword), isbe (encyclopedia), fausset (theology), easton/smith (concise), wilsons (types/symbols), bullinger (figures of speech), navestb (topical verses), hitchcock (names), torrey (outlines), hawker (devotional), ats (general), webster (unabridged English; edition not pinned). All except thayer are keyed by English topic name.",
+            "type": "string"
+          },
+          "query": {
+            "description": "Topic to look up",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dictionary",
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "multi_dict_lookup",
+      "title": "Multi Dict Lookup",
+      "kind": "capability",
+      "description": "Search ALL 13 Bible dictionaries in one call. Returns consolidated results from every dictionary that has an entry for the topic. Saves making 13 separate lookup_dictionary calls.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Multi Dict Lookup"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "description": "Topic to look up across all dictionaries (e.g., 'Paul', 'Jerusalem', 'faith')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "position_to_verse",
+      "title": "Position To Verse",
+      "kind": "capability",
+      "description": "INVERSE OF els tool position-output: given a raw Torah LETTER OFFSET, return the verse containing it plus exact verse boundaries and surrounding context.\n\nINPUT: pos = 0-indexed letter position in the Koren Torah (304,805 Hebrew consonants total). Range 0..304804.\n  pos=0     → first letter of Genesis 1:1 (ב of בראשית)\n  pos=78064 → first letter of Exodus 1:1\n  pos=141593 → first letter of Leviticus 1:1\n  pos=186383 → first letter of Numbers 1:1\n  pos=249913 → first letter of Deuteronomy 1:1\n  pos=304804 → last letter of Deuteronomy 34:12\n\nOUTPUT: { pos, letter, book (1-5), book_name, chapter, verse, ref, verse_start_pos, verse_length, verse_end_pos, offset_in_verse, book_start_pos, pos_in_book, torah_length, surface_word, target, versification }\n\nVERSIFICATION: verse numbers are the KOREN letter grid, which equals the Masoretic numbering everywhere EXCEPT Exodus 20 and Deuteronomy 5, where Koren merges the four short commandments into one verse and every later verse sits three lower than the Masoretic. In those two chapters the response adds mt_equivalent and grid_note so a Koren ref is never silently taken for a Masoretic one.\n\nUSE WHEN:\n  • You have a start_pos from els_search/els_discover/els_verse_codes and want the canonical verse + offset.\n  • Annotating each letter of an ELS sequence (start_pos, start_pos+skip, start_pos+2*skip, ...) with where it lands.\n  • Rendering or debugging grid coordinates back to chapter:verse.\n  • Confirming whether a position falls 'inside' a target verse for proximity analysis.\n\nGUARANTEES: O(log N) binary search over the 5,847-verse index. Always returns the exact verse — no clamping, no fallback. Out-of-range positions return a precise error explaining the valid range.\n\nThis is a Torah-only tool: positions are letter offsets in the Koren consonant text. For non-Torah books, parse a reference string with get_verse instead. The companion els_verse_codes / els_verse_signal tools take a reference and return positions; this tool reverses that mapping.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Position To Verse"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "pos": {
+            "description": "0-indexed letter position in the Koren Torah (range 0..304804). Required. Examples: 0 (first letter of Genesis 1:1), 78064 (start of Exodus), 304804 (last letter of Deuteronomy 34:12). Out-of-range values return a precise error.",
+            "type": "integer"
+          },
+          "target": {
+            "description": "Which Torah text to read the letter from: 'real' (default — actual Koren Torah) or 'shuffled' (deterministically-shuffled control). Verse boundaries are identical for both — only the 'letter' field differs. Use 'shuffled' when annotating positions discovered against the shuffled control.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pos"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "reverse_strongs",
+      "title": "Reverse Strongs",
+      "kind": "capability",
+      "description": "Find Strong's numbers from an English word. Given a word like 'goad' or 'love', returns all Hebrew/Greek Strong's entries whose KJV usage contains that word. The reverse of get_strongs.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Reverse Strongs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "Language filter: 'hebrew', 'greek', or 'both' (default: both)",
+            "type": "string"
+          },
+          "query": {
+            "description": "English word to search (e.g., 'goad', 'love', 'faith', 'mercy')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search",
+      "title": "Search",
+      "kind": "capability",
+      "description": "Full-text search across Bible verses. Surface hits are the doorway, not the study: strongs_in_verse on any hit reaches the lemma underneath.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation (e.g., 'kjv', 'asv', 'web')",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum results (default: 50, max: 200)",
+            "type": "integer"
+          },
+          "query": {
+            "description": "Search text",
+            "type": "string"
+          },
+          "scope": {
+            "description": "Limit search to scope (e.g., 'ot', 'nt', 'Genesis', 'John')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bible",
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_strongs",
+      "title": "Search Strongs",
+      "kind": "capability",
+      "description": "Find all KJV verses containing a specific Strong's number. Word study tool for Hebrew (H) and Greek (G) concordance research.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search Strongs"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "Maximum results (default: 50, max: 200)",
+            "type": "integer"
+          },
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H430' for Hebrew Elohim, 'G26' for Greek agape)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_strongs_definition",
+      "title": "Search Strongs Definition",
+      "kind": "capability",
+      "description": "Search Strong's concordance entries by keyword in definitions. Find Greek/Hebrew words by meaning (e.g., 'love', 'faith', 'glory'). Searches short definitions, detailed definitions, literal meanings, and KJV usage. A match's def_short orients you; take the candidate into word_study before resting an argument on it.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search Strongs Definition"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "description": "Language filter: 'hebrew', 'greek', or 'both' (default: both)",
+            "type": "string"
+          },
+          "limit": {
+            "description": "Maximum results (default: 50, max: 200)",
+            "type": "integer"
+          },
+          "query": {
+            "description": "Keyword to search in definitions (e.g., 'love', 'faith', 'mercy', 'glory')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "semantic_search",
+      "title": "Semantic Search",
+      "kind": "capability",
+      "description": "Three-layer semantic engine: (1) Finds KJV verses containing the query words. (2) Builds a meaning cluster by mapping English→Strong's numbers via reverse lookup, then expanding one hop through etymology (synonyms, derived forms, root words). (3) Searches Hebrew words from the cluster as ELS Torah codes (skip 2-100). Returns: verses, strongs_matches (substring hits), meaning_cluster (the expanded word web with source tracing), and els_hits (Hebrew cluster words found encoded in Torah letters). Multi-word queries like 'faith hope love' search each word independently and merge results.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Semantic Search"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation for verse search (default: kjv)",
+            "type": "string"
+          },
+          "language": {
+            "description": "Strong's language filter: 'hebrew', 'greek', or 'both' (default: both)",
+            "type": "string"
+          },
+          "query": {
+            "description": "Word or phrase to search by meaning (e.g., 'covenant', 'redeem', 'glory')",
+            "type": "string"
+          },
+          "strongs_limit": {
+            "description": "Max Strong's matches (default: 20, max: 50)",
+            "type": "integer"
+          },
+          "verse_limit": {
+            "description": "Max verse results (default: 20, max: 100)",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "strongs_in_verse",
+      "title": "Strongs In Verse",
+      "kind": "capability",
+      "description": "Extract all Strong's numbers from a verse. Returns every Hebrew/Greek word with its Strong's number, lemma, transliteration, and short definition. Quick way to see everything in a verse.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Strongs In Verse"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "Verse reference (e.g., 'Genesis 1:1', 'John 3:16')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "submit_feedback",
+      "title": "Submit Feedback",
+      "kind": "plumbing",
+      "description": "Submit a user testimonial about Darash. Ask the user for: 1) A short comment (1-2 sentences) about their experience, 2) Their name or alias (for display), 3) Their location/city and country, 4) A 1-5 star rating — suggest one based on their sentiment. Examples: 'The ELS findings blew my mind — billion-to-one odds encoded in Genesis', 'Finally a Bible tool that goes beyond English translations', 'Simple to set up, extraordinarily deep'. If the user has already submitted feedback, this tool returns a thank-you message. Only ask ONCE per session, and only after the user has seen meaningful results.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Submit Feedback"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "User's testimonial (1-2 sentences, max 500 chars)",
+            "type": "string"
+          },
+          "country": {
+            "description": "User's country (e.g., 'Norway', 'USA', 'UK')",
+            "type": "string"
+          },
+          "location": {
+            "description": "User's city or region (e.g., 'Oslo', 'Texas', 'London')",
+            "type": "string"
+          },
+          "name": {
+            "description": "User's name or alias for display (default: Anonymous)",
+            "type": "string"
+          },
+          "stars": {
+            "description": "Rating 1-5 (1=poor, 3=good, 5=extraordinary). Suggest based on user's sentiment.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "comment",
+          "stars"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "synonym_stats",
+      "title": "Synonym Stats",
+      "kind": "capability",
+      "description": "Health check for the synonym graph built at startup. Returns node counts, edge counts, mean/max degree per language, and build time. Use once to confirm the graph is populated; then use get_synonyms for actual queries.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Synonym Stats"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "verse_study",
+      "title": "Verse Study",
+      "kind": "capability",
+      "description": "Complete verse analysis in one call. Returns: verse text, all Strong's numbers with definitions, word-by-word morphological parsing (tense, voice, mood, case, gender), and cross-references. Replaces 4 separate tool calls (get_verse + strongs_in_verse + get_morphology + get_cross_refs).[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Verse Study"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bible": {
+            "description": "Bible translation for verse text (default: kjv)",
+            "type": "string"
+          },
+          "ref": {
+            "description": "Verse reference (e.g., 'Romans 3:23', 'Genesis 1:1', 'John 3:16')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "verse_to_position",
+      "title": "Verse To Position",
+      "kind": "capability",
+      "description": "INVERSE of position_to_verse: given a Torah verse reference, return its exact letter-offset window in the 304,805-letter Koren consonant text.\n\nINPUT: ref = Torah verse like 'Genesis 32:11', 'Exodus 21:32', 'Deuteronomy 6:4'.\nOUTPUT: { ref, book, book_name, chapter, verse, start_pos, length, end_pos, book_start_pos, pos_in_book, torah_length, text }\n  • start_pos = first letter of verse (Torah offset, 0-indexed)\n  • end_pos = exclusive end (= start_pos + length)\n  • text = Hebrew consonants of the entire verse\n\nUSE WHEN:\n  • You need the position window of a verse to check whether an ELS code passes through it.\n  • Filtering els_search results: keep matches whose start_pos falls within [start_pos, end_pos) of the target verse.\n  • Computing a multi-verse window (e.g., Gen 28:10..28:22): call once per endpoint and use [first.start_pos, last.end_pos).\n  • Pairing with trace_els_code or position_to_verse for letter-by-letter verification of a finding.\n\nGUARANTEES: Torah-only (Genesis–Deuteronomy). Linear scan of the 5,847-entry verse index — sub-millisecond. Non-Torah books, missing verses, or unparseable refs return precise errors with the valid format example.\n\nVERSIFICATION: the ref is read in KOREN numbering, which equals the Masoretic everywhere except Exodus 20 and Deuteronomy 5 (Koren merges the four short commandments, so its later verses run three lower). Those responses carry mt_equivalent + grid_note, and a Masoretic verse number the shorter Koren chapter lacks (e.g. Exodus 20:24) errors with the Koren verse it maps to.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Verse To Position"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "Torah verse reference (e.g., 'Genesis 32:11', 'Exodus 21:32'). Required. Must be Genesis–Deuteronomy.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_delete",
+      "title": "View Delete",
+      "kind": "plumbing",
+      "description": "Delete a stored figure immediately. Removes both the in-memory entry and the Redis persistence (if the entry was frozen). After delete, the /view/<id> URL returns 404. Idempotent: deleting an already-gone entry returns ok=false but is not an error.[END]",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "view_id": {
+            "description": "The 32-character hex id from the /view/<id> URL.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_freeze",
+      "title": "View Freeze",
+      "kind": "plumbing",
+      "description": "Mark a stored figure as permanently preserved (never expires). The figure is persisted to Redis under darash:frozen:<view_id> and rehydrated automatically on service restart, so the /view/<view_id> URL remains live forever. Use this when a figure is publication-worthy and must outlast the default 72-hour TTL. Idempotent: calling twice does nothing extra. To revert, use view_unfreeze.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Freeze"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "view_id": {
+            "description": "The 32-character hex id from the /view/<id> URL (or the 'url' field returned by els_verse_overlay).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_info",
+      "title": "View Info",
+      "kind": "plumbing",
+      "description": "Return metadata about a single stored figure: id, Bible ref, title, size, created-at, expires-at (omitted when frozen), and frozen boolean. Read-only complement to view_list when you already know the view_id.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "View Info"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "view_id": {
+            "description": "The 32-character hex id from the /view/<id> URL.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_list",
+      "title": "View List",
+      "kind": "plumbing",
+      "description": "List all stored figures (SVG/HTML overlays) in the public view store. Returns each entry's id, optional Bible ref, optional title, size in bytes, created-at timestamp, expires-at (omitted when frozen), and a frozen boolean. Use frozen_only=true to filter to permanently-frozen entries. Use this to audit what figures are currently live, identify which ones to freeze for long-term preservation, or to find a specific figure by Bible reference. Frozen figures survive service restarts via Redis-backed persistence; non-frozen figures expire on a TTL (72h default).[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "View List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "frozen_only": {
+            "description": "When true, return only frozen entries (skip TTL-bound entries). Default false (return all active entries).",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_set_ttl",
+      "title": "View Set TTL",
+      "kind": "plumbing",
+      "description": "Set (extend or shrink) the TTL of a stored figure relative to NOW. Works on both TTL-bound and frozen entries (a frozen entry will be unfrozen as a side effect when its TTL is reset). Use this to extend a 72-hour figure to '30d' for short-term sharing without committing to permanent freeze. To make permanent, use view_freeze. To remove now, use view_delete.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Set TTL"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ttl": {
+            "description": "New TTL relative to NOW. Accepts Go duration strings: '72h', '30d', '7d', '1h'. Required.",
+            "type": "string"
+          },
+          "view_id": {
+            "description": "The 32-character hex id from the /view/<id> URL.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view_id",
+          "ttl"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "view_unfreeze",
+      "title": "View Unfreeze",
+      "kind": "plumbing",
+      "description": "Revert a frozen figure back to a normal TTL-bound entry. Removes the Redis persistence and re-applies the requested TTL relative to NOW. After unfreezing, the figure will expire at the new ExpiresAt; if you want it gone immediately, use view_delete.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Unfreeze"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "ttl": {
+            "description": "Time-to-live to apply on unfreeze. Accepts Go duration strings: '72h', '30d' (treated as 720h), '7d' (treated as 168h). Default '72h'.",
+            "type": "string"
+          },
+          "view_id": {
+            "description": "The 32-character hex id from the /view/<id> URL.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "view_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "word_frequency",
+      "title": "Word Frequency",
+      "kind": "capability",
+      "description": "Count how many times a Strong's number appears in the KJV tagged text. Returns total frequency, OT/NT breakdown, and whether it's a hapax legomenon (appears only once). Essential for word studies.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Word Frequency"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H430' for Hebrew Elohim, 'G26' for Greek agape)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "word_study",
+      "title": "Word Study",
+      "kind": "capability",
+      "description": "THE recommended tool for studying any Greek or Hebrew word. Complete word study in ONE call — returns everything: Strong's definition, Abbott-Smith/BDB scholarly lexicon, LSJ classical Greek, Thayer's Greek-English Lexicon 1889 (for G numbers), frequency with OT/NT breakdown, etymology tree, reverse lookup (other words translated the same way), and sample verses. Use THIS instead of calling get_strongs + lookup_dictionary(thayer) + search_strongs separately. The 'thayer' field carries 'thayer_note' naming the edition — until 2026-09-02 that field held a modern gloss set that was not Thayer's text at all, so check the note rather than trusting the field name. Then sharpen it: get_synonyms for the near-synonyms, search_strongs to see the word live in its verses.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Word Study"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "number": {
+            "description": "Strong's number with prefix (e.g., 'H2617' for Hebrew chesed, 'G26' for Greek agape)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

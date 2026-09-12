@@ -1,0 +1,740 @@
+{
+  "name": "pro.publifye/lexifye",
+  "title": "Lexifye",
+  "description": "Build dictionaries & glossaries with AI: entries, senses, versions, print PDF, EPUB, web reader, RTL",
+  "version": "1.0.2",
+  "websiteUrl": "https://lexifye.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://lexifye.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon-1024.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    },
+    {
+      "src": "https://lexifye.publifye.com/_assets/icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "audit_list",
+      "description": "The dict's CHANGE HISTORY: who changed what, and when. Newest first, paginated. EDITOR-level (write), exactly like trash_list and for the same reason: this is editorial history, not content — it names",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Audit List"
+      }
+    },
+    {
+      "name": "definition_add",
+      "description": "Add a definition to an entry. content is an array of blocks (paragraph|heading|list) each holding spans (text, emph, bold, hebrew, greek, strong, bref, link). A list block may also carry items — the p",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Add"
+      }
+    },
+    {
+      "name": "definition_add_source",
+      "description": "Create a definition from markup source in ONE call — the definition_add twin for the source grammar (source_syntax). Parses the markup into content blocks, validates, and appends the definition to the",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Add Source"
+      }
+    },
+    {
+      "name": "definition_delete",
+      "description": "Delete a definition. sha256_of_old MUST match the current stored sha256.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Delete"
+      }
+    },
+    {
+      "name": "definition_diff",
+      "description": "Compare two versions of a definition (from/to version numbers via definition_history), returning each version's markup source plus a unified line diff (lines prefixed ' ' unchanged, '-' removed, '+' a",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition Diff"
+      }
+    },
+    {
+      "name": "definition_get_source",
+      "description": "Return a definition's content as round-trippable markup source (the grammar source_syntax documents). Pair with definition_set_source for edit-and-push revision. Returns {dict_id, entry_id, definition",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition Get Source"
+      }
+    },
+    {
+      "name": "definition_history",
+      "description": "List the retained version history of a definition (the last 20 saves, 7-day window), newest first. Each version carries {n, sha256, author_name, ts} — NO content (call definition_diff to compare, or d",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Definition History"
+      }
+    },
+    {
+      "name": "definition_move",
+      "description": "Reorder a definition within its entry's sense order (rendered 1., 2., 3.). to_index is 0-based (0 = first) and clamped. Returns {ok, definition_id, to_index} where to_index is where the definition ACT",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Move"
+      }
+    },
+    {
+      "name": "definition_restore",
+      "description": "Restore a soft-deleted definition to its original position in its entry's sense order, with its version history intact. Works for 30 days after definition_delete. Call trash_list for what is restorabl",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Restore"
+      }
+    },
+    {
+      "name": "definition_revert",
+      "description": "Restore a definition to a past version n (from definition_history), recorded as a NEW version — history is never destroyed. Carries the SAME optimistic lock as an edit: sha256 MUST match the definitio",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Revert"
+      }
+    },
+    {
+      "name": "definition_set_source",
+      "description": "Replace a definition's content by parsing markup source (the grammar source_syntax documents). sha256 MUST match the current stored token (quote the one from definition_get_source / dict_get) — a mism",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Set Source"
+      }
+    },
+    {
+      "name": "definition_update",
+      "description": "Replace a definition's content. sha256_of_old MUST match the current stored sha256 — quote the one returned by dict_get. Mismatch is rejected (refetch and retry).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Definition Update"
+      }
+    },
+    {
+      "name": "dict_create",
+      "description": "Create a new dictionary. Author is stamped from the caller's pubcontacts Contact. author_bio is an optional opt-in paragraph (<=500 chars) printed under the title-page date; default empty. language is",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Create"
+      }
+    },
+    {
+      "name": "dict_delete",
+      "description": "Delete a dict. Requires admin (owner).",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Delete"
+      }
+    },
+    {
+      "name": "dict_enrich",
+      "description": "Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced original-language words (Strong's codes in `strong` spans, and hebrew/greek spans carrying a code), pull their lexicon",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Enrich"
+      }
+    },
+    {
+      "name": "dict_freeze",
+      "description": "ADMIN. Apply a CANONICAL LOCK to a dictionary — the recoverable take-down. Use this FIRST when responding to an abuse report: it stops the dictionary being changed while you investigate, and destroys ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Freeze"
+      }
+    },
+    {
+      "name": "dict_get",
+      "description": "Fetch a dict by id with a PAGE of its entries and their definitions inlined. Each definition includes sha256 — quote it on subsequent definition_update/delete calls.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict Get"
+      }
+    },
+    {
+      "name": "dict_group_add",
+      "description": "Attach a GROUP to a dict so every member of the group becomes a content editor of it (resolved live — membership changes take effect instantly). Dict owner only, and you must BELONG to the group you a",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Group Add"
+      }
+    },
+    {
+      "name": "dict_group_remove",
+      "description": "Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any who are ALSO individual guests, or members of another attached group, keep access via that path). Dict own",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Group Remove"
+      }
+    },
+    {
+      "name": "dict_list",
+      "description": "List the dictionaries you OWN, newest first. There is no public catalogue: filter=public no longer exists, and filter=all is accepted only as a synonym for 'own'. Dictionaries shared WITH you (via a g",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict List"
+      }
+    },
+    {
+      "name": "dict_list_for_user",
+      "description": "SERVICE/ADMIN ONLY. List every dictionary a given user can work with — the union of dicts they OWN, are a GROUP member of, and are a GUEST editor of — deduped and each tagged with its relation ('owner",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict List For User"
+      }
+    },
+    {
+      "name": "dict_replace",
+      "description": "Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring typo, rename a term, update a date. One call instead of one edit per definition.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Replace"
+      }
+    },
+    {
+      "name": "dict_restore",
+      "description": "Restore a soft-deleted dict, with every entry, definition, version history and private note exactly as they were. Works for 30 days after dict_delete. Requires admin (owner), like dict_delete. Find th",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Restore"
+      }
+    },
+    {
+      "name": "dict_set_field",
+      "description": "Atomically set ONE field on a dict by key.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Set Field"
+      }
+    },
+    {
+      "name": "dict_transfer",
+      "description": "Hand ownership of YOUR dictionary to another user. Owner only — the mirror of group_transfer, which already lets you hand over a group.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Transfer"
+      }
+    },
+    {
+      "name": "dict_unfreeze",
+      "description": "ADMIN. Lift a dict_freeze. Everything returns exactly as it was — the freeze changed no content, so there is nothing to restore. Idempotent: unfreezing a dictionary that is not frozen is a no-op and s",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Unfreeze"
+      }
+    },
+    {
+      "name": "entry_add",
+      "description": "Add a term entry to a dict. term must be unique within the dict (case-insensitive). translit is an optional romanization of the term (e.g. 'logos' for λόγος) for glossary rendering.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Add"
+      }
+    },
+    {
+      "name": "entry_delete",
+      "description": "Delete an entry and all of its definitions from a dict.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Delete"
+      }
+    },
+    {
+      "name": "entry_get",
+      "description": "Look a term UP in a dict and return the matching entry (or entries) with their definitions inlined — the read you want when you know the word but not its idj_ id. Read-level: any caller with the dict ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry Get"
+      }
+    },
+    {
+      "name": "entry_list",
+      "description": "List a dict's entries (summary only: id, term, translit, seq — NO definitions; use dict_get for the full tree). Paginated via limit (default 100, max 500) + offset. Response: {items, total, limit, off",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry List"
+      }
+    },
+    {
+      "name": "entry_move",
+      "description": "Reorder an entry within its dict's display order. to_index is 0-based (0 = first) and clamped to the valid range. Returns {ok, entry_id, to_index} where to_index is where the entry ACTUALLY landed — w",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Move"
+      }
+    },
+    {
+      "name": "entry_rename",
+      "description": "Rename an entry's term (and optionally its transliteration). term must stay unique within the dict (case-insensitive) — a collision with a DIFFERENT entry is rejected. Pass translit to also set/clear ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Rename"
+      }
+    },
+    {
+      "name": "entry_reorder",
+      "description": "Set a dict's ENTIRE entry display order in one call — the bulk twin of entry_move (which repositions one entry and costs N calls to reorder N entries).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Reorder"
+      }
+    },
+    {
+      "name": "entry_restore",
+      "description": "Restore a soft-deleted entry to its original position, with every definition, every definition's version history, and the private notes that were anchored to it. Works for 30 days after entry_delete. ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Restore"
+      }
+    },
+    {
+      "name": "entry_search",
+      "description": "Find entries in ONE dictionary by a text fragment — the way to locate an entry when you do NOT know its exact headword (entry_get needs the exact term; this does not).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entry Search"
+      }
+    },
+    {
+      "name": "group_accept",
+      "description": "Accept an invite to a group (you become a member and gain content-edit access to every dict the group is attached to). You must have a pending invite — see group_list.pending_invites.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Accept"
+      }
+    },
+    {
+      "name": "group_admin_set",
+      "description": "Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin members). Owner only. The target must already be a member.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Admin Set"
+      }
+    },
+    {
+      "name": "group_autoshare_set",
+      "description": "Toggle YOUR autoshare on a group. With autoshare ON, every NEW dict you create is automatically attached to this group (its members can edit it). You must be a member. Pass apply_existing=true (with o",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Autoshare Set"
+      }
+    },
+    {
+      "name": "group_create",
+      "description": "Create a GROUP — a named set of lexifye users you can later attach to a dict (dict_group_add) so every member becomes a content editor of that dict at once. You become the group's owner (and first mem",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Create"
+      }
+    },
+    {
+      "name": "group_decline",
+      "description": "Decline an invite to a group (drops the pending invite; you do NOT join). You must have a pending invite — see group_list.pending_invites.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Decline"
+      }
+    },
+    {
+      "name": "group_delete",
+      "description": "Delete a group. Owner only. This detaches the group from every dict it is attached to (those dicts lose group-editing) and removes it for all members. Irreversible.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Delete"
+      }
+    },
+    {
+      "name": "group_get",
+      "description": "Get one group in detail: members (with display names), each member's admin/owner flag, member_count, attached_dicts_count, and YOUR role + autoshare. Owners/admins additionally see pending_invites and",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Group Get"
+      }
+    },
+    {
+      "name": "group_invite",
+      "description": "Invite a lexifye user to a group. Owner or admin only. The invitee is NOT a member until they group_accept (find their user_id with guest_find_user). Rejects inviting an existing member.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite"
+      }
+    },
+    {
+      "name": "group_invite_cancel",
+      "description": "Withdraw a pending group invite. Owner or admin only. Idempotent, and HONEST about it: the reply carries cancelled:true only when an invite was actually pending. With nothing pending it returns cancel",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite Cancel"
+      }
+    },
+    {
+      "name": "group_leave",
+      "description": "Leave a group you are a member of. Leaving also DETACHES the group from every dict YOU own. The owner cannot leave — transfer the group (group_transfer) or delete it (group_delete) first.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Leave"
+      }
+    },
+    {
+      "name": "group_list",
+      "description": "List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role is owner/admin/member and autoshare is YOUR auto-attach opt-in — plus pending_invites: groups you have bee",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Group List"
+      }
+    },
+    {
+      "name": "group_member_remove",
+      "description": "Remove a member from a group. The OWNER may remove any member (except themselves — use group_transfer or group_delete); an ADMIN may remove only non-admin members. Removing a member also DETACHES the ",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Member Remove"
+      }
+    },
+    {
+      "name": "group_rename",
+      "description": "Rename a group. Owner or admin only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Rename"
+      }
+    },
+    {
+      "name": "group_transfer",
+      "description": "Hand ownership of a group to another MEMBER. Owner only. The new owner must already be a member; you (the old owner) stay a member and keep admin.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Transfer"
+      }
+    },
+    {
+      "name": "guest_add",
+      "description": "Invite a lexifye user as a GUEST EDITOR of a dict — they get CONTENT-edit access (entries/definitions) and the dict appears on THEIR dashboard; they never get delete/restore, group attach/detach, tran",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Add"
+      }
+    },
+    {
+      "name": "guest_find_user",
+      "description": "Find lexifye users by NAME to invite as guest editors or group members. Returns [{user_id, name, username}] for DISCOVERABLE users whose name/handle contains the query. Use the returned user_id with g",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Find User"
+      }
+    },
+    {
+      "name": "guest_list",
+      "description": "List the collaborators of a dict. Returns guests: the individual GUEST EDITORS [{user_id, name}], AND groups: the GROUPS attached to the dict [{id, name, member_count}] (every member of an attached gr",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Guest List"
+      }
+    },
+    {
+      "name": "guest_remove",
+      "description": "Remove a GUEST EDITOR from a dict — revokes their content access and drops the dict from their library. Owner-only. Idempotent.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Remove"
+      }
+    },
+    {
+      "name": "house_style",
+      "description": "THE one-stop authoring guide — read this ONCE before writing a dictionary and you have everything: lexifye's conventions (the translit-always rule, Darash Strong's enrichment + strongs_depth/dict_enri",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "House Style"
+      }
+    },
+    {
+      "name": "note_delete",
+      "description": "Delete a PRIVATE note at (anchor, key). Editor-only.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Delete"
+      }
+    },
+    {
+      "name": "note_get",
+      "description": "Fetch a PRIVATE note (summary + full body) at (anchor, key). Editor-only. Returns {note, content}.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note Get"
+      }
+    },
+    {
+      "name": "note_list",
+      "description": "List PRIVATE note summaries (no bodies), newest first. Omit anchor to list the whole dict; pass a dict/entry id to filter to that anchor. Editor-only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note List"
+      }
+    },
+    {
+      "name": "note_patch",
+      "description": "Append text to an existing PRIVATE note's body (a convenience wrapper over note_set append=true). Optionally updates the subject. Editor-only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Patch"
+      }
+    },
+    {
+      "name": "note_set",
+      "description": "Set (upsert) a PRIVATE authoring note on a dict (anchor=idy…) or entry (anchor=idj…). Notes are editor-only and NEVER render into any artifact or the public JSON — use them for research, TODOs, proven",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Set"
+      }
+    },
+    {
+      "name": "notice_dismiss",
+      "description": "Clear ALL of YOUR pending notices (after reading them with notice_list). Idempotent — dismissing an empty inbox succeeds. Returns {ok:true}.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Notice Dismiss"
+      }
+    },
+    {
+      "name": "notice_list",
+      "description": "List YOUR pending notices (newest first) — the one-shot lines left when a group membership change affects you (invited to / removed from / handed / deleted-out-from-under a group). Non-destructive: ca",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Notice List"
+      }
+    },
+    {
+      "name": "source_syntax",
+      "description": "Return the grammar of the round-trippable definition markup used by definition_get_source (read) and definition_set_source / definition_add_source (write): block prefixes (#/##/### headings, - list it",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Source Syntax"
+      }
+    },
+    {
+      "name": "trash_list",
+      "description": "The dict's TRASH BIN: everything soft-deleted and still recoverable, oldest first. EDITOR-level (write): a soft delete keeps the content, so the bin is visible only to someone who could edit the dict ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Trash List"
+      }
+    }
+  ],
+  "_meta": {
+    "pro.publifye/generated": "2026-09-13",
+    "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/lexifye"
+  }
+}

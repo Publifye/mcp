@@ -1,0 +1,1708 @@
+{
+  "name": "pro.publifye/junifye",
+  "title": "Junifye",
+  "description": "Write books, studies & commentaries with your AI — EPUB, print-ready PDF, web reader, ISBN, RTL",
+  "version": "1.0.3",
+  "websiteUrl": "https://junifye.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://junifye.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon-1024.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    },
+    {
+      "src": "https://junifye.publifye.com/_assets/mcp-icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "author_page_get",
+      "description": "Get YOUR public author-page state: display name (page_name override, else your directory name), bio, handle, the public URL (/a/<handle>), whether the page is LIVE, the count of listed books, and whet",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Author Page Get"
+      }
+    },
+    {
+      "name": "author_page_set",
+      "description": "Set YOUR public author-page state: `bio` (max 2000 chars — the blurb shown on /a/<handle>), `page_name` (max 120 chars — a display-name override, e.g. a church or organisation name; the page falls bac",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Author Page Set"
+      }
+    },
+    {
+      "name": "authors_list",
+      "description": "List every author whose PUBLIC page is LIVE (they opted in AND have at least one listed book) — the same set the public /authors index shows. Returns each author's `handle`, `name` (display name), `li",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Authors List"
+      }
+    },
+    {
+      "name": "block_add_bible_quote",
+      "description": "Add a scripture block quote. ref shape: '[1-3 ]Book Chap[:Verse[-Verse]]' — Book is 2-30 Unicode letters (English, Norwegian, German, Greek, etc.) and may include spaces, dots, hyphens. Examples: 'Joh",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Bible Quote"
+      }
+    },
+    {
+      "name": "block_add_figure",
+      "description": "Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH the HTML reader and the EPUB, and as a crisp high-DPI raster in the PDF (one artifact → three faithful ou",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Figure"
+      }
+    },
+    {
+      "name": "block_add_general_quote",
+      "description": "Add a non-scripture block quote (Church Father, theologian, hymn writer, web source). author + cite optional; text required. url optional (http/https/mailto) — when set, the attribution (cite, or auth",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add General Quote"
+      }
+    },
+    {
+      "name": "block_add_heading",
+      "description": "Add a heading block — this is how you make SUB-CHAPTERS inside a chapter. The level (2-4) sets NESTING DEPTH, not an absolute size: the FIRST heading in a chapter is always the top sub-chapter level w",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Heading"
+      }
+    },
+    {
+      "name": "block_add_image",
+      "description": "Add an image/figure block that renders in BOTH the PDF and the HTML reader. image_id is the content-addressed id returned by image_upload_begin (e.g. \"a1b2…e9.png\") — upload the file FIRST via image_u",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Image"
+      }
+    },
+    {
+      "name": "block_add_list",
+      "description": "Add a list initialised with one item (item_idx=0) containing one text span. ordered=true → numbered; ordered=false → bulleted. Extend with list_add_item for more rows, span_add_* for span content with",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add List"
+      }
+    },
+    {
+      "name": "block_add_paragraph",
+      "description": "Add a paragraph initialised with one text span. Returns the new block_id (e.g. blk7a91...) — extend with span_add_* (any type) afterwards by passing that block_id.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Paragraph"
+      }
+    },
+    {
+      "name": "block_add_stat",
+      "description": "Add a stat block (percentage \"rings\", a donut chart per item) initialised with ONE ring; build it up with stat_add_item. color = \"plain\" (book accent, default) | \"scale\" (coloured by percentage: low→r",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Stat"
+      }
+    },
+    {
+      "name": "block_add_table",
+      "description": "Add a tabular grid in ONE call. rows = array of rows, each row = array of cell strings (one string per column). header = optional array of column-header strings (rendered bold, and used as the per-col",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Add Table"
+      }
+    },
+    {
+      "name": "block_delete",
+      "description": "Delete a block by its stable id (e.g. blk7a91...). Returns error if no block has that id (e.g. another writer deleted it). Any notes pinned to this block follow to the next block (or the previous if i",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Delete"
+      }
+    },
+    {
+      "name": "block_get_source",
+      "description": "Return one block as round-trippable source text (markdown-ish). Pair with block_set_source for edit-and-push revision. Block id is preserved by the server, not encoded in the source.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Block Get Source"
+      }
+    },
+    {
+      "name": "block_list",
+      "description": "Read-only chapter navigation. Without block_id: returns {chapter_id, chapter_title, chapter_number, book_short_url, book_slug_url, blocks: [{id, type, summary, reader_url, reader_url_short}], count}. ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Block List"
+      }
+    },
+    {
+      "name": "block_move",
+      "description": "Reorder blocks by id. block_id is moved to position relative to target_id according to position ('before' | 'after').",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Move"
+      }
+    },
+    {
+      "name": "block_patch_many",
+      "description": "Apply MANY surgical patches to one chapter in a SINGLE version. Same exact-once semantics as block_patch_text, once per patch — this is not a mass find/replace, it is N specific edits committed togeth",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Patch Many"
+      }
+    },
+    {
+      "name": "block_patch_text",
+      "description": "Surgically edit ONE block: replace `find` with `replace` inside that block's SOURCE (exactly the text block_get_source returns), without resending the whole block. `find` must match EXACTLY ONCE — zer",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Patch Text"
+      }
+    },
+    {
+      "name": "block_set_source",
+      "description": "Replace a block's content by parsing source text. The block_id is preserved (handle stays stable). Use to revise an existing block without delete+re-add. Call source_syntax for the source grammar. If ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Set Source"
+      }
+    },
+    {
+      "name": "block_set_stat",
+      "description": "Change a stat block's presentation without touching its rings: color (\"plain\"|\"scale\"|\"#RRGGBB\"), size (small|medium|large), columns (1|2). Omit a field to keep it.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Set Stat"
+      }
+    },
+    {
+      "name": "block_set_table",
+      "description": "Replace an existing TABLE block's contents from STRUCTURED data — the only way to edit a table (never block_set_source / pipe text). The block_id is preserved, so the section's stable anchor never cha",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Set Table"
+      }
+    },
+    {
+      "name": "block_transfer",
+      "description": "MOVE whole sections (blocks) from one chapter to another — the two chapters may be in DIFFERENT BOOKS. This is the primitive for reorganising material across a shelf: lifting a thread out of one title",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Block Transfer"
+      }
+    },
+    {
+      "name": "book_cover_generate",
+      "description": "Generate a cover for a book and set it: an image model draws a background from the book's OWN description and subject codes, then junifye composes the title, author and owner logo over it. ASYNC — ret",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Cover Generate"
+      }
+    },
+    {
+      "name": "book_cover_refresh",
+      "description": "Re-set the title, author and imprint mark over the artwork ALREADY STORED for this book, and replace the cover with the result. FREE and repeatable: it does not call an image model and cannot change t",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Cover Refresh"
+      }
+    },
+    {
+      "name": "book_cover_restore",
+      "description": "Revert this book's cover to a previous version, from book_cover_versions. The current cover is NOT destroyed — it is itself snapshotted first, so a restore is reversible too (an author can keep testin",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Cover Restore"
+      }
+    },
+    {
+      "name": "book_cover_status",
+      "description": "Poll a running or finished cover generation. Returns {state: running|done|failed, stage, eta_seconds, prompt, error}. Safe to call repeatedly.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Cover Status"
+      }
+    },
+    {
+      "name": "book_cover_upload_begin",
+      "description": "Begin uploading the front COVER ART for ONE book. Returns a one-time {reqid, url, expect}: a PERSON OPENs the url (browser upload page) and picks a PNG/JPEG; an AI POSTs the bytes — `curl -X POST <url",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Cover Upload Begin"
+      }
+    },
+    {
+      "name": "book_cover_versions",
+      "description": "List the covers this book USED and can still be reverted to. When a cover is replaced (book_cover_generate replace=true, or a new upload via book_cover_upload_begin), the old cover — its composed imag",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Cover Versions"
+      }
+    },
+    {
+      "name": "book_create",
+      "description": "Create a new book or document. Returns BOTH an id (idb...) and a uuid:",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Create"
+      }
+    },
+    {
+      "name": "book_delete",
+      "description": "Soft-delete a book into a trash window of 30 days (restore with book_restore). The book is removed from all listings immediately; after that it is permanently purged. A public (listed) book can ONLY b",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Delete"
+      }
+    },
+    {
+      "name": "book_epub_check",
+      "description": "Inspect the metadata of a book's ACTUAL BUILT EPUB — the file a store would receive — and report whether it is complete for EPUB 3 and, separately, for Apple Books. Reads OEBPS/content.opf out of the ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book EPUB Check"
+      }
+    },
+    {
+      "name": "book_export_begin",
+      "description": "Begin a book export. Returns a one-time {reqid, url, method:GET}: GET the url (e.g. `curl -L <url> -o book.json`) to download the whole book as an editable bundle — per chapter a flat Markdown-ish `so",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Export Begin"
+      }
+    },
+    {
+      "name": "book_files",
+      "description": "List EVERY file this book can hand over — one call, with metadata and staleness. Answers the print question directly: the entries with for_print=true are exactly what a printer needs (the interior and",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Files"
+      }
+    },
+    {
+      "name": "book_freeze",
+      "description": "ADMIN. Place a book under an OPERATOR HOLD — for abuse review, a legal dispute, or an investigation. The hold locks ALL content edits (owner and group alike, overriding listed/publicly_editable) AND b",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Freeze"
+      }
+    },
+    {
+      "name": "book_get",
+      "description": "Get book metadata + artifact URLs: url (the PRIMARY link to share — the short permalink that 301s to the reader; the explicit UUID forms are returned alongside, never instead), uuid_url (the full <uui",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Get"
+      }
+    },
+    {
+      "name": "book_get_source",
+      "description": "Read MANY chapters' round-trippable source in ONE call — the whole book by default, or a subset. Use this (not a chapter_get_source loop) for whole-book review, translation, or cross-chapter consisten",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Get Source"
+      }
+    },
+    {
+      "name": "book_grep",
+      "description": "Find WHERE a string occurs in a book, one result per occurrence, each attributed to its BLOCK — the tool to use before any revision pass. book_search(content=true) only answers WHETHER a book mentions",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Grep"
+      }
+    },
+    {
+      "name": "book_group_add",
+      "description": "Attach a GROUP to a book so every member of the group becomes a content editor of it (resolved live — membership changes take effect instantly). Book owner only, and you must BELONG to the group you a",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Group Add"
+      }
+    },
+    {
+      "name": "book_group_remove",
+      "description": "Detach a GROUP from a book — its members lose the group-derived edit access to that book (any who are ALSO individual guests, or members of another attached group, keep access via that path). Book own",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Group Remove"
+      }
+    },
+    {
+      "name": "book_import_begin",
+      "description": "Begin a book import. Returns a one-time {reqid, url, method:POST}: POST your edited export bundle to the url (e.g. `curl -X POST <url> --data-binary @book.json`). The server runs a conflict-safe 3-way",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Import Begin"
+      }
+    },
+    {
+      "name": "book_isbn_assign",
+      "description": "Assign a REAL, pool-allocated ISBN-13 to a published book. It identifies the DIGITAL edition: it becomes the book's colophon ISBN line and the EPUB's metadata, and Publifye is named as publisher of th",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book ISBN Assign"
+      }
+    },
+    {
+      "name": "book_list",
+      "description": "List books with sort + pagination + visibility filter. PROVENANCE: every row carries `origin` — original = the owner's own authored work; transcript = captured EXTERNAL material (e.g. a YouTube talk c",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book List"
+      }
+    },
+    {
+      "name": "book_logo_upload_begin",
+      "description": "Begin uploading a logo for ONE book's social share card (og:image) — it OVERRIDES your account/owner logo for this book only. Returns a one-time {reqid, url}: a PERSON OPENs the url (browser upload pa",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Logo Upload Begin"
+      }
+    },
+    {
+      "name": "book_outline",
+      "description": "Cheap PLANNING view of a book BEFORE reading content: each chapter's size + block count, plus the exact pages book_get_source will return. Returns {book_id, total_chapters, total_bytes, total_payload_",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Outline"
+      }
+    },
+    {
+      "name": "book_publish_to_store",
+      "description": "Put this book ON THE SHELF — register it for sale on the storefront and upload the EPUB a buyer downloads. Call it again after any edit: it is an idempotent UPDATE, not a second release. One work has ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Publish To Store"
+      }
+    },
+    {
+      "name": "book_questions",
+      "description": "List every question this book answers (across all its chapters + any whole-book answers). Use it to see a book's discovery footprint.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Questions"
+      }
+    },
+    {
+      "name": "book_replace",
+      "description": "Find-and-replace a LITERAL text string across EVERY chapter of a book — fix a recurring typo, rename a term, update a date. Case-sensitive, literal (not regex). Operates on each chapter's source text ",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Replace"
+      }
+    },
+    {
+      "name": "book_restore",
+      "description": "Restore a soft-deleted book within its trash window (30 days) — re-adds it to all listings and makes its URLs live again. DO NOT call this on your own initiative: restoring a deleted book is the human",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Restore"
+      }
+    },
+    {
+      "name": "book_retract_from_store",
+      "description": "Take this book OFF the shelf. It is unlinked from the storefront and marked not-purchasable, which removes it from the shop's catalogue and from its Google product feed.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Retract From Store"
+      }
+    },
+    {
+      "name": "book_revision_close",
+      "description": "Close a revision window on YOUR published book — refreeze its text as the new canonical version (frozen=1, lock_reason 'revision_closed'). Call this when you've finished the edits you opened with book",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Revision Close"
+      }
+    },
+    {
+      "name": "book_revision_open",
+      "description": "Open a REVISION WINDOW on YOUR published book so you can edit its (otherwise canonical, frozen) text. Publishing freezes the text as canonical; this lifts that freeze temporarily. You get up to 10 sel",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Revision Open"
+      }
+    },
+    {
+      "name": "book_search",
+      "description": "Search visible books. Matches title + author always; pass content=true to also scan body text (a disk scan — slower, use when you need to find a book by something inside it). CONTENT SEARCH IS NOT EXH",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Book Search"
+      }
+    },
+    {
+      "name": "book_set",
+      "description": "Atomically set ONE book field by key. Three categories of keys are accepted:",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Set"
+      }
+    },
+    {
+      "name": "book_set_buy_links",
+      "description": "Set WHERE a reader can buy this book — every channel, not just ours. Replaces the WHOLE list in one call: to add, resend the existing links plus the new one; to remove, omit it; to reorder, change the",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Set Buy Links"
+      }
+    },
+    {
+      "name": "book_set_translation_of",
+      "description": "Link a book as a translation/edition of an ORIGINAL book so the two appear as language editions of one title — a language picker on the reader and on the library card lets readers switch between them.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Set Translation Of"
+      }
+    },
+    {
+      "name": "book_unfreeze",
+      "description": "Lift a book freeze. An auto-lock (a public group-editable book idle past 30 days, lock_reason=auto) is reopenable by the book's OWNER or an admin, and reopening restarts the 30-day window. An admin HO",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Book Unfreeze"
+      }
+    },
+    {
+      "name": "chapter_create",
+      "description": "Add a new empty chapter to a book. book_id MUST be the 'idb...' value from book_create.id — passing the UUID returns 'not found'. Title CANNOT start with 'Chapter ' (renderer auto-numbers).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Create"
+      }
+    },
+    {
+      "name": "chapter_delete",
+      "description": "Move a chapter to the TRASH. It leaves the book immediately (gone from chapter_list, the reader, the PDF and every export), but its text, its title and its full version history are KEPT for 30 days an",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Delete"
+      }
+    },
+    {
+      "name": "chapter_diff",
+      "description": "Show what changed between two saved versions of a chapter — READ-ONLY (no revert, no re-render). With NO version args it diffs the LAST edit (current vs the version before it), so chapter_diff(chapter",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Diff"
+      }
+    },
+    {
+      "name": "chapter_get_source",
+      "description": "Read the WHOLE chapter at once as round-trippable source — one call instead of block_list + block_get_source per block. PICK THE SHAPE BY WHAT YOU ARE ABOUT TO DO, and nothing needs reassembling: shap",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Get Source"
+      }
+    },
+    {
+      "name": "chapter_history",
+      "description": "List a chapter's recent saved versions (newest first): version number, content checksum, author, timestamp, and which is current. History keeps the last N versions, where N is the OWNING BOOK's histor",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter History"
+      }
+    },
+    {
+      "name": "chapter_list",
+      "description": "List chapters in book seq order. Returns lean projection per chapter: {id, book_id, title, seq, current_version, updated_at}. No checksum surfaced — concurrency is server-side. Pass include_deleted=tr",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter List"
+      }
+    },
+    {
+      "name": "chapter_move",
+      "description": "Re-sequence a chapter inside its book to 1-based position `seq` (1 = first). The whole book is reflowed so chapters stay densely ordered with no gaps or ties — `seq` can land a chapter BETWEEN any two",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Move"
+      }
+    },
+    {
+      "name": "chapter_questions",
+      "description": "List the questions linked to a specific chapter — the set you would be WARNED about before deleting or heavily editing it (deleting the chapter auto-detaches these; editing its content flags them stal",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Questions"
+      }
+    },
+    {
+      "name": "chapter_restore",
+      "description": "Bring a soft-deleted chapter back out of the trash — its text, its title, its full version history AND its notes return intact, and it is re-appended as the LAST chapter of the book (its old position ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Restore"
+      }
+    },
+    {
+      "name": "chapter_revert",
+      "description": "Undo: revert a chapter to a previous version (from chapter_history). NON-DESTRUCTIVE — it restores that version's content as a NEW current version, so the reverted-from edit stays in history and can i",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Revert"
+      }
+    },
+    {
+      "name": "chapter_set_source",
+      "description": "Replace a chapter's ENTIRE content from whole-chapter source text — blocks separated by a blank line (the form chapter_get_source returns as `source`). ATOMIC: if any block is malformed the whole chap",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Set Source"
+      }
+    },
+    {
+      "name": "chapter_set_title",
+      "description": "Rename a chapter. The new title is validated through the same rules as chapter_create (no leading 'Chapter ', must start with a letter, max 80 chars).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Set Title"
+      }
+    },
+    {
+      "name": "chapter_transfer",
+      "description": "MOVE a whole chapter into a DIFFERENT BOOK — for splitting a book, lifting a thread into its own volume, or filing a chapter under the title it really belongs to. The chapter KEEPS its id, all its blo",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Chapter Transfer"
+      }
+    },
+    {
+      "name": "chapter_version_get",
+      "description": "Read a PAST version of a chapter as round-trippable source (same shape as chapter_get_source) WITHOUT changing anything. Pair with chapter_history (version numbers) and chapter_diff. READ-ONLY: unlike",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Version Get"
+      }
+    },
+    {
+      "name": "description_status",
+      "description": "Check the GENERATED book description job for one of your books. A description is written automatically — from the book's OWN chapters, one model pass per chapter then one to compose — when a book is p",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Description Status"
+      }
+    },
+    {
+      "name": "dict_add",
+      "description": "Create a new Dictionary entry. body is plain-text/markdown — split on blank lines, each chunk becomes a paragraph in the entry definition. transliteration is optional. Term normalisation is per-script",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Add"
+      }
+    },
+    {
+      "name": "dict_delete",
+      "description": "Delete a Dictionary entry. term addresses ONE entry by the entry's own term as the glossary spells it, or by its stored key (normalized_term, from dict_list). A term that folds onto SEVERAL entries (t",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Delete"
+      }
+    },
+    {
+      "name": "dict_get",
+      "description": "Get a Dictionary entry. body is the markdown reconstructed from the entry's stored blocks (paragraphs joined by blank lines). used_in lists the chapter ids whose text references this term via \\gref{}.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict Get"
+      }
+    },
+    {
+      "name": "dict_list",
+      "description": "List all Dictionary entries for a book. sort=alpha (default) | order | recent. Each entry carries provenance: source_dict_id is \"\" for a book-local authored term (via dict_add) and \"idy…\" for a term s",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Dict List"
+      }
+    },
+    {
+      "name": "dict_reorder",
+      "description": "Set the manual sequence for all Dictionary entries. terms MUST contain EVERY term in the book exactly once, each addressed by the entry's own term or by its stored key (normalized_term, from dict_list",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Reorder"
+      }
+    },
+    {
+      "name": "dict_update",
+      "description": "Replace a Dictionary entry's body. body is markdown; paragraphs are blank-line separated. The entire definition is replaced — there is no per-paragraph diff. term addresses ONE entry by the entry's ow",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Dict Update"
+      }
+    },
+    {
+      "name": "edit_session_create",
+      "description": "Open (or REUSE) a human WEB-EDITOR link for a book and return {session_id, url, pin, reused, expires_in_minutes}. Hand the url to the author — they edit one section at a time in a distraction-free bro",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Edit Session Create"
+      }
+    },
+    {
+      "name": "edit_session_revoke",
+      "description": "Immediately disable a web-editor link previously minted by edit_session_create (e.g. once the author is finished). After this the URL shows the locked page. Idempotent — revoking an already-expired/un",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Edit Session Revoke"
+      }
+    },
+    {
+      "name": "editorial_list",
+      "description": "List the books on YOUR editable shelf (books you own or are a guest editor on) that are IN the editorial workflow — by default ONLY those waiting to be edited (status=ready), so it answers \"what is mi",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Editorial List"
+      }
+    },
+    {
+      "name": "editorial_set",
+      "description": "Set a book's EDITORIAL review state — an opt-in, soft workflow separate from the admin publish/vet pipeline (not every book needs it). status: \"ready\" = mark it ready for an editor to review (it then ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Editorial Set"
+      }
+    },
+    {
+      "name": "figure_upload_begin",
+      "description": "Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter. Like image_upload_begin but for an SVG diagram/line-art that renders as live inline vector in the HTML reader + EPUB and a crisp raster",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Figure Upload Begin"
+      }
+    },
+    {
+      "name": "group_accept",
+      "description": "Accept an invite to a group (you become a member and gain content-edit access to every book the group is attached to). You must have a pending invite — see group_list.pending_invites.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Accept"
+      }
+    },
+    {
+      "name": "group_admin_set",
+      "description": "Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin members). Owner only. The target must already be a member.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Admin Set"
+      }
+    },
+    {
+      "name": "group_autoshare_set",
+      "description": "Toggle YOUR autoshare on a group. With autoshare ON, every NEW book you create is automatically attached to this group (its members can edit it). You must be a member. Pass apply_existing=true (with o",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Autoshare Set"
+      }
+    },
+    {
+      "name": "group_create",
+      "description": "Create a GROUP — a named set of Junifye users you can later attach to a book (book_group_add) so every member becomes a content editor of that book at once. You become the group's owner (and first mem",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Create"
+      }
+    },
+    {
+      "name": "group_decline",
+      "description": "Decline an invite to a group (drops the pending invite; you do NOT join). You must have a pending invite — see group_list.pending_invites.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Decline"
+      }
+    },
+    {
+      "name": "group_delete",
+      "description": "Delete a group. Owner only. This detaches the group from every book it is attached to (those books lose group-editing) and removes it for all members. Irreversible.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Delete"
+      }
+    },
+    {
+      "name": "group_get",
+      "description": "Get one group in detail: members (with display names), each member's admin/owner flag, member_count, attached_books_count, and YOUR role + autoshare. Owners/admins additionally see pending_invites and",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Get"
+      }
+    },
+    {
+      "name": "group_invite",
+      "description": "Invite a Junifye user to a group. Owner or admin only. The invitee is NOT a member until they group_accept (find their user_id with guest_find_user). Rejects inviting an existing member.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite"
+      }
+    },
+    {
+      "name": "group_invite_cancel",
+      "description": "Withdraw a pending group invite. Owner or admin only. Idempotent.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Invite Cancel"
+      }
+    },
+    {
+      "name": "group_leave",
+      "description": "Leave a group you are a member of. Leaving also DETACHES the group from every book YOU own. The owner cannot leave — transfer the group (group_transfer) or delete it (group_delete) first.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Leave"
+      }
+    },
+    {
+      "name": "group_list",
+      "description": "List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role is owner/admin/member and autoshare is YOUR auto-attach opt-in — plus pending_invites: groups you have bee",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group List"
+      }
+    },
+    {
+      "name": "group_member_remove",
+      "description": "Remove a member from a group. The OWNER may remove any member (except themselves — use group_transfer or group_delete); an ADMIN may remove only non-admin members. Removing a member also DETACHES the ",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Member Remove"
+      }
+    },
+    {
+      "name": "group_rename",
+      "description": "Rename a group. Owner or admin only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Rename"
+      }
+    },
+    {
+      "name": "group_transfer",
+      "description": "Hand ownership of a group to another MEMBER. Owner only. The new owner must already be a member; you (the old owner) stay a member and keep admin.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Group Transfer"
+      }
+    },
+    {
+      "name": "guest_add",
+      "description": "Invite a Junifye user as a GUEST EDITOR of a book — they get CONTENT-edit access (chapters/blocks/sections) and the book appears in THEIR library + book-switcher; they never get publication, branding,",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Add"
+      }
+    },
+    {
+      "name": "guest_find_user",
+      "description": "Find Junifye users by NAME to invite as guest editors. Returns [{user_id, name}] for DISCOVERABLE users whose name matches the query (a user can mark themselves not-findable, in which case they never ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Find User"
+      }
+    },
+    {
+      "name": "guest_list",
+      "description": "List the collaborators of a book. Returns guests: the individual GUEST EDITORS [{user_id, name}], AND groups: the GROUPS attached to the book [{id, name, member_count}] (every member of an attached gr",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest List"
+      }
+    },
+    {
+      "name": "guest_remove",
+      "description": "Remove a GUEST EDITOR from a book — revokes their content access and drops the book from their library. Owner-only. Idempotent.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Guest Remove"
+      }
+    },
+    {
+      "name": "house_style",
+      "description": "THE one-stop authoring guide — read this ONCE before writing or vetting a book and you have everything: Junifye's editorial ruleset (what a publishable book is — finished edited prose, never raw trans",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "House Style"
+      }
+    },
+    {
+      "name": "image_upload_begin",
+      "description": "Begin an image upload that will be placed in a specific chapter. The REQUEST says WHERE (chapter_id); on a successful upload the image is auto-appended to that chapter (no separate block_add_image nee",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Image Upload Begin"
+      }
+    },
+    {
+      "name": "indexnow_run",
+      "description": "ADMIN. Trigger an IndexNow submission now. full=true clears the stored content digests and resubmits EVERY URL (the one-time bootstrap); otherwise only content changed since the last run is submitted.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false,
+        "title": "Indexnow Run"
+      }
+    },
+    {
+      "name": "indexnow_status",
+      "description": "ADMIN. Last IndexNow run for this site (public books + sellables): added/changed/removed URL counts, how many were submitted, and whether it was a baseline/skip. Read-only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false,
+        "title": "Indexnow Status"
+      }
+    },
+    {
+      "name": "isbn_record_acceptance",
+      "description": "ADMIN. Record that a book's OWNER has accepted the ISBN publisher terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "ISBN Record Acceptance"
+      }
+    },
+    {
+      "name": "isbn_status",
+      "description": "Read your ISBN standing — the fast way to see whether book_isbn_assign will work for you. There is NO separate ISBN allowance to be granted: your paid plan includes one ISBN per book, so what this rep",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "ISBN Status"
+      }
+    },
+    {
+      "name": "list_add_item",
+      "description": "Append (or insert at at_idx) a new row to a list block. Each new row is initialised with one text span — content can be refined via span_add_* / span_delete with the returned item_idx.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "List Add Item"
+      }
+    },
+    {
+      "name": "list_delete_item",
+      "description": "Delete row item_idx from a list block.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "List Delete Item"
+      }
+    },
+    {
+      "name": "list_move_item",
+      "description": "Reorder rows within a list block.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "List Move Item"
+      }
+    },
+    {
+      "name": "note_delete",
+      "description": "Delete one authoring NOTE, addressed by anchor / block_id / key (same handle used to set it).",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Delete"
+      }
+    },
+    {
+      "name": "note_get",
+      "description": "Read one authoring NOTE in full (subject + body) — private scratch, never part of the rendered book. Address it by the same anchor / block_id / key shown in note_list or block_list. orphaned=true mean",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note Get"
+      }
+    },
+    {
+      "name": "note_list",
+      "description": "List authoring NOTES (private scratch — never part of the rendered book) as a compact catalog — subjects only, NO bodies — so it stays context-cheap however many notes exist. scope = a book id (idb…) ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Note List"
+      }
+    },
+    {
+      "name": "note_patch",
+      "description": "Surgically edit a NOTE without resending its whole body: replace `find` with `replace`. find must match EXACTLY ONCE — zero or multiple matches return an error rather than guessing. To replace a long ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Patch"
+      }
+    },
+    {
+      "name": "note_set",
+      "description": "Create, replace, or append an authoring NOTE — private scratch for you and the author (research, TODOs, decisions, sources). Notes are NEVER rendered into the PDF/HTML and never appear in the publishe",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Note Set"
+      }
+    },
+    {
+      "name": "owner_logo_upload_begin",
+      "description": "Begin uploading YOUR brand logo — the image shown on the social share card (og:image) of every book you own, in place of the default author-initials monogram. Returns a one-time {reqid, url}: a PERSON",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Owner Logo Upload Begin"
+      }
+    },
+    {
+      "name": "print_get",
+      "description": "Read a book's PHYSICAL-PRINT status — does NOT change anything or render. Returns: whether it's configured for print, the resolved printer + trim + bleed, the print_url, cover_print_url + spine_mm + s",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Print Get"
+      }
+    },
+    {
+      "name": "print_set",
+      "description": "Configure a book for PHYSICAL PRINT (print-on-demand) and render a press-ready interior PDF. This is the one tool to set up printing — it ACTIVELY changes the book's print settings and PERSISTS them, ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Print Set"
+      }
+    },
+    {
+      "name": "publish_request",
+      "description": "Request that a book be PUBLISHED (made publicly listed). This is HOW you publish. For an ordinary author it does NOT go public immediately: the book is submitted for review and a reviewer must approve",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Publish Request"
+      }
+    },
+    {
+      "name": "question_add",
+      "description": "Create a discoverable question (e.g. \"What does the Bible say about baptism?\"). It starts with NO answers (status=orphaned) — link it to the book/chapter that answers it with question_link. tags are f",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Question Add"
+      }
+    },
+    {
+      "name": "question_delete",
+      "description": "Permanently delete a question and all its answer edges (the referenced books/chapters are untouched). To remove only YOUR book's association, prefer question_unlink. Requires admin, or write access to",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Question Delete"
+      }
+    },
+    {
+      "name": "question_get",
+      "description": "Fetch one question by id OR slug, with its answer edges resolved (each answer names the book/chapter, its title, whether the book is publicly listed, and the reader path). Use this before question_set",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Question Get"
+      }
+    },
+    {
+      "name": "question_link",
+      "description": "Attach an answer: this question is answered by book_id, optionally narrowed to chapter_id. short_answer is an optional ≤320-char teaser (the full answer lives in the book); rank orders competing answe",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Question Link"
+      }
+    },
+    {
+      "name": "question_list",
+      "description": "Browse questions newest-first, paginated. Optional tag filter. Returns a light view (no answer edges — call question_get for those) plus total/offset/limit/has_more so a UI or agent can page through t",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Question List"
+      }
+    },
+    {
+      "name": "question_set",
+      "description": "Edit a question's text/tags/lang. The slug is permanent (permalinks must not rot) and is NOT changed. Editing also clears the 'stale' flag (a linked chapter changed) — do this after reviewing the answ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Question Set"
+      }
+    },
+    {
+      "name": "question_unlink",
+      "description": "Detach one answer edge (book_id, optionally chapter_id) from a question. Removing the last answer leaves the question orphaned (its text is kept for re-linking), not deleted. Requires WRITE access to ",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Question Unlink"
+      }
+    },
+    {
+      "name": "retail_record_acceptance",
+      "description": "ADMIN. Record that a book's OWNER has accepted the retail terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This e",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Retail Record Acceptance"
+      }
+    },
+    {
+      "name": "retail_status",
+      "description": "Whether an author is approved to sell books on a live retail shelf, and what the remaining gates are. Answers 'can this author put a book on sale?' without needing an admin. Omit owner_id for yourself",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Retail Status"
+      }
+    },
+    {
+      "name": "retail_terms",
+      "description": "The retail terms an AUTHOR accepts before a book goes on sale, plus the version string the acceptance is recorded against. Render these verbatim to the author — the record stores the version, never th",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Retail Terms"
+      }
+    },
+    {
+      "name": "rotate_share_links",
+      "description": "ADMIN. Rotate a book's PUBLIC links so previously shared ones stop working — the enforcement teeth behind an unpublish/takedown. The short code ALWAYS rotates (old /<code> 404s). rotate_uuid (default ",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Rotate Share Links"
+      }
+    },
+    {
+      "name": "source_syntax",
+      "description": "Return the grammar of the round-trippable block source used by block_get_source / chapter_get_source (read) and block_set_source (write): block prefixes (#, :bible, :quote, :footnote, :list, :math) an",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Source Syntax"
+      }
+    },
+    {
+      "name": "span_add_bref",
+      "description": "Append a Bible-reference link span. ref shape: '[1-3 ]Book Chap[:Verse[-Verse]]' — Book is 2-30 Unicode letters (English, Norwegian, German, Greek, etc.) and may include spaces, dots, hyphens. Example",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Bref"
+      }
+    },
+    {
+      "name": "span_add_emph",
+      "description": "Append italic-emphasis span. Use for emphasis, titles of works, or foreign terms not covered by hebrew/greek.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Emph"
+      }
+    },
+    {
+      "name": "span_add_greek",
+      "description": "Append Greek-script span (may contain accents + breathings). Rendered in GFS Didot. text MUST contain actual Greek letters (e.g. λόγος) — a Latin transliteration is rejected, not swallowed; put a tran",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Greek"
+      }
+    },
+    {
+      "name": "span_add_hebrew",
+      "description": "Append Hebrew-script span (may contain nikud). Rendered RTL with appropriate Hebrew font. text MUST contain actual Hebrew letters (e.g. דָּבָר) — a Latin transliteration is rejected, not swallowed; pu",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Hebrew"
+      }
+    },
+    {
+      "name": "span_add_latin",
+      "description": "Append LTR Latin-script span. Use inside an RTL-primary book (language he/ar/fa) to embed a Latin word/phrase — it renders LTR with the default body font mid-paragraph. In a Latin-primary book the mac",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Latin"
+      }
+    },
+    {
+      "name": "span_add_link",
+      "description": "Append an inline hyperlink span: a visible TITLE + a url. This is the ONLY way to put a URL in the text — a bare http(s):// or mailto: address typed into plain paragraph text is hard-rejected, so the ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Link"
+      }
+    },
+    {
+      "name": "span_add_strong",
+      "description": "Append bold-emphasis span. Use sparingly — Bringhurst convention reserves bold for key terms only.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Strong"
+      }
+    },
+    {
+      "name": "span_add_strongs",
+      "description": "Append a Strong's-concordance code span. code MUST match ^[HG][0-9]{1,5}$ — e.g. H1697, G3056.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Strongs"
+      }
+    },
+    {
+      "name": "span_add_text",
+      "description": "Append (or insert at at_idx) a plain-text span. Use this for normal prose.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Add Text"
+      }
+    },
+    {
+      "name": "span_delete",
+      "description": "Delete the span at idx within the target block. For list blocks pass item_idx (selects the row); for paragraph/footnote omit it.",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Delete"
+      }
+    },
+    {
+      "name": "span_move",
+      "description": "Reorder spans within a block. For list blocks pass item_idx (selects the row); for paragraph/footnote omit it.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Span Move"
+      }
+    },
+    {
+      "name": "stat_add_item",
+      "description": "Append a ring to an existing stat block. percent 0–100; label is the bold text; description is an optional muted line; color is an optional \"#RRGGBB\" for THIS ring (overrides the block colour). Return",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Stat Add Item"
+      }
+    },
+    {
+      "name": "store_readiness",
+      "description": "Everything standing between this book and a live retail shelf, in one call: the deterministic checklist, whether the author is approved to sell, and whether the author has accepted the retail terms fo",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Store Readiness"
+      }
+    },
+    {
+      "name": "sync_resolve",
+      "description": "Mark a chapter (or the whole book) reconciled across all language editions — i.e. record the CURRENT source of each edition's chapter as the new sync baseline, so it stops showing up in sync_status. C",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Sync Resolve"
+      }
+    },
+    {
+      "name": "sync_status",
+      "description": "Cross-edition drift report for a TRANSLATED book: which chapters were edited in one language edition but not yet reconciled in the others. Pass any edition's book_id ('idb…'); the whole translation fa",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Sync Status"
+      }
+    },
+    {
+      "name": "user_contact_get",
+      "description": "Get the CALLER's own contact info from pubcontacts (name, email, phone, address, bio, etc.). Derived from authenticated user_id — there is no parameter for specifying a different user. Auto-registers ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "User Contact Get"
+      }
+    },
+    {
+      "name": "user_contact_set_field",
+      "description": "Update ONE field on the CALLER's own contact (name, phone, address, website, bio, etc.). EMAIL CANNOT be set via this tool — it requires the pubcontacts confirmation flow (anti-hijack). The target Con",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "User Contact Set Field"
+      }
+    },
+    {
+      "name": "vet_decide",
+      "description": "ADMIN. Vet a pending publication request (see vet_list). decision=approve makes the book PUBLIC (sets listed=true, mints its share aliases, adds it to the public library + search) — this is irreversib",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Vet Decide"
+      }
+    },
+    {
+      "name": "vet_list",
+      "description": "ADMIN. List the books currently awaiting a publication-review decision — the queue fed by publish_request. It covers BOTH vet_state='pending' (queued, awaiting a decision) AND vet_state='stalled' (a P",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Vet List"
+      }
+    },
+    {
+      "name": "vet_status",
+      "description": "Check whether a book has been approved for public listing, and — if it was rejected — WHY. Returns {book_id, vet_state, vet_reason, listed} — plus reviewed_by while the book is queued (see below). vet",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Vet Status"
+      }
+    },
+    {
+      "name": "vet_submit_result",
+      "description": "Report the verdict of an agentic publication-vetting session for a book. GATED BY A DEPLOYMENT SWITCH: while agentic vetting is switched off this tool refuses EVERY call (reason='agentic_vetting_disab",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Vet Submit Result"
+      }
+    }
+  ],
+  "_meta": {
+    "pro.publifye/generated": "2026-09-13",
+    "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/junifye"
+  }
+}

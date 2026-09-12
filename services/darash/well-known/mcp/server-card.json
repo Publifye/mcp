@@ -1,0 +1,553 @@
+{
+  "name": "pro.publifye/darash",
+  "title": "Darash",
+  "description": "Bible research: 59 translations, Hebrew/Greek Strong's, morphology, cross-refs, 13 dictionaries",
+  "version": "1.0.3",
+  "websiteUrl": "https://darash.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://darash-api.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://darash.publifye.com/static/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://darash.publifye.com/static/icon-1024.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    },
+    {
+      "src": "https://darash.publifye.com/static/icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "cache_control",
+      "description": "Controls the disk scan cache generator at runtime via the Redis-backed control plane. Actions: action=enable (start/resume the generator — default state), action=freeze (pause without losing state — g",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Cache Control"
+      }
+    },
+    {
+      "name": "cache_status",
+      "description": "Returns the live state of the els_discover scan cache: file counts, fill percentage, per-book/per-kind breakdown, hit/miss metrics, generator state (enabled/frozen/disabled, ETA, scan throughput), and",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Cache Status"
+      }
+    },
+    {
+      "name": "co_occurrence",
+      "description": "Find verses where two Strong's numbers appear together. Useful for studying word pairs — e.g., kentron (G2759) + thanatos (G2288) to find 'sting of death'.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Co Occurrence"
+      }
+    },
+    {
+      "name": "compare_verses",
+      "description": "Compare the same verse across multiple Bible translations in one call. Include 'kjs' for Strong's tagged text with clickable word study links. For Norwegian work nb2026 is the standard (Masoretic vers",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Compare Verses"
+      }
+    },
+    {
+      "name": "corpus_status",
+      "description": "Reports whether the Torah corpus calibration is ready and, when ready, summarises its distribution (min/p25/median/p75/p90/p95/p99/max of real_tds across all Torah verses). Use this BEFORE relying on ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Corpus Status"
+      }
+    },
+    {
+      "name": "corpus_top_verses",
+      "description": "Discovery query against the Torah-wide thematic-density distribution. Returns Torah verses whose real_tds (the same metric reported by els_thematic_score) falls in a requested percentile band, optiona",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Corpus Top Verses"
+      }
+    },
+    {
+      "name": "etymology_tree",
+      "description": "Trace the etymology of a Strong's number through multiple levels. Walks 'see' references and derivation links recursively, building a tree of related words up to 3 levels deep (configurable). One call",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Etymology Tree"
+      }
+    },
+    {
+      "name": "export_bible",
+      "description": "Export an entire Bible translation as structured JSON. Returns a single-use download URL (expires in 10 minutes). Includes all available books (66 for full Bibles, 27 for NT-only like Vulgate). Output",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Export Bible"
+      }
+    },
+    {
+      "name": "export_bible_book",
+      "description": "Export a single book from a Bible translation as structured JSON. Returns a single-use download URL (expires in 5 minutes). Output includes verse numbers: {\"verse\": 1, \"text\": \"...\"}.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Export Bible Book"
+      }
+    },
+    {
+      "name": "get_bible",
+      "description": "Get detailed metadata and complete structure for a Bible translation (books, chapters per book, verses per chapter)[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Bible"
+      }
+    },
+    {
+      "name": "get_book",
+      "description": "Get entire book with all chapters and verses[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Book"
+      }
+    },
+    {
+      "name": "get_chapter",
+      "description": "Get entire chapter with all verses[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Chapter"
+      }
+    },
+    {
+      "name": "get_cross_refs",
+      "description": "Get cross-references for a verse (related passages). Shared lemmas are usually the connection — strongs_in_verse on both ends often lights it up.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Cross Refs"
+      }
+    },
+    {
+      "name": "get_health",
+      "description": "Get service info, health, statistics, product page URL, and documentation link. Call this first to understand what Darash is and what data is available.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Health"
+      }
+    },
+    {
+      "name": "get_morphology",
+      "description": "Get word-by-word morphological analysis (grammatical parsing) for a Bible verse. Returns each original Hebrew/Greek word with its Strong's number, morphology code, and human-readable description (e.g.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Morphology"
+      }
+    },
+    {
+      "name": "get_related_strongs",
+      "description": "Get all words related to a Strong's number — synonyms, antonyms, derived forms, and root words. Walks the cross-reference and derivation graph in one call.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Related Strongs"
+      }
+    },
+    {
+      "name": "get_strongs",
+      "description": "Get Strong's concordance entry with full scholarly lexicon data. Returns: def_short (one-line gloss), def_long (detailed definitions), usage (KJV translations), abbott_smith (full Abbott-Smith Greek l",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Strongs"
+      }
+    },
+    {
+      "name": "get_synonyms",
+      "description": "Get the semantic-neighbour set for a Strong's number, computed from the in-memory synonym graph built at startup. Three signals unioned: shared Hebrew/Greek root, definition-word overlap (≥3 shared co",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Synonyms"
+      }
+    },
+    {
+      "name": "get_verse",
+      "description": "Get verse(s) by reference. Supports single verse, verse range within chapter, or count-based cross-chapter fetching. Scripture interprets Scripture: follow a verse into get_cross_refs for its web of p",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Verse"
+      }
+    },
+    {
+      "name": "hapax_list",
+      "description": "List all hapax legomena — words that appear exactly once in the Bible. Gold for word studies and identifying rare vocabulary. Filter by Hebrew, Greek, or both.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Hapax List"
+      }
+    },
+    {
+      "name": "hebrew_pictographs",
+      "description": "Get the ancient pictographic meanings of Hebrew letters. Each of the 22 Hebrew consonants originated as a picture (proto-Sinaitic script, c. 1800 BC). Pass a Hebrew word to see what each letter origin",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Hebrew Pictographs"
+      }
+    },
+    {
+      "name": "list_bibles",
+      "description": "List all 59 Bible translations with metadata (abbreviation, name, language, year)[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Bibles"
+      }
+    },
+    {
+      "name": "list_books",
+      "description": "List all 66 books of the Bible with chapters and testament. LEAN by default (id, name, abbr, chapters, testament, genre — no alias arrays, ~3x smaller); pass detail=full to include each book's alias l",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Books"
+      }
+    },
+    {
+      "name": "list_dict_topics",
+      "description": "List all topics in a dictionary with byte-based pagination. Use to build client-side linking of dictionary terms. Fetches topics until max_bytes reached.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Dict Topics"
+      }
+    },
+    {
+      "name": "list_dicts",
+      "description": "List all 13 Bible dictionaries. Each carries its full provenance block (work, author, edition, source, method, licence, imported, identification, known gaps) — read it before quoting a definition as a",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Dicts"
+      }
+    },
+    {
+      "name": "lookup_dictionary",
+      "description": "Search 13 Bible dictionaries. Every response carries the dictionary's provenance block — read it before quoting a definition as a named scholar's work. WORKFLOW: For Greek words, start with get_strong",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Lookup Dictionary"
+      }
+    },
+    {
+      "name": "multi_dict_lookup",
+      "description": "Search ALL 13 Bible dictionaries in one call. Returns consolidated results from every dictionary that has an entry for the topic. Saves making 13 separate lookup_dictionary calls.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Multi Dict Lookup"
+      }
+    },
+    {
+      "name": "position_to_verse",
+      "description": "INVERSE OF els tool position-output: given a raw Torah LETTER OFFSET, return the verse containing it plus exact verse boundaries and surrounding context.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Position To Verse"
+      }
+    },
+    {
+      "name": "reverse_strongs",
+      "description": "Find Strong's numbers from an English word. Given a word like 'goad' or 'love', returns all Hebrew/Greek Strong's entries whose KJV usage contains that word. The reverse of get_strongs.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Reverse Strongs"
+      }
+    },
+    {
+      "name": "search",
+      "description": "Full-text search across Bible verses. Surface hits are the doorway, not the study: strongs_in_verse on any hit reaches the lemma underneath.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search"
+      }
+    },
+    {
+      "name": "search_strongs",
+      "description": "Find all KJV verses containing a specific Strong's number. Word study tool for Hebrew (H) and Greek (G) concordance research.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search Strongs"
+      }
+    },
+    {
+      "name": "search_strongs_definition",
+      "description": "Search Strong's concordance entries by keyword in definitions. Find Greek/Hebrew words by meaning (e.g., 'love', 'faith', 'glory'). Searches short definitions, detailed definitions, literal meanings, ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search Strongs Definition"
+      }
+    },
+    {
+      "name": "semantic_search",
+      "description": "Three-layer semantic engine: (1) Finds KJV verses containing the query words. (2) Builds a meaning cluster by mapping English→Strong's numbers via reverse lookup, then expanding one hop through etymol",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Semantic Search"
+      }
+    },
+    {
+      "name": "strongs_in_verse",
+      "description": "Extract all Strong's numbers from a verse. Returns every Hebrew/Greek word with its Strong's number, lemma, transliteration, and short definition. Quick way to see everything in a verse.[END]",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Strongs In Verse"
+      }
+    },
+    {
+      "name": "submit_feedback",
+      "description": "Submit a user testimonial about Darash. Ask the user for: 1) A short comment (1-2 sentences) about their experience, 2) Their name or alias (for display), 3) Their location/city and country, 4) A 1-5 ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Submit Feedback"
+      }
+    },
+    {
+      "name": "synonym_stats",
+      "description": "Health check for the synonym graph built at startup. Returns node counts, edge counts, mean/max degree per language, and build time. Use once to confirm the graph is populated; then use get_synonyms f",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Synonym Stats"
+      }
+    },
+    {
+      "name": "verse_study",
+      "description": "Complete verse analysis in one call. Returns: verse text, all Strong's numbers with definitions, word-by-word morphological parsing (tense, voice, mood, case, gender), and cross-references. Replaces 4",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Verse Study"
+      }
+    },
+    {
+      "name": "verse_to_position",
+      "description": "INVERSE of position_to_verse: given a Torah verse reference, return its exact letter-offset window in the 304,805-letter Koren consonant text.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Verse To Position"
+      }
+    },
+    {
+      "name": "view_delete",
+      "description": "Delete a stored figure immediately. Removes both the in-memory entry and the Redis persistence (if the entry was frozen). After delete, the /view/<id> URL returns 404. Idempotent: deleting an already-",
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Delete"
+      }
+    },
+    {
+      "name": "view_freeze",
+      "description": "Mark a stored figure as permanently preserved (never expires). The figure is persisted to Redis under darash:frozen:<view_id> and rehydrated automatically on service restart, so the /view/<view_id> UR",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Freeze"
+      }
+    },
+    {
+      "name": "view_info",
+      "description": "Return metadata about a single stored figure: id, Bible ref, title, size, created-at, expires-at (omitted when frozen), and frozen boolean. Read-only complement to view_list when you already know the ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "View Info"
+      }
+    },
+    {
+      "name": "view_list",
+      "description": "List all stored figures (SVG/HTML overlays) in the public view store. Returns each entry's id, optional Bible ref, optional title, size in bytes, created-at timestamp, expires-at (omitted when frozen)",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "View List"
+      }
+    },
+    {
+      "name": "view_set_ttl",
+      "description": "Set (extend or shrink) the TTL of a stored figure relative to NOW. Works on both TTL-bound and frozen entries (a frozen entry will be unfrozen as a side effect when its TTL is reset). Use this to exte",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Set TTL"
+      }
+    },
+    {
+      "name": "view_unfreeze",
+      "description": "Revert a frozen figure back to a normal TTL-bound entry. Removes the Redis persistence and re-applies the requested TTL relative to NOW. After unfreezing, the figure will expire at the new ExpiresAt; ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "View Unfreeze"
+      }
+    },
+    {
+      "name": "word_frequency",
+      "description": "Count how many times a Strong's number appears in the KJV tagged text. Returns total frequency, OT/NT breakdown, and whether it's a hapax legomenon (appears only once). Essential for word studies.[END",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Word Frequency"
+      }
+    },
+    {
+      "name": "word_study",
+      "description": "THE recommended tool for studying any Greek or Hebrew word. Complete word study in ONE call — returns everything: Strong's definition, Abbott-Smith/BDB scholarly lexicon, LSJ classical Greek, Thayer's",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Word Study"
+      }
+    }
+  ],
+  "_meta": {
+    "pro.publifye/generated": "2026-09-13",
+    "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/darash"
+  }
+}
