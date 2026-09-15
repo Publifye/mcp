@@ -15,6 +15,7 @@ services themselves are in scope:
 - `https://darash-api.publifye.com`
 - `https://junifye.publifye.com`
 - `https://lexifye.publifye.com`
+- `https://brreg.publifye.com`
 - `https://lighthouse.publifye.pro` (authorisation server)
 
 Please do not run automated scanning or load testing against these endpoints. If you need to test

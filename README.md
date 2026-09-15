@@ -1,25 +1,26 @@
-# Publifye MCP Servers — Scripture research, book authoring and dictionary building for AI clients
+# Publifye MCP Servers — Scripture research, book authoring, dictionary building and the Norwegian company register for AI clients
 
-**Publifye AS runs three hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
+**Publifye AS runs four hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
 Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
-Greek text of Scripture, write and typeset a book, or build a dictionary — over an authenticated
-HTTPS endpoint, with no local install.**
+Greek text of Scripture, write and typeset a book, build a dictionary, or look up Norwegian
+organisations in Enhetsregisteret — over an authenticated HTTPS endpoint, with no local install.**
 
 This repository is the canonical public reference for those servers: their endpoints, their complete
 tool schemas, and the provenance of every dataset behind them. It contains no server code — the
 services are hosted and commercial. What it contains is everything you need to evaluate them before
 you pay for anything.
 
-| | Darash | Junifye | Lexifye |
-|---|---|---|---|
-| What it does | Bible research | Book & study authoring | Dictionary building |
-| Endpoint | `https://darash-api.publifye.com/mcp` | `https://junifye.publifye.com/mcp` | `https://lexifye.publifye.com/mcp` |
-| Capability tools | 35 | 151 | 63 |
-| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) |
-| Reference | [services/darash](services/darash) | [services/junifye](services/junifye) | [services/lexifye](services/lexifye) |
+| | Darash | Junifye | Lexifye | Brreg |
+|---|---|---|---|---|
+| What it does | Bible research | Book & study authoring | Dictionary building | Norwegian company register |
+| Endpoint | `https://darash-api.publifye.com/mcp` | `https://junifye.publifye.com/mcp` | `https://lexifye.publifye.com/mcp` | `https://brreg.publifye.com/mcp` |
+| Capability tools | 35 | 151 | 63 | 6 |
+| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | `pro.publifye/brreg` (not yet published) |
+| Reference | [services/darash](services/darash) | [services/junifye](services/junifye) | [services/lexifye](services/lexifye) | [services/brreg](services/brreg) |
 
 Transport is Streamable HTTP. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic Client
-Registration, or a personal API key. See **[docs/connect.md](docs/connect.md)**.
+Registration, or a personal API key — except Brreg, which is OAuth only. See
+**[docs/connect.md](docs/connect.md)**.
 
 ---
 
@@ -72,6 +73,16 @@ recoverable.
 
 → **[services/lexifye](services/lexifye)** · [tool schemas](services/lexifye/tools.json)
 
+## Brreg — Norwegian organisations, by number or by name
+
+Lookup by organisasjonsnummer, filtered search, and organisational structure over
+Brønnøysundregistrene's Enhetsregisteret, with key financials from Regnskapsregisteret fetched only
+when a call asks for them. A name returns candidates, never a silent pick. Open data under NLOD 2.0,
+attributed in every successful result; not the authoritative register, no roles or persons, no bulk export.
+
+→ **[services/brreg](services/brreg)** · [tool schemas](services/brreg/tools.json) ·
+[PROVENANCE.md](services/brreg/PROVENANCE.md) · [DATA-HANDLING.md](services/brreg/DATA-HANDLING.md)
+
 ---
 
 ## Three ways in
@@ -86,7 +97,7 @@ whose data cannot leave the building it is usually the only workable shape. Lice
 
 **You are embedding Scripture data in your own product.** The complete input schemas, output shapes
 and tool annotations are in this repository, so you can design against them before you hold a
-credential. Every tool carries `readOnlyHint`, `destructiveHint`, `idempotentHint` and
+credential. Every Darash tool carries `readOnlyHint`, `destructiveHint`, `idempotentHint` and
 `openWorldHint`, derived from its access level rather than hand-written, so a client can plan
 parallel reads safely.
 

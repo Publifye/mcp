@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/brreg",
+  "title": "Brreg",
+  "description": "Norway's company register (Enhetsregisteret) for AI: lookup, search, name resolution, key financials",
+  "version": "1.0.0",
+  "websiteUrl": "https://brreg.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/brreg"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://brreg.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://brreg.publifye.com/static/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

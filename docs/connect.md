@@ -1,6 +1,6 @@
 # Connecting a client
 
-All three servers speak **Streamable HTTP** at a single endpoint and are authenticated. There is
+All four servers speak **Streamable HTTP** at a single endpoint and are authenticated. There is
 nothing to install.
 
 | Service | MCP endpoint |
@@ -8,6 +8,7 @@ nothing to install.
 | Darash | `https://darash-api.publifye.com/mcp` |
 | Junifye | `https://junifye.publifye.com/mcp` |
 | Lexifye | `https://lexifye.publifye.com/mcp` |
+| Brreg | `https://brreg.publifye.com/mcp` |
 
 ## Discovery
 
@@ -67,8 +68,8 @@ there is no key to paste.
 
 ## API key instead of OAuth
 
-Every endpoint also accepts a personal API key in an `X-API-Key` header, for scripts, CI and clients
-that do not implement OAuth. Keys are issued from your account on the product site.
+Darash, Junifye and Lexifye also accept a personal API key in an `X-API-Key` header, for scripts, CI
+and clients that do not implement OAuth. Keys are issued from your account on the product site.
 
 ```console
 $ curl -s -X POST https://darash-api.publifye.com/mcp \
@@ -77,11 +78,14 @@ $ curl -s -X POST https://darash-api.publifye.com/mcp \
     -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
+Brreg does not: customer access is through the OAuth sign-in only, and no API key is issued for it.
+
 ## Tool annotations
 
 Every tool on every server carries `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint` and
-`openWorldHint`. These are **derived from each tool's declared access level**, not written by hand,
-so a newly added tool cannot ship unannotated.
+`openWorldHint`. On Darash, Junifye and Lexifye these are **derived from each tool's declared access
+level**, not written by hand, so a newly added tool cannot ship unannotated. Brreg declares them per
+tool in its registry; all six of its customer tools are read-only.
 
 `openWorldHint: true` is set on exactly the tools that leave our estate — nothing else. Darash's
 corpus is closed and fixed: a lookup returns the same answer tomorrow, and the hints say so, which

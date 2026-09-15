@@ -1,0 +1,99 @@
+{
+  "name": "pro.publifye/brreg",
+  "title": "Brreg",
+  "description": "Norway's company register (Enhetsregisteret) for AI: lookup, search, name resolution, key financials",
+  "version": "1.0.0",
+  "websiteUrl": "https://brreg.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://brreg.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://brreg.publifye.com/static/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "code_list",
+      "description": "Filter-value discovery with counts from the current snapshot: list org_form, municipality, nace or sector; optional query matches a code prefix or description text. Use the codes as entity_search filt",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Code List"
+      }
+    },
+    {
+      "name": "entity_lookup",
+      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. Pass orgnr (one) or orgnrs (several, results in input order); spaces and dots are tolerated. Each item is {orgnr, found, record?, ",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Entity Lookup"
+      }
+    },
+    {
+      "name": "entity_resolve",
+      "description": "Name to organisation candidates, never an implicit pick. Compares with one documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa spellings also match), & → og, punctuation stripped, trailing le",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entity Resolve"
+      }
+    },
+    {
+      "name": "entity_search",
+      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website or a filter. Filters: kind, org_form (codes from code_list), municipalit",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entity Search"
+      }
+    },
+    {
+      "name": "entity_structure",
+      "description": "Organisational structure of one orgnr as a stream of items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subu",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entity Structure"
+      }
+    },
+    {
+      "name": "snapshot_status",
+      "description": "Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts (enheter, underenheter, enk, public_bodies, deleted), build an",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Snapshot Status"
+      }
+    }
+  ],
+  "_meta": {
+    "pro.publifye/generated": "2026-09-15",
+    "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/brreg"
+  }
+}
