@@ -13,7 +13,6 @@ you what it does not cover.**
 | Registry | `pro.publifye/lexar` — not yet published |
 | Product site | <https://lexar.publifye.com> |
 | Research tools | **7** ([full schemas](tools.json)) |
-| Service version | 0.1.20 |
 
 ## Connect
 
