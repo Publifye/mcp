@@ -1,0 +1,22 @@
+{
+  "name": "pro.publifye/currency",
+  "title": "Currency Exchange",
+  "description": "Norges Bank daily exchange rates for AI: 38 currencies against NOK with history back to ~1980, conversion, and World Bank buying-power multipliers",
+  "version": "1.0.2",
+  "websiteUrl": "https://currency.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://currency.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://currency.publifye.com/static/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

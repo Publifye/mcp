@@ -1,10 +1,10 @@
-# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data and Norwegian law, for AI clients
+# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law and exchange rates, for AI clients
 
-**Publifye AS runs five hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
+**Publifye AS runs six hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
 Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
 Greek text of Scripture, write and typeset a book, build a dictionary, look up Norwegian
-organisations in Enhetsregisteret, or read the current text of Norwegian law — over an
-authenticated HTTPS endpoint, with no local install.**
+organisations in Enhetsregisteret, read the current text of Norwegian law, or convert a currency at
+a published central-bank rate — over an authenticated HTTPS endpoint, with no local install.**
 
 ## Quickstart — connect in under a minute
 
@@ -19,7 +19,8 @@ and nothing to install.
     "junifye": { "type": "http", "url": "https://junifye.publifye.com/mcp" },
     "lexifye": { "type": "http", "url": "https://lexifye.publifye.com/mcp" },
     "brreg":   { "type": "http", "url": "https://brreg.publifye.com/mcp" },
-    "lexar":   { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" }
+    "lexar":   { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" },
+    "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" }
   }
 }
 ```
@@ -38,13 +39,14 @@ tool schemas, and the provenance of every dataset behind them. It contains no se
 services are hosted and commercial. What it contains is everything you need to evaluate them before
 you pay for anything.
 
-| | Darash | Junifye | Lexifye | Brreg | Lexar |
+| Server | What it does | Endpoint | Tools | Registry | Reference |
 |---|---|---|---|---|---|
-| What it does | Bible research | Book & study authoring | Dictionary building | Norwegian company register | Norwegian law |
-| Endpoint | `https://darash-api.publifye.com/mcp` | `https://junifye.publifye.com/mcp` | `https://lexifye.publifye.com/mcp` | `https://brreg.publifye.com/mcp` | `https://lexar-api.publifye.pro/mcp` |
-| Capability tools | 35 | 151 | 63 | 6 | 7 |
-| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | `pro.publifye/brreg` (not yet published) | `pro.publifye/lexar` (not yet published) |
-| Reference | [services/darash](services/darash) | [services/junifye](services/junifye) | [services/lexifye](services/lexifye) | [services/brreg](services/brreg) | [services/lexar](services/lexar) |
+| **Darash** | Bible research | `https://darash-api.publifye.com/mcp` | 35 | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/darash](services/darash) |
+| **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 151 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
+| **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 63 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
+| **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | `pro.publifye/brreg` (not yet published) | [services/brreg](services/brreg) |
+| **Lexar** | Norwegian law | `https://lexar-api.publifye.pro/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
+| **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration, or a personal API key — except Brreg, which is OAuth only. See
@@ -128,6 +130,25 @@ there is no law.** Open data under NLOD 2.0. Source text and navigation, not leg
 
 ---
 
+## Currency — a published rate, or nothing
+
+Norges Bank's daily reference rates: 38 currencies against NOK, back to about 1980, plus conversion
+and a daily series for charting. The discipline is in what it refuses to do — it never computes,
+estimates or interpolates a rate. Norges Bank publishes once per business day, so weekends and
+holidays have no rate, and those days come back **as published** rather than carried forward. A
+model that wants a number for a Sunday has to decide that for itself, which is where the decision
+belongs.
+
+Two further tools price one USD list price into many markets from World Bank GNI per capita (PPP),
+and they return two numbers on purpose: `factor`, the recommended multiplier, never above 1.0; and
+`raw_factor`, the uncapped measurement, which exceeds 1.0 for countries richer than the United
+States. Norway measures about 1.10 — so applying the raw number to a Norwegian price charges above
+list, which is exactly what the cap exists to prevent.
+
+→ **[services/currency](services/currency)** · [tool schemas](services/currency/tools.json)
+
+---
+
 ## Three ways in
 
 **You study the biblical languages.** Darash is the one that matters. Start with `word_study`,
@@ -162,6 +183,7 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Lexifye | [lexifye.publifye.com](https://lexifye.publifye.com) · [docs](https://lexifye.publifye.com/docs) | [publifye.com/lexifye](https://publifye.com/lexifye) |
 | Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
 | Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
+| Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
 
 The left column sells the product and gates access. The right column is one
 page on the company site saying what the server is for and when one of the
