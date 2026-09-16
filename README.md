@@ -1,25 +1,53 @@
-# Publifye MCP Servers — Scripture research, book authoring, dictionary building and the Norwegian company register for AI clients
+# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data and Norwegian law, for AI clients
 
-**Publifye AS runs four hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
+**Publifye AS runs five hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
 Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
-Greek text of Scripture, write and typeset a book, build a dictionary, or look up Norwegian
-organisations in Enhetsregisteret — over an authenticated HTTPS endpoint, with no local install.**
+Greek text of Scripture, write and typeset a book, build a dictionary, look up Norwegian
+organisations in Enhetsregisteret, or read the current text of Norwegian law — over an
+authenticated HTTPS endpoint, with no local install.**
+
+## Quickstart — connect in under a minute
+
+Paste this into your MCP client's config and restart it. Sign-in happens in the browser on first
+use: OAuth 2.1 with PKCE and open Dynamic Client Registration, so there is no key to create first
+and nothing to install.
+
+```jsonc
+{
+  "mcpServers": {
+    "darash":  { "type": "http", "url": "https://darash-api.publifye.com/mcp" },
+    "junifye": { "type": "http", "url": "https://junifye.publifye.com/mcp" },
+    "lexifye": { "type": "http", "url": "https://lexifye.publifye.com/mcp" },
+    "brreg":   { "type": "http", "url": "https://brreg.publifye.com/mcp" },
+    "lexar":   { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" }
+  }
+}
+```
+
+Take only the lines you want — each server stands alone.
+
+- **Claude Desktop** — `claude_desktop_config.json`, or add each URL under Settings → Connectors.
+- **Claude Code** — `claude mcp add --transport http darash https://darash-api.publifye.com/mcp`
+- **Cursor / VS Code** — the same `mcpServers` block in the client's MCP settings file.
+
+Prefer a key to a browser flow? Every endpoint also takes `X-API-Key`. Both routes, and the full
+OAuth discovery chain, are in **[docs/connect.md](docs/connect.md)**.
 
 This repository is the canonical public reference for those servers: their endpoints, their complete
 tool schemas, and the provenance of every dataset behind them. It contains no server code — the
 services are hosted and commercial. What it contains is everything you need to evaluate them before
 you pay for anything.
 
-| | Darash | Junifye | Lexifye | Brreg |
-|---|---|---|---|---|
-| What it does | Bible research | Book & study authoring | Dictionary building | Norwegian company register |
-| Endpoint | `https://darash-api.publifye.com/mcp` | `https://junifye.publifye.com/mcp` | `https://lexifye.publifye.com/mcp` | `https://brreg.publifye.com/mcp` |
-| Capability tools | 35 | 151 | 63 | 6 |
-| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | `pro.publifye/brreg` (not yet published) |
-| Reference | [services/darash](services/darash) | [services/junifye](services/junifye) | [services/lexifye](services/lexifye) | [services/brreg](services/brreg) |
+| | Darash | Junifye | Lexifye | Brreg | Lexar |
+|---|---|---|---|---|---|
+| What it does | Bible research | Book & study authoring | Dictionary building | Norwegian company register | Norwegian law |
+| Endpoint | `https://darash-api.publifye.com/mcp` | `https://junifye.publifye.com/mcp` | `https://lexifye.publifye.com/mcp` | `https://brreg.publifye.com/mcp` | `https://lexar-api.publifye.pro/mcp` |
+| Capability tools | 35 | 151 | 63 | 6 | 7 |
+| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | `pro.publifye/brreg` (not yet published) | `pro.publifye/lexar` (not yet published) |
+| Reference | [services/darash](services/darash) | [services/junifye](services/junifye) | [services/lexifye](services/lexifye) | [services/brreg](services/brreg) | [services/lexar](services/lexar) |
 
-Transport is Streamable HTTP. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic Client
-Registration, or a personal API key — except Brreg, which is OAuth only. See
+Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
+Client Registration, or a personal API key — except Brreg, which is OAuth only. See
 **[docs/connect.md](docs/connect.md)**.
 
 ---
@@ -83,6 +111,21 @@ attributed in every successful result; not the authoritative register, no roles 
 → **[services/brreg](services/brreg)** · [tool schemas](services/brreg/tools.json) ·
 [PROVENANCE.md](services/brreg/PROVENANCE.md) · [DATA-HANDLING.md](services/brreg/DATA-HANDLING.md)
 
+## Lexar — the current text of Norwegian law
+
+6,859 documents from Lovdata: 759 consolidated statutes, 5,112 central regulations and the current
+year's Norsk Lovtidend announcements, with the citation and source URL attached to every passage.
+Seven tools, and the number is fixed by specification rather than by what got built — richer
+capability goes into typed results, not more tools. `resolve` returns candidates and never picks a
+statute silently.
+
+It is equally explicit about what it does not hold: no court decisions, no preparatory works, no
+local regulations, no historical consolidated versions. **A search returning nothing does not mean
+there is no law.** Open data under NLOD 2.0. Source text and navigation, not legal advice.
+
+→ **[services/lexar](services/lexar)** · [tool schemas](services/lexar/tools.json) ·
+[PROVENANCE.md](services/lexar/PROVENANCE.md) — including the measured cross-reference miss rate
+
 ---
 
 ## Three ways in
@@ -108,6 +151,19 @@ commercial product; publishing it is a business decision and it has been decided
 published here is the *description* — schemas, provenance, endpoints — which is the part you need
 to evaluate the service and the part we are willing to be held to.
 
+## The products these servers belong to
+
+Each server has a site of its own — what it is for, what it costs, and how to get access:
+
+| | |
+|---|---|
+| [darash.publifye.com](https://darash.publifye.com) | Darash — Scripture research. [Documentation](https://darash.publifye.com/docs) |
+| [junifye.publifye.com](https://junifye.publifye.com) | Junifye — write and publish a book with your AI |
+| [lexifye.publifye.com](https://lexifye.publifye.com) | Lexifye — build and publish a dictionary. [Documentation](https://lexifye.publifye.com/docs) |
+| [brreg.publifye.com](https://brreg.publifye.com) | Brreg — the Norwegian company register |
+| [lexar.publifye.com](https://lexar.publifye.com) | Lexar — Norwegian law |
+| [blog.publifye.com](https://blog.publifye.com) | How this work is done, in English, Norwegian, Spanish, Chinese and Korean |
+
 ## Publifye AS
 
 Norwegian publishing house, Oslo. Organisation number **826774622**
@@ -116,8 +172,9 @@ Norwegian publishing house, Oslo. Organisation number **826774622**
 Company site **[publifye.com](https://publifye.com)** ·
 [Privacy](https://publifye.com/privacy.html) · [Terms](https://publifye.com/terms.html)
 
-Licence for this repository: [CC BY 4.0](LICENSE). The datasets it describes carry their own
-licences, recorded per source in each service's `PROVENANCE.md`.
+Licence for this repository: **[CC BY 4.0](LICENSE)**. It covers the documentation and metadata
+here — **not** the datasets the servers serve, which are separate works under their own terms,
+recorded per source in each service's `PROVENANCE.md`. See [NOTICE](NOTICE).
 
 ## Written about this work
 

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/lexar",
+  "title": "Lexar",
+  "description": "Norwegian law for AI: current statutes and central regulations from Lovdata, with source citations",
+  "version": "1.0.0",
+  "websiteUrl": "https://lexar.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/lexar"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://lexar-api.publifye.pro/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://lexar.publifye.com/static/lexar-mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

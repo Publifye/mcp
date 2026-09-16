@@ -1,0 +1,24 @@
+Copyright (c) 2026 Publifye AS
+Licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
+Full text: LICENSE — https://creativecommons.org/licenses/by/4.0/
+
+SCOPE — read this before reusing anything here.
+
+This licence covers THIS REPOSITORY ONLY: the documentation, the prose and the
+metadata describing Publifye's MCP servers.
+
+It does NOT cover the datasets those servers serve. Each is a separate work
+under its own terms, recorded per source in the relevant PROVENANCE.md:
+
+  services/darash/PROVENANCE.md   13 dictionaries and two Strong's lexicons —
+                                  public-domain 19th-century works, STEPBible
+                                  data under CC BY 4.0, and one source whose
+                                  rights position is unresolved and is
+                                  therefore not described.
+  services/brreg/PROVENANCE.md    Enhetsregisteret and Regnskapsregisteret,
+                                  Brønnøysundregistrene, under NLOD 2.0.
+  services/lexar/PROVENANCE.md    Lovdata, under NLOD 2.0.
+
+Describing a dataset here is not a grant of any right to it. Attribution
+requirements for the data sit with those sources, not with this repository, and
+the relevant wording is quoted in each PROVENANCE.md.

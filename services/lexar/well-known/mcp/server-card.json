@@ -1,0 +1,110 @@
+{
+  "name": "pro.publifye/lexar",
+  "title": "Lexar",
+  "description": "Norwegian law for AI: current statutes and central regulations from Lovdata, with source citations",
+  "version": "1.0.0",
+  "websiteUrl": "https://lexar.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://lexar-api.publifye.pro/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://lexar.publifye.com/static/lexar-mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "tools": [
+    {
+      "name": "connections",
+      "description": "Read outgoing source-provided cross-references, including unresolved and ambiguous targets. A source link does not by itself establish a legal interpretation. Example: connections id=NL/lov/2005-06-17",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Connections"
+      }
+    },
+    {
+      "name": "outline",
+      "description": "List the complete source document tree, including appendices, tables and documents without numbered provisions. Each node carries its source citation and Lovdata anchor; anchors are positional HTML id",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Outline"
+      }
+    },
+    {
+      "name": "read",
+      "description": "Read exact legal source wording, published metadata or retained evidence. view=text (default) returns exact spans of the node's decoded text with start_byte/end_byte (half-open UTF-8 offsets into that",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Read"
+      }
+    },
+    {
+      "name": "resolve",
+      "description": "Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml) bokmål/nynorsk law-name form (arbeidsmiljølova) or printed chapter citation (NL/lov/2005-06-17-62/kap10; Lo",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Resolve"
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search legal source provisions and blocks with Norwegian lexical ranking, or kind=keyword for accepted labels with evidence handles (exact, whole-word, then 4+ letter parts: ferie finds feriepenger; t",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search"
+      }
+    },
+    {
+      "name": "status",
+      "description": "Read the published snapshot: per-capability readiness with concrete causes (body search, resolution, keyword search, published metadata, revisions, annotations, publication), corpus composition, langu",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Status"
+      }
+    },
+    {
+      "name": "terms",
+      "description": "Browse source wordforms by prefix (without a prefix, forms containing numerals are skipped; any prefix lists them); min_blocks hides forms indexed in fewer units (such as one-off codes), and stopword=",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Terms"
+      }
+    }
+  ],
+  "_meta": {
+    "pro.publifye/generated": "2026-09-16",
+    "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/lexar"
+  }
+}

@@ -2,6 +2,19 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-16
+
+- **Lexar added** — the current text of Norwegian law from Lovdata: 6,859 documents, 7 research
+  tools, full schemas, and a provenance record that publishes the cross-reference miss rate rather
+  than only the resolved count.
+- **Quickstart** at the top of the README — a copy-pasteable `mcpServers` block for all five
+  servers, plus the Claude Code one-liner. Everything here served evaluation; nothing served first
+  contact.
+- **Live product sites linked** — darash, junifye, lexifye, brreg, lexar and the blog.
+- **LICENSE is now the canonical CC BY 4.0 text**, so the licence is detected rather than reported
+  as NOASSERTION. The scope caveat it used to carry moved to NOTICE, where it is not competing with
+  licence detection: the repository is CC BY 4.0, the datasets are not.
+
 ## 2026-09-15
 
 - Brreg added: lookup, search and name resolution over Brønnøysundregistrene's Enhetsregisteret,
