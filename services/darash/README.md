@@ -12,6 +12,7 @@ MCP server over HTTPS — there is nothing to install.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · or `X-API-Key` |
 | Registry | `pro.publifye/darash` |
 | Product site | <https://darash.publifye.com> |
+| What it solves | <https://publifye.com/darash> |
 | Capability tools | **35** ([full schemas](tools.json)) |
 
 ## Connect

@@ -12,6 +12,7 @@ you what it does not cover.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | `pro.publifye/lexar` — not yet published |
 | Product site | <https://lexar.publifye.com> |
+| What it solves | <https://publifye.com/lexar> |
 | Research tools | **7** ([full schemas](tools.json)) |
 
 ## Connect

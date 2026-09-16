@@ -11,6 +11,7 @@ book. It runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · or `X-API-Key` |
 | Registry | `pro.publifye/lexifye` |
 | Product site | <https://lexifye.publifye.com> |
+| What it solves | <https://publifye.com/lexifye> |
 | Capability tools | **63** ([full schemas](tools.json)) |
 
 ## Connect

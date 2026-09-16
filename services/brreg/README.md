@@ -12,6 +12,7 @@ Regnskapsregisteret when you ask for them. It runs as a hosted MCP server over H
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · no API keys |
 | Registry | `pro.publifye/brreg` ([server.json](server.json); not yet published to the registry) |
 | Product site | <https://brreg.publifye.com> |
+| What it solves | <https://publifye.com/brreg> |
 | Capability tools | **6** ([full schemas](tools.json)) |
 
 ## Connect

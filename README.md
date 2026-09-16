@@ -155,14 +155,20 @@ to evaluate the service and the part we are willing to be held to.
 
 Each server has a site of its own — what it is for, what it costs, and how to get access:
 
-| | |
-|---|---|
-| [darash.publifye.com](https://darash.publifye.com) | Darash — Scripture research. [Documentation](https://darash.publifye.com/docs) |
-| [junifye.publifye.com](https://junifye.publifye.com) | Junifye — write and publish a book with your AI |
-| [lexifye.publifye.com](https://lexifye.publifye.com) | Lexifye — build and publish a dictionary. [Documentation](https://lexifye.publifye.com/docs) |
-| [brreg.publifye.com](https://brreg.publifye.com) | Brreg — the Norwegian company register |
-| [lexar.publifye.com](https://lexar.publifye.com) | Lexar — Norwegian law |
-| [blog.publifye.com](https://blog.publifye.com) | How this work is done, in English, Norwegian, Spanish, Chinese and Korean |
+| Server | The product site | What problem it solves |
+|---|---|---|
+| Darash | [darash.publifye.com](https://darash.publifye.com) · [docs](https://darash.publifye.com/docs) | [publifye.com/darash](https://publifye.com/darash) |
+| Junifye | [junifye.publifye.com](https://junifye.publifye.com) | [publifye.com/junifye](https://publifye.com/junifye) |
+| Lexifye | [lexifye.publifye.com](https://lexifye.publifye.com) · [docs](https://lexifye.publifye.com/docs) | [publifye.com/lexifye](https://publifye.com/lexifye) |
+| Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
+| Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
+
+The left column sells the product and gates access. The right column is one
+page on the company site saying what the server is for and when one of the
+others is the better answer — written for someone deciding between them.
+
+How the work is done, in English, Norwegian, Spanish, Chinese and Korean:
+**[blog.publifye.com](https://blog.publifye.com)**.
 
 ## Publifye AS
 

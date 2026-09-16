@@ -11,6 +11,7 @@ reader and more, from one source. It runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · or `X-API-Key` |
 | Registry | `pro.publifye/junifye` |
 | Product site | <https://junifye.publifye.com> |
+| What it solves | <https://publifye.com/junifye> |
 | Capability tools | **151** ([full schemas](tools.json)) |
 
 ## What the tools do
