@@ -79,7 +79,8 @@ Regnskapsregisteret.
 - **Not the authoritative register.** Brreg is operated by Publifye AS and is not affiliated with
   Brønnøysundregistrene. For anything legally binding, use the official record at
   <https://virksomhet.brreg.no>.
-- **No bulk export.** A search pages through at most 10,000 results.
+- **No bulk export.** A search answers a page at a time, followed by cursor; there is no download of
+  the register.
 - **Sole proprietorships are held back.** E-mail and phone numbers, former names and activity text
   are not shown, and a search without a name never lists them.
 - **No full annual accounts**, notes or auditor's reports — key figures only.
@@ -105,7 +106,7 @@ and what leaves the service on your behalf.
 | Daily calls | a per-account allowance set by the plan, reset at midnight UTC |
 | Key financials | up to 30 fresh fetches from Regnskapsregisteret per minute per account; beyond that, figures already fetched or a note saying when to retry |
 | Response size | about 24 KiB by default, adjustable from 4 to 48 KiB; longer results continue with a cursor valid for 15 minutes |
-| Search depth | 10,000 results per query; narrow with filters to reach the rest |
+| Search depth | none — a cursor pages to the end of the result set; `offset` skips at most 10,000 on the first call |
 
 ## Plans
 

@@ -2,6 +2,19 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-18
+
+- **Brreg `entity_search` takes `match`** — 1 to 4 `{field, pattern}` regex terms over activity,
+  address, city, email, name, phone or website, AND'ed with each other and with every other filter.
+  RE2, at most 200 bytes, matched case-insensitively against the normalised field value and anchored
+  by the caller. Personal-data records — sole proprietorships and their establishments — carry no
+  field values, so a `match` term never returns one.
+- **Search items carry `email`** — the address registered in Enhetsregisteret, absent for
+  personal-data records.
+- **The 10,000-result paging depth is gone** — a cursor pages to the end of the result set on every
+  plane, and `depth_limit_reached` is no longer part of the envelope. `offset` is unchanged: a
+  first-call convenience, at most 10,000.
+
 ## 2026-09-16
 
 - **Lexar added** — the current text of Norwegian law from Lovdata: 6,859 documents, 7 research

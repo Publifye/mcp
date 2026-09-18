@@ -63,7 +63,7 @@ name never returns them.
 **Accounts beyond the key figures.** Full annual accounts, notes and auditor's reports are not
 included.
 
-**Bulk copies.** A search pages through at most 10,000 results, and there is no export.
+**Bulk copies.** A search answers a page at a time, followed by cursor, and there is no export.
 
 ## Removals
 
