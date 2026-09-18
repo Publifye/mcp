@@ -4,6 +4,23 @@ Dates are the date the change was made, not the date it was written up.
 
 ## 2026-09-18
 
+- **Brreg search near a point** — `entity_search` takes `lat`, `lon` and `radius_km` (all three or
+  none) and lists the organisations whose registered address falls inside the circle, nearest first,
+  each with `distance_km` and the address point it was measured from. At most 10 km on its own, or
+  50 km together with another filter. A name query keeps relevance order and uses the radius as a
+  filter.
+- **Brreg lookups can carry the address point, the parcel and the buildings** — `location`, `unit`
+  and `buildings`, from Kartverket's Matrikkelen, for the *registered* address. Not a statement
+  about property owned or occupied, and never for a sole proprietorship.
+- **A second licence, recorded** — Kartverket's data is CC BY 4.0, so a result carrying a coordinate
+  or a distance carries the Kartverket attribution beside the NLOD one, and a result carrying a
+  parcel or buildings carries the utleveringsforskriften § 5 (10) private-register notice. The
+  § 5 (3) ban on using cadastre data for marketing is recorded in
+  [DATA-HANDLING.md](services/brreg/DATA-HANDLING.md), because it binds the caller too.
+- **Brreg filed annual accounts** — `fields` takes `filings` for the years an organisation has
+  actually filed, which also answers for banks and insurers whose key figures Regnskapsregisteret
+  does not serve. `document_year` returns that year's filing as a private, expiring link: a scanned
+  image, not structured figures, and never inlined in a response.
 - **Brreg `entity_search` takes `match`** — 1 to 4 `{field, pattern}` regex terms over activity,
   address, city, email, name, phone or website, AND'ed with each other and with every other filter.
   RE2, at most 200 bytes, matched case-insensitively against the normalised field value and anchored

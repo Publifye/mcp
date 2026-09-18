@@ -12,9 +12,9 @@ From the service's own documentation, <https://brreg.publifye.com/en/docs#privac
 > What we log: for every tool call on a customer account, the account, the client IP address, the
 > tool and the outcome — never the arguments you send. The audit trail is kept for 365 days.
 
-The organisation numbers you look up and the names and search text you send are arguments, so they
-are not in that trail. Calls are also counted per account, which is what the daily allowance is
-measured against.
+The organisation numbers you look up, the names and search text you send, the regular expressions in
+`match` and the coordinates of a radius search are all arguments, so they are not in that trail.
+Calls are also counted per account, which is what the daily allowance is measured against.
 
 ## What is kept for a few minutes
 
@@ -29,19 +29,45 @@ Only an organisation number, and only when you ask for something that needs Brø
 | When | What is sent | To |
 |---|---|---|
 | `entity_lookup` with `fields` including `financials` | the organisasjonsnummer | Regnskapsregisteret's open API at data.brreg.no |
+| `entity_lookup` with `fields` including `filings` | the organisasjonsnummer | Regnskapsregisteret's open API at data.brreg.no |
+| `entity_lookup` with `document_year` | the organisasjonsnummer and the year | Regnskapsregisteret's open API at data.brreg.no |
 | `entity_lookup` with `live=true` | the organisasjonsnummer | Enhetsregisteret's open API at data.brreg.no |
+
+Nothing else reaches the network. Search, name resolution, structure, codes, map points, parcels and
+buildings are all answered from the weekly edition held on disk, so a radius search sends nothing
+anywhere — least of all to a map provider.
 
 Key figures fetched this way are stored against the organisation number and served to later calls;
 the store holds the figures, not who asked for them. No language model is involved in answering a
 call, so nothing is sent to an AI provider.
 
+## The link a filed document comes back on
+
+A filed annual account is a scanned document of tens of megabytes, far past any response budget, so
+it is never inlined. When you ask for one, the service fetches it and hands back a **private,
+expiring link** — unguessable, valid for 15 minutes by default, revocable, and gone on restart. The
+answer always states how long it has left, together with the size and a SHA-256 of the bytes. The
+link is a capability: anyone holding it can read that document until it expires, so treat it as you
+would a one-time download URL. Nothing is kept permanently, which is what makes a deletion request
+on a sole proprietorship's filing answerable at all.
+
 ## Personal data in the register
 
 Enhetsregisteret is a register of organisations, but a sole proprietorship (ENK) is tied to one
 person. Brreg therefore holds back an ENK's e-mail and phone numbers, former names and activity
-text, and a search without a name never lists sole proprietorships or their sub-units. There are
-no roles or persons in the service, no address-only lookups of individuals and no bulk export. What
-is withheld, and how removals are applied, is in [PROVENANCE.md](PROVENANCE.md).
+text; gives it no map point, no parcel and no buildings; never returns one from a search without a
+name, from a radius search or from a `match` term; and never hands a customer its filed document.
+There are no roles or persons in the service, no address-only lookups of individuals and no bulk
+export. What is withheld, and how removals are applied, is in [PROVENANCE.md](PROVENANCE.md).
+
+## What you may do with the parcel and building data
+
+Kartverket's Matrikkelen is open data under CC BY 4.0, but Norwegian law adds one restriction that
+follows the data to whoever uses it:
+[utleveringsforskriften](https://lovdata.no/forskrift/2013-12-18-1599) § 5 third paragraph forbids
+using information from grunnboken and matrikkelen for advertising or marketing purposes without the
+consent of the party it concerns. Answers carrying a parcel or buildings also carry the § 5 tenth
+paragraph notice that the information comes from a private register.
 
 ## What governs what
 

@@ -50,7 +50,7 @@
       "name": "code_list",
       "title": "Code List",
       "kind": "capability",
-      "description": "Filter-value discovery with counts from the current snapshot: list org_form, municipality, nace or sector; optional query matches a code prefix or description text. Use the codes as entity_search filters. Example: code_list list=org_form query=aksje. Next: entity_search org_form=[<code>]. [END]",
+      "description": "Filter values with counts from the current snapshot: list org_form, municipality, nace or sector; query matches a code prefix or description. Use them as entity_search filters. Example: code_list list=org_form query=aksje. Next: entity_search org_form=[<code>]. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -62,16 +62,16 @@
         "additionalProperties": false,
         "properties": {
           "compact": {
-            "description": "One-line text summary instead of duplicated JSON.",
+            "description": "One-line text summary, not duplicated JSON.",
             "type": "boolean"
           },
           "cursor": {
-            "description": "Next-page token; send it alone (max_bytes, compact allowed).",
+            "description": "Next-page token; send it alone (+max_bytes, compact).",
             "maxLength": 512,
             "type": "string"
           },
           "fields": {
-            "description": "Top-level item fields to return (orgnr kept).",
+            "description": "Item fields to return (orgnr kept).",
             "items": {
               "maxLength": 40,
               "type": "string"
@@ -98,7 +98,7 @@
             "type": "string"
           },
           "max_bytes": {
-            "description": "Response byte budget (default 24576; above 49152 services with compact only).",
+            "description": "Response byte budget (default 24576).",
             "maximum": 49152,
             "minimum": 4096,
             "type": "integer"
@@ -124,7 +124,7 @@
       "name": "entity_lookup",
       "title": "Entity Lookup",
       "kind": "capability",
-      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. Pass orgnr (one) or orgnrs (several, results in input order); spaces and dots are tolerated. Each item is {orgnr, found, record?, reason?} with reason invalid_checksum, not_in_snapshot or removed. Key financials (Regnskapsregisteret, latest filed accounts) are fetched only when fields includes \"financials\", then stored: a single orgnr waits up to 3 s; a batch answers stored figures, fetching or queue_full; over the caller's fetch budget rate_limited with financials_retry_after_seconds; repeat later. Without that request no fetch is made: stored figures are shown, else status not_requested. include_subunits adds the first 20 underenheter. live=true (single orgnr) also checks data.brreg.no: live_status current, changed (changed_fields), deleted, removed, not_found or unavailable; rate limited (rate_limited, retry_after). Sole proprietorships (ENK) never show former names or activity text to customers, and their financials only in a single orgnr lookup. A full record is about 6 KiB; with a small max_bytes use fields or compact=true. Use entity_resolve when you only have a name, entity_search for filtered lists. fields: any top-level record key (name, org_form, nace, business_address, parent_orgnr, financials, ...). Example: entity_lookup orgnr=\"983 887 457\". Next: entity_structure orgnr=<orgnr> for parents, agencies and subunits. [END]",
+      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. orgnr (one) or orgnrs (several, in input order); spaces and dots tolerated. Items are {orgnr, found, record?, reason?}, reason invalid_checksum, not_in_snapshot or removed. Key financials (Regnskapsregisteret, latest filed accounts) are fetched only when fields includes \"financials\", then stored: one orgnr waits up to 3 s, a batch answers stored/fetching/queue_full, over budget rate_limited with financials_retry_after_seconds — repeat later. Without it nothing is fetched: stored figures, else not_requested. fields \"filings\" adds the years actually filed, and answers for banks and insurers whose financials are not_supported; document_year returns that year's filed document as an expiring private link (a scan, not figures). include_subunits adds the first 20 underenheter. live=true (one orgnr) also checks data.brreg.no: live_status current, changed (changed_fields), deleted, removed, not_found or unavailable; rate limited (rate_limited, retry_after). ENK never show former names or activity text to customers, and their financials only in a one-orgnr lookup. A record is about 6 KiB; with a small max_bytes use fields or compact=true. location, unit, buildings: point, parcel and buildings at the registered address (Kartverket); location null with a reason, others omitted. fields: any top-level record key (name, org_form, nace, business_address, ...). Example: entity_lookup orgnr=\"983 887 457\". Next: entity_structure orgnr=<orgnr>. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -136,16 +136,22 @@
         "additionalProperties": false,
         "properties": {
           "compact": {
-            "description": "One-line text summary instead of duplicated JSON.",
+            "description": "One-line text summary, not duplicated JSON.",
             "type": "boolean"
           },
           "cursor": {
-            "description": "Next-page token; send it alone (max_bytes, compact allowed).",
+            "description": "Next-page token; send it alone (+max_bytes, compact).",
             "maxLength": 512,
             "type": "string"
           },
+          "document_year": {
+            "description": "That year's filed accounts as an expiring link (single orgnr, fields filings).",
+            "maximum": 2100,
+            "minimum": 1990,
+            "type": "integer"
+          },
           "fields": {
-            "description": "Top-level item fields to return (orgnr kept).",
+            "description": "Item fields to return (orgnr kept).",
             "items": {
               "maxLength": 40,
               "type": "string"
@@ -163,7 +169,7 @@
             "type": "boolean"
           },
           "max_bytes": {
-            "description": "Response byte budget (default 24576; above 49152 services with compact only).",
+            "description": "Response byte budget (default 24576).",
             "maximum": 49152,
             "minimum": 4096,
             "type": "integer"
@@ -196,7 +202,7 @@
       "name": "entity_resolve",
       "title": "Entity Resolve",
       "kind": "capability",
-      "description": "Name to organisation candidates, never an implicit pick. Compares with one documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa spellings also match), & → og, punctuation stripped, trailing legal forms (AS, ASA, ENK, DA, ANS, SA, STI, I LIKVIDASJON, ...) and leading STIFTELSEN/FORENINGEN/SELSKAPET removed. Tiers, first non-empty wins: exact_name (1.0), normalized_name (0.9), historical_name (0.8); only when all are empty, prefix and near_miss suggestions (at most 0.5, resolution unresolved). resolution is unique (one strong candidate), ambiguous (several; order active_first_then_enhet_then_public_body_then_orgnr) or unresolved. Zero candidates return one unresolved item with next_action entity_search. Filters: kind, public_body, municipality, include_deleted. Example: entity_resolve name=\"Sosialdepartementet\". Next: entity_lookup orgnr=<candidate orgnr>. [END]",
+      "description": "Name to organisation candidates, never an implicit pick. One documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa also match), & → og, punctuation stripped, trailing legal forms (AS, ASA, ENK, DA, ANS, SA, STI, I LIKVIDASJON, ...) and leading STIFTELSEN/FORENINGEN/SELSKAPET removed. Tiers, first non-empty wins: exact_name (1.0), normalized_name (0.9), historical_name (0.8); only when all are empty, prefix and near_miss (max 0.5, unresolved). resolution is unique (one strong candidate), ambiguous (several; order active_first_then_enhet_then_public_body_then_orgnr) or unresolved. None: one unresolved item with next_action entity_search. Filters: kind, public_body, municipality, include_deleted. Example: entity_resolve name=\"Sosialdepartementet\". Next: entity_lookup orgnr=<candidate orgnr>. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -208,16 +214,16 @@
         "additionalProperties": false,
         "properties": {
           "compact": {
-            "description": "One-line text summary instead of duplicated JSON.",
+            "description": "One-line text summary, not duplicated JSON.",
             "type": "boolean"
           },
           "cursor": {
-            "description": "Next-page token; send it alone (max_bytes, compact allowed).",
+            "description": "Next-page token; send it alone (+max_bytes, compact).",
             "maxLength": 512,
             "type": "string"
           },
           "fields": {
-            "description": "Top-level item fields to return (orgnr kept).",
+            "description": "Item fields to return (orgnr kept).",
             "items": {
               "maxLength": 40,
               "type": "string"
@@ -231,7 +237,7 @@
             "type": "boolean"
           },
           "kind": {
-            "description": "enhet, underenhet or all (default all).",
+            "description": "Default all.",
             "enum": [
               "enhet",
               "underenhet",
@@ -247,7 +253,7 @@
             "type": "integer"
           },
           "max_bytes": {
-            "description": "Response byte budget (default 24576; above 49152 services with compact only).",
+            "description": "Response byte budget (default 24576).",
             "maximum": 49152,
             "minimum": 4096,
             "type": "integer"
@@ -282,7 +288,7 @@
       "name": "entity_search",
       "title": "Entity Search",
       "kind": "capability",
-      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website or a filter. Filters: kind, org_form (codes from code_list), municipality (number or name), postcode, city, nace or sector prefix, status (active by default; any for all), public_body, vat_registered, parent_orgnr, employees_min/max, registered_from/to. match: 1-4 regex terms {field, pattern} over activity, address, city, email, name, phone or website; pattern is RE2, at most 200 bytes, matched case-insensitively against the normalised (NFC, lower-cased, whitespace-collapsed) field value, and you anchor it yourself (^post anchors at the start, an unanchored pattern matches anywhere in the value, \".\" tests that the field is present); one pattern per field, AND'ed with each other and with every other filter; a pattern that is invalid, longer than 200 bytes, too complex or that matches the empty string (a*) rejects the call with invalid_filter. sort: relevance, name or registered_desc. Items are summaries (orgnr, kind, name, org_form, municipality, city, address, email, nace1, status, public_body, parent_orgnr, matched, score); entity_lookup gives the full record. Diagnostics state mode, ranking_version, searched/matched/dropped terms, filters_applied and empty_reason (no_query_term_in_snapshot, filters_excluded_all_matches, offset_beyond_results) with a next_action, and prefix_truncated when a short prefix matched too many terms. Customer searches without a name query never return personal-data records (sole proprietorships and their establishments); diagnostics say so, and such records carry no field values, so a match term never returns one. Follow cursor to the end of the result set; offset is a first-call convenience only. Example: entity_search query=\"tilsyn\" public_body=true; generic company inboxes: entity_search nace=\"94.91\" match=[{\"field\":\"email\",\"pattern\":\"^(post|info|kontakt|firmapost)[.0-9]*@\"}]; two terms AND: match=[{\"field\":\"email\",\"pattern\":\"^post\"},{\"field\":\"name\",\"pattern\":\"kirke|kyrkje\"}]. Next: entity_lookup orgnr=<item orgnr>. [END]",
+      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter. Filters: kind, org_form (code_list codes), municipality (number or name), postcode, city, nace or sector prefix, status (active by default; any for all), public_body, vat_registered, parent_orgnr, employees_min/max, registered_from/to. sort: relevance, name, registered_desc. match: 1-4 RE2 filters [{field, pattern}] (fields in the schema), AND'ed with the rest; case-insensitive, you anchor them, \".\" = present. Anchor when you can: ^post narrows the scan to a range, an unanchored pattern reads the field's whole dictionary once (tens of ms) and is then cached. lat+lon+radius_km: registered-address points (Kartverket), nearest first without query; items add distance_km and location. Items are summaries (orgnr, kind, name, org_form, municipality, city, address, nace1, status, public_body, email, parent_orgnr, matched, score); entity_lookup gives the record. Diagnostics: mode, terms, filters_applied, empty_reason with next_action. Customer searches without a name query, radius searches and match never return personal-data records (ENK and their establishments). Follow cursor to the end: paging has no depth limit. Example: entity_search query=\"tilsyn\" public_body=true. Next: entity_lookup orgnr=<item orgnr>. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -304,11 +310,11 @@
             "type": "string"
           },
           "compact": {
-            "description": "One-line text summary instead of duplicated JSON.",
+            "description": "One-line text summary, not duplicated JSON.",
             "type": "boolean"
           },
           "cursor": {
-            "description": "Next-page token; send it alone (max_bytes, compact allowed).",
+            "description": "Next-page token; send it alone (+max_bytes, compact).",
             "maxLength": 512,
             "type": "string"
           },
@@ -325,7 +331,7 @@
             "type": "integer"
           },
           "fields": {
-            "description": "Top-level item fields to return (orgnr kept).",
+            "description": "Item fields to return (orgnr kept).",
             "items": {
               "maxLength": 40,
               "type": "string"
@@ -335,7 +341,7 @@
             "type": "array"
           },
           "kind": {
-            "description": "enhet, underenhet or all (default all).",
+            "description": "Default all.",
             "enum": [
               "enhet",
               "underenhet",
@@ -344,19 +350,31 @@
             "maxLength": 32,
             "type": "string"
           },
+          "lat": {
+            "description": "Radius centre latitude; needs lon and radius_km.",
+            "maximum": 81.5,
+            "minimum": 57.5,
+            "type": "number"
+          },
           "limit": {
             "description": "Items per page (1-100, default 20).",
             "maximum": 100,
             "minimum": 1,
             "type": "integer"
           },
+          "lon": {
+            "description": "Radius centre longitude.",
+            "maximum": 32,
+            "minimum": 4,
+            "type": "number"
+          },
           "match": {
-            "description": "Regex terms, 1-4, one per field: {field, pattern}. RE2, case-insensitive, max 200 bytes; anchor it yourself. AND'ed with every other filter.",
+            "description": "Regex filters, AND'ed with the rest: [{\"field\":\"email\",\"pattern\":\"^post\"}].",
             "items": {
               "additionalProperties": false,
               "properties": {
                 "field": {
-                  "description": "Field to match: activity, address, city, email, name, phone or website.",
+                  "description": "Which field to match.",
                   "enum": [
                     "activity",
                     "address",
@@ -366,11 +384,11 @@
                     "phone",
                     "website"
                   ],
-                  "maxLength": 16,
+                  "maxLength": 32,
                   "type": "string"
                 },
                 "pattern": {
-                  "description": "RE2 regular expression matched against the normalised field value; ^post anchors at the start, unanchored matches anywhere, \".\" means present.",
+                  "description": "RE2, case-insensitive; anchor it (^post) so the scan is narrowed. \".\" = present.",
                   "maxLength": 200,
                   "type": "string"
                 }
@@ -386,7 +404,7 @@
             "type": "array"
           },
           "max_bytes": {
-            "description": "Response byte budget (default 24576; above 49152 services with compact only).",
+            "description": "Response byte budget (default 24576).",
             "maximum": 49152,
             "minimum": 4096,
             "type": "integer"
@@ -436,6 +454,12 @@
             "maxLength": 200,
             "type": "string"
           },
+          "radius_km": {
+            "description": "Km; max 10 alone, 50 with another filter.",
+            "maximum": 50,
+            "minimum": 0.05,
+            "type": "number"
+          },
           "registered_from": {
             "description": "Registered on or after (YYYY-MM-DD).",
             "maxLength": 10,
@@ -457,7 +481,7 @@
             "type": "string"
           },
           "sort": {
-            "description": "relevance (default), name or registered_desc.",
+            "description": "Default relevance.",
             "enum": [
               "relevance",
               "name",
@@ -467,7 +491,7 @@
             "type": "string"
           },
           "status": {
-            "description": "active (default), bankrupt, dissolving, deleted or any.",
+            "description": "Default active.",
             "enum": [
               "active",
               "bankrupt",
@@ -495,7 +519,7 @@
       "name": "entity_structure",
       "title": "Entity Structure",
       "kind": "capability",
-      "description": "Organisational structure of one orgnr as a stream of items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subunit (underenheter). section: all (default), children or subunits. A ministry lists its agencies as children; a company lists its establishments as subunits. Diagnostics carry the root summary. Example: entity_structure orgnr=983887457 section=children. Next: entity_lookup orgnr=<item orgnr>. [END]",
+      "description": "Organisational structure of one orgnr: items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subunit (underenheter). section: all (default), children or subunits. A ministry lists its agencies as children; a company its establishments as subunits. Diagnostics carry the root summary. Example: entity_structure orgnr=983887457 section=children. Next: entity_lookup orgnr=<item orgnr>. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -507,16 +531,16 @@
         "additionalProperties": false,
         "properties": {
           "compact": {
-            "description": "One-line text summary instead of duplicated JSON.",
+            "description": "One-line text summary, not duplicated JSON.",
             "type": "boolean"
           },
           "cursor": {
-            "description": "Next-page token; send it alone (max_bytes, compact allowed).",
+            "description": "Next-page token; send it alone (+max_bytes, compact).",
             "maxLength": 512,
             "type": "string"
           },
           "fields": {
-            "description": "Top-level item fields to return (orgnr kept).",
+            "description": "Item fields to return (orgnr kept).",
             "items": {
               "maxLength": 40,
               "type": "string"
@@ -532,7 +556,7 @@
             "type": "integer"
           },
           "max_bytes": {
-            "description": "Response byte budget (default 24576; above 49152 services with compact only).",
+            "description": "Response byte budget (default 24576).",
             "maximum": 49152,
             "minimum": 4096,
             "type": "integer"
@@ -543,7 +567,7 @@
             "type": "string"
           },
           "section": {
-            "description": "all (parents, children, subunits), children or subunits.",
+            "description": "Default all (parents, children, subunits).",
             "enum": [
               "all",
               "children",
@@ -568,7 +592,7 @@
       "name": "snapshot_status",
       "title": "Snapshot Status",
       "kind": "capability",
-      "description": "Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts (enheter, underenheter, enk, public_bodies, deleted), build and ranking version, suppression count, memory state, caller plane and access level, licence, scope and exclusions. detail=true adds per-tool latency, cursor state, suppression reconcile and removals watcher status. Memory read only. Example: snapshot_status. Next: entity_search or entity_resolve. [END]",
+      "description": "Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts (enheter, underenheter, enk, public_bodies, deleted), build and ranking version, suppression count, memory state, caller plane and level, licence, scope and exclusions. detail=true adds latency, cursor, suppression and watcher detail. Example: snapshot_status. Next: entity_search or entity_resolve. [END]",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,

@@ -27,7 +27,7 @@
   "tools": [
     {
       "name": "code_list",
-      "description": "Filter-value discovery with counts from the current snapshot: list org_form, municipality, nace or sector; optional query matches a code prefix or description text. Use the codes as entity_search filt",
+      "description": "Filter values with counts from the current snapshot: list org_form, municipality, nace or sector; query matches a code prefix or description. Use them as entity_search filters. Example: code_list list",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -38,7 +38,7 @@
     },
     {
       "name": "entity_lookup",
-      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. Pass orgnr (one) or orgnrs (several, results in input order); spaces and dots are tolerated. Each item is {orgnr, found, record?, ",
+      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. orgnr (one) or orgnrs (several, in input order); spaces and dots tolerated. Items are {orgnr, found, record?, reason?}, reason inv",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -49,7 +49,7 @@
     },
     {
       "name": "entity_resolve",
-      "description": "Name to organisation candidates, never an implicit pick. Compares with one documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa spellings also match), & → og, punctuation stripped, trailing le",
+      "description": "Name to organisation candidates, never an implicit pick. One documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa also match), & → og, punctuation stripped, trailing legal forms (AS, ASA, ENK,",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -60,7 +60,7 @@
     },
     {
       "name": "entity_search",
-      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website or a filter. Filters: kind, org_form (codes from code_list), municipalit",
+      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter. Filters: kind, org_form (code_list codes), municipal",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -71,7 +71,7 @@
     },
     {
       "name": "entity_structure",
-      "description": "Organisational structure of one orgnr as a stream of items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subu",
+      "description": "Organisational structure of one orgnr: items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subunit (underenhe",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -93,7 +93,7 @@
     }
   ],
   "_meta": {
-    "pro.publifye/generated": "2026-09-15",
+    "pro.publifye/generated": "2026-09-18",
     "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/brreg"
   }
 }
