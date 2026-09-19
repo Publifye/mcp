@@ -20,7 +20,7 @@ and nothing to install.
     "junifye": { "type": "http", "url": "https://junifye.publifye.com/mcp" },
     "lexifye": { "type": "http", "url": "https://lexifye.publifye.com/mcp" },
     "brreg":   { "type": "http", "url": "https://brreg.publifye.com/mcp" },
-    "lexar":   { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" },
+    "lexar":   { "type": "http", "url": "https://lexar-api.publifye.com/mcp" },
     "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" },
     "doksi":   { "type": "http", "url": "https://doksi.publifye.com/mcp" },
     "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" }
@@ -48,7 +48,7 @@ you pay for anything.
 | **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 151 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
 | **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 63 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
 | **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | `pro.publifye/brreg` (not yet published) | [services/brreg](services/brreg) |
-| **Lexar** | Norwegian law | `https://lexar-api.publifye.pro/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
+| **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | `pro.publifye/doksi` (not yet published) | [services/doksi](services/doksi) |
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 8 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |

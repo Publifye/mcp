@@ -7,7 +7,7 @@ you what it does not cover.**
 
 | | |
 |---|---|
-| Endpoint | `https://lexar-api.publifye.pro/mcp` |
+| Endpoint | `https://lexar-api.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | `pro.publifye/lexar` — not yet published |
@@ -18,7 +18,7 @@ you what it does not cover.**
 ## Connect
 
 ```jsonc
-{ "mcpServers": { "lexar": { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" } } }
+{ "mcpServers": { "lexar": { "type": "http", "url": "https://lexar-api.publifye.com/mcp" } } }
 ```
 
 The OAuth flow runs in the browser on first use. See **[../../docs/connect.md](../../docs/connect.md)**.

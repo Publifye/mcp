@@ -1,7 +1,7 @@
 # Context and coverage
 
 **What does it connect to, what do its terms mean, and how much of the corpus can you rely on?** 3 Lexar MCP tools, listed below with the exact description
-and input schema the server itself returns. Endpoint: `https://lexar-api.publifye.pro/mcp`.
+and input schema the server itself returns. Endpoint: `https://lexar-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get access.
 
 | Tool | What it does |

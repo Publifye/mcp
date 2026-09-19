@@ -1,7 +1,7 @@
 # Finding the law
 
 **Which law or regulation is this, and where is the wording that matters?** 2 Lexar MCP tools, listed below with the exact description
-and input schema the server itself returns. Endpoint: `https://lexar-api.publifye.pro/mcp`.
+and input schema the server itself returns. Endpoint: `https://lexar-api.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get access.
 
 | Tool | What it does |

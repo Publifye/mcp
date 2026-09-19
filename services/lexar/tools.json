@@ -1,6 +1,6 @@
 {
   "service": "lexar",
-  "endpoint": "https://lexar-api.publifye.pro/mcp",
+  "endpoint": "https://lexar-api.publifye.com/mcp",
   "captured": "2026-09-16",
   "how_this_was_made": "Captured from the live service's own tools/list, then filtered to the public research surface the specification fixes at exactly seven tools. Nothing here is hand-written. Excluded, with counts: contributor and review tools 3 (annotation submission and enrichment promotion — not part of the research offering), bridge-injected ops 2 (added by the local MCP bridge, present in no service registry).",
   "counts": {
