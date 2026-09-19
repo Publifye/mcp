@@ -1,10 +1,11 @@
-# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law and exchange rates, for AI clients
+# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law, exchange rates, documents and meeting programmes, for AI clients
 
-**Publifye AS runs six hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
+**Publifye AS runs eight hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
 Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
 Greek text of Scripture, write and typeset a book, build a dictionary, look up Norwegian
-organisations in Enhetsregisteret, read the current text of Norwegian law, or convert a currency at
-a published central-bank rate — over an authenticated HTTPS endpoint, with no local install.**
+organisations in Enhetsregisteret, read the current text of Norwegian law, convert a currency at a
+published central-bank rate, render a document to PDF, or build a meeting programme — over an
+authenticated HTTPS endpoint, with no local install.**
 
 ## Quickstart — connect in under a minute
 
@@ -20,7 +21,9 @@ and nothing to install.
     "lexifye": { "type": "http", "url": "https://lexifye.publifye.com/mcp" },
     "brreg":   { "type": "http", "url": "https://brreg.publifye.com/mcp" },
     "lexar":   { "type": "http", "url": "https://lexar-api.publifye.pro/mcp" },
-    "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" }
+    "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" },
+    "doksi":   { "type": "http", "url": "https://doksi.publifye.com/mcp" },
+    "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" }
   }
 }
 ```
@@ -41,12 +44,14 @@ you pay for anything.
 
 | Server | What it does | Endpoint | Tools | Registry | Reference |
 |---|---|---|---|---|---|
-| **Darash** | Bible research | `https://darash-api.publifye.com/mcp` | 35 | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/darash](services/darash) |
+| **Darash** | Bible research | `https://darash-api.publifye.com/mcp` | 34 | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/darash](services/darash) |
 | **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 151 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
 | **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 63 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
 | **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | `pro.publifye/brreg` (not yet published) | [services/brreg](services/brreg) |
 | **Lexar** | Norwegian law | `https://lexar-api.publifye.pro/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
+| **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | `pro.publifye/doksi` (not yet published) | [services/doksi](services/doksi) |
+| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 8 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration, or a personal API key — except Brreg, which is OAuth only. See
@@ -149,6 +154,39 @@ list, which is exactly what the cap exists to prevent.
 
 ---
 
+## Doksi — ask what a kind requires, then write it
+
+Letters, notices, agreements, ceremonial covenants, checklists, meeting agendas and schedules, each
+rendered to a professional PDF. Four of its twenty-two tools exist only so an agent can find out what
+is expected **before** it composes anything — which kinds exist, which blocks a body may hold, and
+what one specific kind demands. An agent that can ask produces far fewer refusals than one that
+learns by being refused.
+
+Signing is a request with a lifecycle, not a flag on a document: create, describe, replace, revoke,
+render, mail. A signer gets an individual link or a QR code, and a revoked link stops working.
+
+→ **[services/doksi](services/doksi)** · [tool schemas](services/doksi/tools.json)
+
+---
+
+## Timely — an AI cannot publish the programme
+
+A meeting programme for a fixed number of meetings or a calendar period, with every revision kept
+immutably and the approved one rendered through Doksi.
+
+`draft_approve` is present, documented, and refuses every MCP caller: *"human approval required:
+open the account preview and approve there; MCP cannot publish."* An assistant can create, edit,
+restyle and preview; a person decides what a congregation actually reads. The tool exists rather
+than being absent so an agent discovers the boundary by reading the surface instead of guessing why
+nothing happened.
+
+Edits apply against a `base_hash` and are refused rather than merged if the programme moved, so two
+assistants — or an assistant and a person — cannot quietly overwrite each other.
+
+→ **[services/timely](services/timely)** · [tool schemas](services/timely/tools.json)
+
+---
+
 ## Three ways in
 
 **You study the biblical languages.** Darash is the one that matters. Start with `word_study`,
@@ -184,6 +222,8 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
 | Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
 | Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
+| Doksi | [doksi.publifye.com](https://doksi.publifye.com) | — |
+| Timely | [timely.publifye.com](https://timely.publifye.com) | — |
 
 The left column sells the product and gates access. The right column is one
 page on the company site saying what the server is for and when one of the

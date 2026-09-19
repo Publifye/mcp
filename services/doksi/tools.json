@@ -1,0 +1,675 @@
+{
+  "service": "doksi",
+  "endpoint": "https://doksi.publifye.com/mcp",
+  "captured": "2026-09-20",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same New() that cmd/doksi runs at boot, with EnableSigning called as production does — on the source serving production on 2026-09-20, version 0.1.54. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. NOTE: registration is guarded on dependencies (h.filer, h.store, h.mailer, h.assets), so a dump built with nil dependencies silently yields 8 tools instead of 24; this one passes non-nil stores so every branch registers. Counts follow the convention used by the other services here: capability_tools is the public surface, callable_by_a_customer adds the help/health pair, and total_on_the_wire adds alogui's admin log surface.",
+  "counts": {
+    "callable_by_a_customer": 24,
+    "capability_tools": 22,
+    "session_and_cache_plumbing": 0,
+    "excluded_ops_and_logging": 10,
+    "excluded_help_and_health": 2,
+    "total_on_the_wire": 34
+  },
+  "excluded": {
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "set_log_capacity",
+      "set_log_level"
+    ],
+    "help_and_health": [
+      "operator_guide",
+      "service_status"
+    ]
+  },
+  "tools": [
+    {
+      "name": "kind_list",
+      "title": "Kind List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the eight document kinds doksi makes, with what each one is for. Read this before doc_compose if you are unsure which kind fits: the kinds differ in LAYOUT, not in wording. A request, a complaint or a resignation are not kinds — they are purposes on letter_official (see purpose_list).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Kind List"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "purpose_list",
+      "title": "Purpose List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the curated purposes an official letter can have, with the EXTRA fields each one requires. A purpose supplies default subject, salutation and closing wording in Norwegian and English, and may demand fields the kind alone does not — a request needs a response-by date, a termination needs an effective date and a notice period.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Purpose List"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_requirements",
+      "title": "Doc Requirements",
+      "kind": "capability",
+      "access": "read",
+      "description": "Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Read this before composing.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Requirements"
+      },
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "description": "Document kind",
+            "enum": [
+              "letter_personal",
+              "letter_official",
+              "notice",
+              "agreement",
+              "covenant",
+              "checklist",
+              "meeting",
+              "schedule"
+            ],
+            "type": "string"
+          },
+          "purpose": {
+            "description": "Optional purpose id, for letter_official only",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "block_types",
+      "title": "Block Types",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the building blocks a document body is made of, and which kinds accept each one. The set is CLOSED: an unknown block type is refused naming what the kind does take, because a document that quietly dropped its table is worse than one that refused.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Block Types"
+      },
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "description": "Restrict to the blocks this kind accepts",
+            "enum": [
+              "letter_personal",
+              "letter_official",
+              "notice",
+              "agreement",
+              "covenant",
+              "checklist",
+              "meeting",
+              "schedule"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_validate",
+      "title": "Doc Validate",
+      "kind": "capability",
+      "access": "read",
+      "description": "Check a document against its kind's requirements and report EVERY problem at once, never just the first — you cannot see the page, so one problem per call would be a dozen round trips. Each problem carries the exact JSON path to fix, why the field exists, and whether it is missing (you have not filled it in) or malformed (it is filled in wrongly). Does not render a PDF; customer API call limits still apply.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Validate"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "The whole document object, as doc_requirements describes it",
+            "type": "object"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_compose",
+      "title": "Doc Compose",
+      "kind": "capability",
+      "access": "write",
+      "description": "Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Compose"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "The whole document object",
+            "type": "object"
+          },
+          "include": {
+            "description": "Which representations to return: pdf (base64 bytes), json (canonical document). Defaults to pdf. Use issue:true with include:[json] for a shareable PDF URL.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "issue": {
+            "description": "Also ISSUE the document: keep it and mint a capability link you can hand to somebody. Off by default — composing is cheap and repeatable, issuing keeps a copy.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_get",
+      "title": "Doc Get",
+      "kind": "capability",
+      "access": "write",
+      "description": "Read the original structured document JSON retained when doc_issue or doc_compose(issue:true) issued a PDF. Use the returned document to inspect wording, block IDs, image references and fields, then edit and validate it before issuing a NEW document. This does not extract text from the PDF, re-render, or modify the issued document. Older documents may have source_available:false. Requires authenticated write access and the private document id, like document link management. Revoking a public PDF link does not erase this retained record.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "The private document id returned at issuance; not its public PDF token or URL",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_share",
+      "title": "Doc Share",
+      "kind": "capability",
+      "access": "write",
+      "description": "Typeset a document and hand back a TEMPORARY download link a person can open — no login, no account, and it expires. Use this when somebody needs the document itself rather than the bytes: paste the link into a chat or an email and they click it.\n\nThe link is private and short-lived by design. It is not published anywhere, it never reaches the open web, and it can be killed early with doc_share_revoke. Validation runs first: an incomplete document produces the same problem list doc_validate returns and nothing is uploaded.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Share"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "The whole document object",
+            "type": "object"
+          },
+          "filename": {
+            "description": "What the person sees when saving, e.g. oppsigelse.pdf",
+            "type": "string"
+          },
+          "title": {
+            "description": "What the document IS, in human words",
+            "type": "string"
+          },
+          "ttl_seconds": {
+            "description": "How long the link works. Default 3600 (one hour), minimum 60, maximum 604800 (one week). The value actually granted is returned — it is clamped, and reporting what was asked for rather than what was allowed is how a person gets told the wrong expiry.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_share_revoke",
+      "title": "Doc Share Revoke",
+      "kind": "capability",
+      "access": "write",
+      "description": "Kill a temporary link now, before it expires. Use it the moment a document went to the wrong person: the link stops working immediately and the bytes are dropped. Revoking an already-dead link is not an error — it is the outcome you wanted.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Share Revoke"
+      },
+      "inputSchema": {
+        "properties": {
+          "file_id": {
+            "description": "The id returned by doc_share",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_issue",
+      "title": "Doc Issue",
+      "kind": "capability",
+      "access": "write",
+      "description": "Typeset a document, KEEP it, and return a permanent link that opens it — no login, no account, no expiry. This is the normal way to deliver a document: give the person the link.\n\nThe link is the credential, so treat it like one: it is not indexed anywhere and it is not guessable, but anyone holding it can open the document. If it reaches the wrong person, doc_link_rotate replaces it and doc_link_revoke kills it — which is exactly what an emailed attachment can never do.\n\nThe stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Issue"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "The whole document object",
+            "type": "object"
+          },
+          "filename": {
+            "description": "What the person sees when saving, e.g. oppsigelse.pdf",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_link_rotate",
+      "title": "Doc Link Rotate",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace a document's link with a new one. The old link stops working immediately, the document is untouched, and you get a fresh link to send. Use this when a link was forwarded further than intended.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Link Rotate"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "The document id from doc_issue",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_link_revoke",
+      "title": "Doc Link Revoke",
+      "kind": "capability",
+      "access": "write",
+      "description": "Kill a document's link with no replacement. Anyone opening it afterwards is told the link was withdrawn. The DOCUMENT IS KEPT — revoking decides who may fetch it, and is not a way to erase a record somebody may already hold a copy of.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Link Revoke"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "The document id from doc_issue",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_mail_to_me",
+      "title": "Doc Mail To Me",
+      "kind": "capability",
+      "access": "write",
+      "description": "Email an issued document to the address you are signed in as. The document is attached and the link is in the body.\n\nIT GOES ONLY TO YOU. doksi does not email documents to anyone else, and there is no argument that changes that: sending a person's correspondence onward would put our sending reputation behind somebody else's letter. To reach a recipient, send them the document's link yourself — from your own address, under your own name.\n\nReports the document as QUEUED, never as delivered: pubmail accepts it for sending and reports failures separately, so 'sent' would be a claim this service cannot make.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Mail To Me"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "The document id from doc_issue",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_describe",
+      "title": "Signature Describe",
+      "kind": "capability",
+      "access": "read",
+      "description": "Describe recipients and available named signature slots in a document. Signing is OPTIONAL: recipients are not automatically signers. Returns slot IDs, roles and placement without image data. Use doc_requirements for the full schema, then explicitly select slots for signature_request_create.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Signature Describe"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "Complete Doksi document",
+            "type": "object"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_create",
+      "title": "Signature Request Create",
+      "kind": "capability",
+      "access": "write",
+      "description": "Freeze a complete document revision and create optional signing requests for selected named signature slots. Returns a private overview_url with every selected signer, individual copy links and QRs. Each signer gets a unique single-use UUID, signing_url and qr_page_url (same request, two views). Links expire after 25 minutes; captured ink is private for at most 45 minutes after submission. No email is sent. Creator can show the QR page on a phone; signer may scan it or choose Sign on this phone. Existing signature assets are refused so previews never expose another person's signature. Call signature_request_get for status; replace one slot with signature_request_replace. No signature image download is provided.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Signature Request Create"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "Complete document with named, unfilled signature slots",
+            "type": "object"
+          },
+          "slot_ids": {
+            "description": "Exactly the signature slot IDs to request; other slots remain untouched",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "document",
+          "slot_ids"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_get",
+      "title": "Signature Request Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Get owner-only status for a signing collection: document revision, requester, each signer/slot, status, deadlines and pending signing/QR URLs. No signature image, reusable asset reference or signed preview is returned. REST status endpoints are available per UUID for webpages.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Signature Request Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Signing collection ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_replace",
+      "title": "Signature Request Replace",
+      "kind": "capability",
+      "access": "write",
+      "description": "Request a new signature for ONE person/slot on the same frozen document. Always creates a new UUID and 25-minute deadline, revokes the old request and deletes its captured ink. Other signers are unchanged. No email is sent automatically.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Signature Request Replace"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Signing collection ID",
+            "type": "string"
+          },
+          "slot_id": {
+            "description": "Exact signer slot to replace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slot_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_revoke",
+      "title": "Signature Request Revoke",
+      "kind": "capability",
+      "access": "write",
+      "description": "Withdraw one signer request or the whole collection and delete its temporary signature material. Existing issued PDFs are not changed.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Signature Request Revoke"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Signing collection ID",
+            "type": "string"
+          },
+          "slot_id": {
+            "description": "One slot, or omit to revoke all",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_render",
+      "title": "Signature Request Render",
+      "kind": "capability",
+      "access": "write",
+      "description": "Explicitly render and issue the completed document after ALL selected signing slots are completed and their ink is unexpired. Returns a document URL, never raw signature downloads. This keeps an issued PDF containing the signatures; temporary signature capture still expires after 45 minutes. May re-render during retention. Does not send email. finalize:true deletes captured ink immediately after successful issue, preventing subsequent re-rendering.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Signature Request Render"
+      },
+      "inputSchema": {
+        "properties": {
+          "finalize": {
+            "description": "Delete temporary signature ink after successful issue",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Signing collection ID",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "signature_request_email",
+      "title": "Signature Request Email",
+      "kind": "capability",
+      "access": "write",
+      "description": "Explicitly email ONE named signer's pending link through Pubmail's transactional lane. Alternative to showing qr_page_url; never automatically do both. Requires an authenticated creator account with an email address; a bare service identity cannot send invitations. Request has a fixed recipient after first send. Returns queued, sending, pending_review, failed or unknown, never claims inbox delivery. Duplicate calls do not send again. Limits: 20 invitations per creator/hour and 3 per recipient/hour. A refused or expired request needs a new UUID for that slot. No document or signature image is attached.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Signature Request Email"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Signing collection ID",
+            "type": "string"
+          },
+          "slot_id": {
+            "description": "Specific named signer slot",
+            "type": "string"
+          },
+          "to": {
+            "description": "This signer's email address",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slot_id",
+          "to"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "asset_upload_begin",
+      "title": "Asset Upload Begin",
+      "kind": "capability",
+      "access": "write",
+      "description": "Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the URL to POST the image to. THE ID COMES FIRST and the bytes follow: this call moves no image data.\n\nFORMATS: send PNG or JPEG. It is stored as PNG with transparency whatever you send. SVG is refused — export it to PNG first; at 300 dpi a vector mark loses nothing at print size.\n\nAsk for several at once with `slots`: a letterhead and a signature is ONE call, not two conversational turns.\n\nTHE SLOT DECLARES THE SIZE — signature (62×12 mm), logo (50×14 mm), seal (28×28 mm), letterhead (80×18 mm). A larger upload buys a better-resolution mark in the same box, never a bigger one, so adding a signature never reflows a page.\n\nNear-white is keyed out to transparent on intake and the mark is trimmed to its ink, because a scan on white paper is an opaque rectangle that would cover the ruled line it sits on. Pass keep_background for a crest designed on a coloured field, which keying would destroy.\n\nThen POST the bytes; HTTP 202 means stored and processing asynchronously. Poll asset_status until ready or failed before rendering. HTTP 503 with Retry-After means capacity is busy; retry the same upload ticket. A ticket is single-use and expires in 30 minutes; a failed upload SPENDS it, so a retry needs a fresh begin.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Asset Upload Begin"
+      },
+      "inputSchema": {
+        "properties": {
+          "keep_background": {
+            "description": "Do not key out the background. For a mark designed on a coloured field.",
+            "type": "boolean"
+          },
+          "slot": {
+            "description": "One of: signature, logo, seal, letterhead",
+            "type": "string"
+          },
+          "slots": {
+            "description": "Several slots in one call, instead of `slot`.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "asset_status",
+      "title": "Asset Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "Where a mark is: awaiting_upload, processing, ready, or failed with the reason.\n\nA document may reference a mark that is not ready yet — that is a normal transient state, not a validation failure. A FAILED mark is a validation failure, and the reason says what to fix.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Asset Status"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "The asset id from asset_upload_begin",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

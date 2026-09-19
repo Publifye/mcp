@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/timely",
+  "title": "Timely",
+  "description": "Meeting programmes for AI: a fixed number of meetings or a calendar period, with assisted edits, immutable revision history and human-approved PDFs",
+  "version": "1.0.0",
+  "websiteUrl": "https://timely.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/timely"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://timely.publifye.com/mcp"
+    }
+  ]
+}

@@ -13,7 +13,7 @@ MCP server over HTTPS — there is nothing to install.**
 | Registry | `pro.publifye/darash` |
 | Product site | <https://darash.publifye.com> |
 | What it solves | <https://publifye.com/darash> |
-| Capability tools | **35** ([full schemas](tools.json)) |
+| Capability tools | **34** ([full schemas](tools.json)) |
 
 ## Connect
 

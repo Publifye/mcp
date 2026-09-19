@@ -1,0 +1,265 @@
+{
+  "service": "timely",
+  "endpoint": "https://timely.publifye.com/mcp",
+  "captured": "2026-09-20",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same New() that cmd/timely runs at boot — on the source serving production on 2026-09-20, version 0.1.27. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Counts follow the convention used by the other services here: capability_tools is the public surface; admin_timely_list is staff-only and alogui's log surface is admin plumbing.",
+  "counts": {
+    "callable_by_a_customer": 8,
+    "capability_tools": 8,
+    "session_and_cache_plumbing": 0,
+    "excluded_admin_only": 1,
+    "excluded_ops_and_logging": 10,
+    "total_on_the_wire": 19
+  },
+  "excluded": {
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "set_log_capacity",
+      "set_log_level"
+    ],
+    "admin_only": [
+      "admin_timely_list"
+    ]
+  },
+  "tools": [
+    {
+      "name": "timely_list",
+      "title": "Timely List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List your programmes; published version first, history available separately.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Timely List"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_get",
+      "title": "Timely Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Current published programme and outstanding draft; use timely_history for older revisions.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Timely Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_history",
+      "title": "Timely History",
+      "kind": "capability",
+      "access": "read",
+      "description": "Your programme's immutable revisions, changes and PDF references.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Timely History"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_create",
+      "title": "Timely Create",
+      "kind": "capability",
+      "access": "write",
+      "description": "Create a programme draft; select an exact meeting count or date period. No publication occurs.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Create"
+      },
+      "inputSchema": {
+        "properties": {
+          "content": {
+            "description": "Programme content: title, language, timezone, selection, grouping, events and bounded series",
+            "type": "object"
+          },
+          "slug": {
+            "description": "Public slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "content"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_edit",
+      "title": "Timely Edit",
+      "kind": "capability",
+      "access": "write",
+      "description": "Atomically apply explicit operations against base_hash. ISAC cannot approve or publish.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Edit"
+      },
+      "inputSchema": {
+        "properties": {
+          "base_hash": {
+            "description": "Expected current content hash",
+            "type": "string"
+          },
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          },
+          "operations": {
+            "description": "Typed event, series, selection, grouping, style or title changes",
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "base_hash",
+          "operations"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_set_theme",
+      "title": "Timely Set Theme",
+      "kind": "capability",
+      "access": "write",
+      "description": "Set the public programme and widget appearance immediately (not PDF styling). Use generation from timely_get. Theme: mode light/dark/auto; font system/serif/mono; light and dark palettes each accept background, text and accent as #RRGGBB. Omitted values reset to defaults. Text and accent require 4.5:1 contrast. Changes are audited; meeting content and publication are untouched.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Set Theme"
+      },
+      "inputSchema": {
+        "properties": {
+          "generation": {
+            "description": "Expected generation from timely_get",
+            "type": "integer"
+          },
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          },
+          "theme": {
+            "description": "mode, font, light:{background,text,accent}, dark:{background,text,accent}",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "generation",
+          "theme"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "timely_render",
+      "title": "Timely Render",
+      "kind": "capability",
+      "access": "write",
+      "description": "Render the current draft through Doksi and retain the exact preview PDF.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Render"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          },
+          "revision": {
+            "description": "Draft revision number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "draft_approve",
+      "title": "Draft Approve",
+      "kind": "capability",
+      "access": "write",
+      "description": "Human approval only: use the signed confirmation page and explicitly confirm the preview. MCP callers cannot approve.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Draft Approve"
+      },
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Programme id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}
