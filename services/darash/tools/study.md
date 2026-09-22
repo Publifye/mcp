@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`word_study`](#word-study) | THE recommended tool for studying any Greek or Hebrew word |
-| [`verse_study`](#verse-study) | Complete verse analysis in one call |
-| [`get_cross_refs`](#get-cross-refs) | Get cross-references for a verse (related passages) |
-| [`get_synonyms`](#get-synonyms) | Get the semantic-neighbour set for a Strong's number, computed from the in-memory synonym… |
-| [`synonym_stats`](#synonym-stats) | Health check for the synonym graph built at startup |
-| [`co_occurrence`](#co-occurrence) | Find verses where two Strong's numbers appear together |
+| [`word_study`](#word_study) | THE recommended tool for studying any Greek or Hebrew word |
+| [`verse_study`](#verse_study) | Complete verse analysis in one call |
+| [`get_cross_refs`](#get_cross_refs) | Get cross-references for a verse (related passages) |
+| [`get_synonyms`](#get_synonyms) | Get the semantic-neighbour set for a Strong's number, computed from the in-memory synonym… |
+| [`synonym_stats`](#synonym_stats) | Health check for the synonym graph built at startup |
+| [`co_occurrence`](#co_occurrence) | Find verses where two Strong's numbers appear together |
 
 ---
 

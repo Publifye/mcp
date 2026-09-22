@@ -6,8 +6,8 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`asset_upload_begin`](#asset-upload-begin) | write | Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the … |
-| [`asset_status`](#asset-status) | read | Where a mark is: awaiting_upload, processing, ready, or failed with the reason.
+| [`asset_upload_begin`](#asset_upload_begin) | write | Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the … |
+| [`asset_status`](#asset_status) | read | Where a mark is: awaiting_upload, processing, ready, or failed with the reason.
 
 A docum… |
 

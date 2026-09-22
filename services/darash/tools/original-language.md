@@ -6,15 +6,15 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`get_morphology`](#get-morphology) | Get word-by-word morphological analysis (grammatical parsing) for a Bible verse |
-| [`strongs_in_verse`](#strongs-in-verse) | Extract all Strong's numbers from a verse |
-| [`get_strongs`](#get-strongs) | Get Strong's concordance entry with full scholarly lexicon data |
-| [`reverse_strongs`](#reverse-strongs) | Find Strong's numbers from an English word |
-| [`search_strongs`](#search-strongs) | Find all KJV verses containing a specific Strong's number |
-| [`search_strongs_definition`](#search-strongs-definition) | Search Strong's concordance entries by keyword in definitions |
-| [`get_related_strongs`](#get-related-strongs) | Get all words related to a Strong's number — synonyms, antonyms, derived forms, and root words |
-| [`etymology_tree`](#etymology-tree) | Trace the etymology of a Strong's number through multiple levels |
-| [`hebrew_pictographs`](#hebrew-pictographs) | Get the ancient pictographic meanings of Hebrew letters |
+| [`get_morphology`](#get_morphology) | Get word-by-word morphological analysis (grammatical parsing) for a Bible verse |
+| [`strongs_in_verse`](#strongs_in_verse) | Extract all Strong's numbers from a verse |
+| [`get_strongs`](#get_strongs) | Get Strong's concordance entry with full scholarly lexicon data |
+| [`reverse_strongs`](#reverse_strongs) | Find Strong's numbers from an English word |
+| [`search_strongs`](#search_strongs) | Find all KJV verses containing a specific Strong's number |
+| [`search_strongs_definition`](#search_strongs_definition) | Search Strong's concordance entries by keyword in definitions |
+| [`get_related_strongs`](#get_related_strongs) | Get all words related to a Strong's number — synonyms, antonyms, derived forms, and root words |
+| [`etymology_tree`](#etymology_tree) | Trace the etymology of a Strong's number through multiple levels |
+| [`hebrew_pictographs`](#hebrew_pictographs) | Get the ancient pictographic meanings of Hebrew letters |
 
 ---
 

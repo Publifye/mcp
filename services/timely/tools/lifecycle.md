@@ -6,13 +6,13 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_export`](#timely-export) | read | Backup of ONE programme: a summary plus signed one-hour download links (json_url restora… |
-| [`timely_export_all`](#timely-export-all) | read | Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a downloa… |
-| [`timely_export_schema`](#timely-export-schema) | read | The embedded JSON Schema that every export validates against and that timely_import ENFO… |
-| [`timely_import`](#timely-import) | write | Create a NEW draft programme from a JSON export that validates against timely_export_sch… |
-| [`timely_delete`](#timely-delete) | write | ONLY on the user's explicit request (confirm:true): move a programme (kind programme, id… |
-| [`timely_restore`](#timely-restore) | write | Restore ONE item from the bin (timely_trash_list) exactly as it was: its address, publis… |
-| [`timely_trash_list`](#timely-trash-list) | read | The bin: programmes and organisation pages that were deleted, newest first, with purge_a… |
+| [`timely_export`](#timely_export) | read | Backup of ONE programme: a summary plus signed one-hour download links (json_url restora… |
+| [`timely_export_all`](#timely_export_all) | read | Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a downloa… |
+| [`timely_export_schema`](#timely_export_schema) | read | The embedded JSON Schema that every export validates against and that timely_import ENFO… |
+| [`timely_import`](#timely_import) | write | Create a NEW draft programme from a JSON export that validates against timely_export_sch… |
+| [`timely_delete`](#timely_delete) | write | ONLY on the user's explicit request (confirm:true): move a programme (kind programme, id… |
+| [`timely_restore`](#timely_restore) | write | Restore ONE item from the bin (timely_trash_list) exactly as it was: its address, publis… |
+| [`timely_trash_list`](#timely_trash_list) | read | The bin: programmes and organisation pages that were deleted, newest first, with purge_a… |
 
 ---
 

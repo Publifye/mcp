@@ -6,20 +6,20 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`chapter_create`](#chapter-create) | Add a new empty chapter to a book |
-| [`chapter_delete`](#chapter-delete) | Move a chapter to the TRASH |
-| [`chapter_diff`](#chapter-diff) | Show what changed between two saved versions of a chapter — READ-ONLY (no revert, no re-render) |
-| [`chapter_get_source`](#chapter-get-source) | Read the WHOLE chapter at once as round-trippable source — one call instead of block_list +… |
-| [`chapter_history`](#chapter-history) | List a chapter's recent saved versions (newest first): version number, content checksum,… |
-| [`chapter_list`](#chapter-list) | List chapters in book seq order |
-| [`chapter_move`](#chapter-move) | Re-sequence a chapter inside its book to 1-based position `seq` (1 = first) |
-| [`chapter_questions`](#chapter-questions) | List the questions linked to a specific chapter — the set you would be WARNED about before… |
-| [`chapter_restore`](#chapter-restore) | Bring a soft-deleted chapter back out of the trash — its text, its title, its full version… |
-| [`chapter_revert`](#chapter-revert) | Undo: revert a chapter to a previous version (from chapter_history) |
-| [`chapter_set_source`](#chapter-set-source) | Replace a chapter's ENTIRE content from whole-chapter source text — blocks separated by a… |
-| [`chapter_set_title`](#chapter-set-title) | Rename a chapter |
-| [`chapter_transfer`](#chapter-transfer) | MOVE a whole chapter into a DIFFERENT BOOK — for splitting a book, lifting a thread into its… |
-| [`chapter_version_get`](#chapter-version-get) | Read a PAST version of a chapter as round-trippable source (same shape as chapter_get_source)… |
+| [`chapter_create`](#chapter_create) | Add a new empty chapter to a book |
+| [`chapter_delete`](#chapter_delete) | Move a chapter to the TRASH |
+| [`chapter_diff`](#chapter_diff) | Show what changed between two saved versions of a chapter — READ-ONLY (no revert, no re-render) |
+| [`chapter_get_source`](#chapter_get_source) | Read the WHOLE chapter at once as round-trippable source — one call instead of block_list +… |
+| [`chapter_history`](#chapter_history) | List a chapter's recent saved versions (newest first): version number, content checksum,… |
+| [`chapter_list`](#chapter_list) | List chapters in book seq order |
+| [`chapter_move`](#chapter_move) | Re-sequence a chapter inside its book to 1-based position `seq` (1 = first) |
+| [`chapter_questions`](#chapter_questions) | List the questions linked to a specific chapter — the set you would be WARNED about before… |
+| [`chapter_restore`](#chapter_restore) | Bring a soft-deleted chapter back out of the trash — its text, its title, its full version… |
+| [`chapter_revert`](#chapter_revert) | Undo: revert a chapter to a previous version (from chapter_history) |
+| [`chapter_set_source`](#chapter_set_source) | Replace a chapter's ENTIRE content from whole-chapter source text — blocks separated by a… |
+| [`chapter_set_title`](#chapter_set_title) | Rename a chapter |
+| [`chapter_transfer`](#chapter_transfer) | MOVE a whole chapter into a DIFFERENT BOOK — for splitting a book, lifting a thread into its… |
+| [`chapter_version_get`](#chapter_version_get) | Read a PAST version of a chapter as round-trippable source (same shape as chapter_get_source)… |
 
 ---
 

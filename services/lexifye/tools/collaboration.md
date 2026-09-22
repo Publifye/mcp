@@ -6,32 +6,32 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`audit_list`](#audit-list) | The dict's CHANGE HISTORY: who changed what, and when |
-| [`group_accept`](#group-accept) | Accept an invite to a group (you become a member and gain content-edit access to every dict… |
-| [`group_admin_set`](#group-admin-set) | Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin… |
-| [`group_autoshare_set`](#group-autoshare-set) | Toggle YOUR autoshare on a group |
-| [`group_create`](#group-create) | Create a GROUP — a named set of lexifye users you can later attach to a dict (dict_group_add)… |
-| [`group_decline`](#group-decline) | Decline an invite to a group (drops the pending invite; you do NOT join) |
-| [`group_delete`](#group-delete) | Delete a group |
-| [`group_get`](#group-get) | Get one group in detail: members (with display names), each member's admin/owner flag,… |
-| [`group_invite`](#group-invite) | Invite a lexifye user to a group |
-| [`group_invite_cancel`](#group-invite-cancel) | Withdraw a pending group invite |
-| [`group_leave`](#group-leave) | Leave a group you are a member of |
-| [`group_list`](#group-list) | List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role… |
-| [`group_member_remove`](#group-member-remove) | Remove a member from a group |
-| [`group_rename`](#group-rename) | Rename a group |
-| [`group_transfer`](#group-transfer) | Hand ownership of a group to another MEMBER |
-| [`guest_add`](#guest-add) | Invite a lexifye user as a GUEST EDITOR of a dict — they get CONTENT-edit access… |
-| [`guest_find_user`](#guest-find-user) | Find lexifye users by NAME to invite as guest editors or group members |
-| [`guest_list`](#guest-list) | List the collaborators of a dict |
-| [`guest_remove`](#guest-remove) | Remove a GUEST EDITOR from a dict — revokes their content access and drops the dict from their… |
-| [`note_delete`](#note-delete) | Delete a PRIVATE note at (anchor, key) |
-| [`note_get`](#note-get) | Fetch a PRIVATE note (summary + full body) at (anchor, key) |
-| [`note_list`](#note-list) | List PRIVATE note summaries (no bodies), newest first |
-| [`note_patch`](#note-patch) | Append text to an existing PRIVATE note's body (a convenience wrapper over note_set append=true) |
-| [`note_set`](#note-set) | Set (upsert) a PRIVATE authoring note on a dict (anchor=idy…) or entry (anchor=idj…) |
-| [`notice_dismiss`](#notice-dismiss) | Clear ALL of YOUR pending notices (after reading them with notice_list) |
-| [`notice_list`](#notice-list) | List YOUR pending notices (newest first) — the one-shot lines left when a group membership… |
+| [`audit_list`](#audit_list) | The dict's CHANGE HISTORY: who changed what, and when |
+| [`group_accept`](#group_accept) | Accept an invite to a group (you become a member and gain content-edit access to every dict… |
+| [`group_admin_set`](#group_admin_set) | Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin… |
+| [`group_autoshare_set`](#group_autoshare_set) | Toggle YOUR autoshare on a group |
+| [`group_create`](#group_create) | Create a GROUP — a named set of lexifye users you can later attach to a dict (dict_group_add)… |
+| [`group_decline`](#group_decline) | Decline an invite to a group (drops the pending invite; you do NOT join) |
+| [`group_delete`](#group_delete) | Delete a group |
+| [`group_get`](#group_get) | Get one group in detail: members (with display names), each member's admin/owner flag,… |
+| [`group_invite`](#group_invite) | Invite a lexifye user to a group |
+| [`group_invite_cancel`](#group_invite_cancel) | Withdraw a pending group invite |
+| [`group_leave`](#group_leave) | Leave a group you are a member of |
+| [`group_list`](#group_list) | List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role… |
+| [`group_member_remove`](#group_member_remove) | Remove a member from a group |
+| [`group_rename`](#group_rename) | Rename a group |
+| [`group_transfer`](#group_transfer) | Hand ownership of a group to another MEMBER |
+| [`guest_add`](#guest_add) | Invite a lexifye user as a GUEST EDITOR of a dict — they get CONTENT-edit access… |
+| [`guest_find_user`](#guest_find_user) | Find lexifye users by NAME to invite as guest editors or group members |
+| [`guest_list`](#guest_list) | List the collaborators of a dict |
+| [`guest_remove`](#guest_remove) | Remove a GUEST EDITOR from a dict — revokes their content access and drops the dict from their… |
+| [`note_delete`](#note_delete) | Delete a PRIVATE note at (anchor, key) |
+| [`note_get`](#note_get) | Fetch a PRIVATE note (summary + full body) at (anchor, key) |
+| [`note_list`](#note_list) | List PRIVATE note summaries (no bodies), newest first |
+| [`note_patch`](#note_patch) | Append text to an existing PRIVATE note's body (a convenience wrapper over note_set append=true) |
+| [`note_set`](#note_set) | Set (upsert) a PRIVATE authoring note on a dict (anchor=idy…) or entry (anchor=idj…) |
+| [`notice_dismiss`](#notice_dismiss) | Clear ALL of YOUR pending notices (after reading them with notice_list) |
+| [`notice_list`](#notice_list) | List YOUR pending notices (newest first) — the one-shot lines left when a group membership… |
 
 ---
 

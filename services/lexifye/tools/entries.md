@@ -6,26 +6,26 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`definition_add`](#definition-add) | Add a definition to an entry |
-| [`definition_add_source`](#definition-add-source) | Create a definition from markup source in ONE call — the definition_add twin for the source… |
-| [`definition_delete`](#definition-delete) | Delete a definition |
-| [`definition_diff`](#definition-diff) | Compare two versions of a definition (from/to version numbers via definition_history),… |
-| [`definition_get_source`](#definition-get-source) | Return a definition's content as round-trippable markup source (the grammar source_syntax… |
-| [`definition_history`](#definition-history) | List the retained version history of a definition (the last 20 saves, 7-day window), newest… |
-| [`definition_move`](#definition-move) | Reorder a definition within its entry's sense order (rendered 1., 2., 3.) |
-| [`definition_restore`](#definition-restore) | Restore a soft-deleted definition to its original position in its entry's sense order, with… |
-| [`definition_revert`](#definition-revert) | Restore a definition to a past version n (from definition_history), recorded as a NEW version… |
-| [`definition_set_source`](#definition-set-source) | Replace a definition's content by parsing markup source (the grammar source_syntax documents) |
-| [`definition_update`](#definition-update) | Replace a definition's content |
-| [`entry_add`](#entry-add) | Add a term entry to a dict |
-| [`entry_delete`](#entry-delete) | Delete an entry and all of its definitions from a dict |
-| [`entry_get`](#entry-get) | Look a term UP in a dict and return the matching entry (or entries) with their definitions… |
-| [`entry_list`](#entry-list) | List a dict's entries (summary only: id, term, translit, seq — NO definitions; use dict_get… |
-| [`entry_move`](#entry-move) | Reorder an entry within its dict's display order |
-| [`entry_rename`](#entry-rename) | Rename an entry's term (and optionally its transliteration) |
-| [`entry_reorder`](#entry-reorder) | Set a dict's ENTIRE entry display order in one call — the bulk twin of entry_move (which… |
-| [`entry_restore`](#entry-restore) | Restore a soft-deleted entry to its original position, with every definition, every… |
-| [`entry_search`](#entry-search) | Find entries in ONE dictionary by a text fragment — the way to locate an entry when you do NOT… |
+| [`definition_add`](#definition_add) | Add a definition to an entry |
+| [`definition_add_source`](#definition_add_source) | Create a definition from markup source in ONE call — the definition_add twin for the source… |
+| [`definition_delete`](#definition_delete) | Delete a definition |
+| [`definition_diff`](#definition_diff) | Compare two versions of a definition (from/to version numbers via definition_history),… |
+| [`definition_get_source`](#definition_get_source) | Return a definition's content as round-trippable markup source (the grammar source_syntax… |
+| [`definition_history`](#definition_history) | List the retained version history of a definition (the last 20 saves, 7-day window), newest… |
+| [`definition_move`](#definition_move) | Reorder a definition within its entry's sense order (rendered 1., 2., 3.) |
+| [`definition_restore`](#definition_restore) | Restore a soft-deleted definition to its original position in its entry's sense order, with… |
+| [`definition_revert`](#definition_revert) | Restore a definition to a past version n (from definition_history), recorded as a NEW version… |
+| [`definition_set_source`](#definition_set_source) | Replace a definition's content by parsing markup source (the grammar source_syntax documents) |
+| [`definition_update`](#definition_update) | Replace a definition's content |
+| [`entry_add`](#entry_add) | Add a term entry to a dict |
+| [`entry_delete`](#entry_delete) | Delete an entry and all of its definitions from a dict |
+| [`entry_get`](#entry_get) | Look a term UP in a dict and return the matching entry (or entries) with their definitions… |
+| [`entry_list`](#entry_list) | List a dict's entries (summary only: id, term, translit, seq — NO definitions; use dict_get… |
+| [`entry_move`](#entry_move) | Reorder an entry within its dict's display order |
+| [`entry_rename`](#entry_rename) | Rename an entry's term (and optionally its transliteration) |
+| [`entry_reorder`](#entry_reorder) | Set a dict's ENTIRE entry display order in one call — the bulk twin of entry_move (which… |
+| [`entry_restore`](#entry_restore) | Restore a soft-deleted entry to its original position, with every definition, every… |
+| [`entry_search`](#entry_search) | Find entries in ONE dictionary by a text fragment — the way to locate an entry when you do NOT… |
 
 ---
 

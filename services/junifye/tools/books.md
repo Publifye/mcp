@@ -6,40 +6,40 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`book_cover_generate`](#book-cover-generate) | Generate a cover for a book and set it: an image model draws a background from the book's OWN… |
-| [`book_cover_refresh`](#book-cover-refresh) | Re-set the title, author and imprint mark over the artwork ALREADY STORED for this book, and… |
-| [`book_cover_restore`](#book-cover-restore) | Revert this book's cover to a previous version, from book_cover_versions |
-| [`book_cover_status`](#book-cover-status) | Poll a running or finished cover generation |
-| [`book_cover_upload_begin`](#book-cover-upload-begin) | Begin uploading the front COVER ART for ONE book |
-| [`book_cover_versions`](#book-cover-versions) | List the covers this book USED and can still be reverted to |
-| [`book_create`](#book-create) | Create a new book or document |
-| [`book_delete`](#book-delete) | Soft-delete a book into a trash window of 30 days (restore with book_restore) |
-| [`book_epub_check`](#book-epub-check) | Inspect the metadata of a book's ACTUAL BUILT EPUB — the file a store would receive — and… |
-| [`book_export_begin`](#book-export-begin) | Begin a book export |
-| [`book_files`](#book-files) | List EVERY file this book can hand over — one call, with metadata and staleness |
-| [`book_freeze`](#book-freeze) | ADMIN |
-| [`book_get`](#book-get) | Get book metadata + artifact URLs: url (the PRIMARY link to share — the short permalink that… |
-| [`book_get_source`](#book-get-source) | Read MANY chapters' round-trippable source in ONE call — the whole book by default, or a subset |
-| [`book_grep`](#book-grep) | Find WHERE a string occurs in a book, one result per occurrence, each attributed to its BLOCK… |
-| [`book_group_add`](#book-group-add) | Attach a GROUP to a book so every member of the group becomes a content editor of it (resolved… |
-| [`book_group_remove`](#book-group-remove) | Detach a GROUP from a book — its members lose the group-derived edit access to that book (any… |
-| [`book_import_begin`](#book-import-begin) | Begin a book import |
-| [`book_isbn_assign`](#book-isbn-assign) | Assign a REAL, pool-allocated ISBN-13 to a published book |
-| [`book_list`](#book-list) | List books with sort + pagination + visibility filter |
-| [`book_logo_upload_begin`](#book-logo-upload-begin) | Begin uploading a logo for ONE book's social share card (og:image) — it OVERRIDES your… |
-| [`book_outline`](#book-outline) | Cheap PLANNING view of a book BEFORE reading content: each chapter's size + block count, plus… |
-| [`book_publish_to_store`](#book-publish-to-store) | Put this book ON THE SHELF — register it for sale on the storefront and upload the EPUB a… |
-| [`book_questions`](#book-questions) | List every question this book answers (across all its chapters + any whole-book answers) |
-| [`book_replace`](#book-replace) | Find-and-replace a LITERAL text string across EVERY chapter of a book — fix a recurring typo,… |
-| [`book_restore`](#book-restore) | Restore a soft-deleted book within its trash window (30 days) — re-adds it to all listings and… |
-| [`book_retract_from_store`](#book-retract-from-store) | Take this book OFF the shelf |
-| [`book_revision_close`](#book-revision-close) | Close a revision window on YOUR published book — refreeze its text as the new canonical… |
-| [`book_revision_open`](#book-revision-open) | Open a REVISION WINDOW on YOUR published book so you can edit its (otherwise canonical,… |
-| [`book_search`](#book-search) | Search visible books |
-| [`book_set`](#book-set) | Atomically set ONE book field by key |
-| [`book_set_buy_links`](#book-set-buy-links) | Set WHERE a reader can buy this book — every channel, not just ours |
-| [`book_set_translation_of`](#book-set-translation-of) | Link a book as a translation/edition of an ORIGINAL book so the two appear as language… |
-| [`book_unfreeze`](#book-unfreeze) | Lift a book freeze |
+| [`book_cover_generate`](#book_cover_generate) | Generate a cover for a book and set it: an image model draws a background from the book's OWN… |
+| [`book_cover_refresh`](#book_cover_refresh) | Re-set the title, author and imprint mark over the artwork ALREADY STORED for this book, and… |
+| [`book_cover_restore`](#book_cover_restore) | Revert this book's cover to a previous version, from book_cover_versions |
+| [`book_cover_status`](#book_cover_status) | Poll a running or finished cover generation |
+| [`book_cover_upload_begin`](#book_cover_upload_begin) | Begin uploading the front COVER ART for ONE book |
+| [`book_cover_versions`](#book_cover_versions) | List the covers this book USED and can still be reverted to |
+| [`book_create`](#book_create) | Create a new book or document |
+| [`book_delete`](#book_delete) | Soft-delete a book into a trash window of 30 days (restore with book_restore) |
+| [`book_epub_check`](#book_epub_check) | Inspect the metadata of a book's ACTUAL BUILT EPUB — the file a store would receive — and… |
+| [`book_export_begin`](#book_export_begin) | Begin a book export |
+| [`book_files`](#book_files) | List EVERY file this book can hand over — one call, with metadata and staleness |
+| [`book_freeze`](#book_freeze) | ADMIN |
+| [`book_get`](#book_get) | Get book metadata + artifact URLs: url (the PRIMARY link to share — the short permalink that… |
+| [`book_get_source`](#book_get_source) | Read MANY chapters' round-trippable source in ONE call — the whole book by default, or a subset |
+| [`book_grep`](#book_grep) | Find WHERE a string occurs in a book, one result per occurrence, each attributed to its BLOCK… |
+| [`book_group_add`](#book_group_add) | Attach a GROUP to a book so every member of the group becomes a content editor of it (resolved… |
+| [`book_group_remove`](#book_group_remove) | Detach a GROUP from a book — its members lose the group-derived edit access to that book (any… |
+| [`book_import_begin`](#book_import_begin) | Begin a book import |
+| [`book_isbn_assign`](#book_isbn_assign) | Assign a REAL, pool-allocated ISBN-13 to a published book |
+| [`book_list`](#book_list) | List books with sort + pagination + visibility filter |
+| [`book_logo_upload_begin`](#book_logo_upload_begin) | Begin uploading a logo for ONE book's social share card (og:image) — it OVERRIDES your… |
+| [`book_outline`](#book_outline) | Cheap PLANNING view of a book BEFORE reading content: each chapter's size + block count, plus… |
+| [`book_publish_to_store`](#book_publish_to_store) | Put this book ON THE SHELF — register it for sale on the storefront and upload the EPUB a… |
+| [`book_questions`](#book_questions) | List every question this book answers (across all its chapters + any whole-book answers) |
+| [`book_replace`](#book_replace) | Find-and-replace a LITERAL text string across EVERY chapter of a book — fix a recurring typo,… |
+| [`book_restore`](#book_restore) | Restore a soft-deleted book within its trash window (30 days) — re-adds it to all listings and… |
+| [`book_retract_from_store`](#book_retract_from_store) | Take this book OFF the shelf |
+| [`book_revision_close`](#book_revision_close) | Close a revision window on YOUR published book — refreeze its text as the new canonical… |
+| [`book_revision_open`](#book_revision_open) | Open a REVISION WINDOW on YOUR published book so you can edit its (otherwise canonical,… |
+| [`book_search`](#book_search) | Search visible books |
+| [`book_set`](#book_set) | Atomically set ONE book field by key |
+| [`book_set_buy_links`](#book_set_buy_links) | Set WHERE a reader can buy this book — every channel, not just ours |
+| [`book_set_translation_of`](#book_set_translation_of) | Link a book as a translation/edition of an ORIGINAL book so the two appear as language… |
+| [`book_unfreeze`](#book_unfreeze) | Lift a book freeze |
 
 ---
 

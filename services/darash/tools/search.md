@@ -7,9 +7,9 @@ See [connect](../../../docs/connect.md) to get a key.
 | Tool | What it does |
 |---|---|
 | [`search`](#search) | Full-text search across Bible verses |
-| [`semantic_search`](#semantic-search) | Three-layer semantic engine: (1) Finds KJV verses containing the query words |
-| [`word_frequency`](#word-frequency) | Count how many times a Strong's number appears in the KJV tagged text |
-| [`hapax_list`](#hapax-list) | List all hapax legomena — words that appear exactly once in the Bible |
+| [`semantic_search`](#semantic_search) | Three-layer semantic engine: (1) Finds KJV verses containing the query words |
+| [`word_frequency`](#word_frequency) | Count how many times a Strong's number appears in the KJV tagged text |
+| [`hapax_list`](#hapax_list) | List all hapax legomena — words that appear exactly once in the Bible |
 
 ---
 

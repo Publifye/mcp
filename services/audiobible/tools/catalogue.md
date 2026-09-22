@@ -6,9 +6,9 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`list_books`](#list-books) | read | Every book of the canon with its chapter count, in canon order. The canon is loaded from… |
-| [`search_chapters`](#search-chapters) | read | The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 23' into th… |
-| [`chapter_status`](#chapter-status) | read | Whether one chapter's audio exists, and what it was made from. With no arguments it answ… |
+| [`list_books`](#list_books) | read | Every book of the canon with its chapter count, in canon order. The canon is loaded from… |
+| [`search_chapters`](#search_chapters) | read | The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 23' into th… |
+| [`chapter_status`](#chapter_status) | read | Whether one chapter's audio exists, and what it was made from. With no arguments it answ… |
 | [`coverage`](#coverage) | read | How much of the Bible has actually been generated and how much is still pending. Read st… |
 
 ---

@@ -6,9 +6,9 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`house_style`](#house-style) | THE one-stop authoring guide — read this ONCE before writing a dictionary and you have… |
-| [`source_syntax`](#source-syntax) | Return the grammar of the round-trippable definition markup used by definition_get_source… |
-| [`trash_list`](#trash-list) | The dict's TRASH BIN: everything soft-deleted and still recoverable, oldest first |
+| [`house_style`](#house_style) | THE one-stop authoring guide — read this ONCE before writing a dictionary and you have… |
+| [`source_syntax`](#source_syntax) | Return the grammar of the round-trippable definition markup used by definition_get_source… |
+| [`trash_list`](#trash_list) | The dict's TRASH BIN: everything soft-deleted and still recoverable, oldest first |
 
 ---
 

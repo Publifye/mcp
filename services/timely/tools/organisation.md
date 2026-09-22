@@ -6,14 +6,14 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_org_get`](#timely-org-get) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). The complete record… |
-| [`timely_org_set`](#timely-org-set) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Replace the organis… |
-| [`timely_org_set_display`](#timely-org-set-display) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). What visitors see i… |
-| [`timely_org_add_website`](#timely-org-add-website) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Append ONE website … |
-| [`timely_org_homepage`](#timely-org-homepage) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). To make Timely the … |
-| [`timely_org_logo_import`](#timely-org-logo-import) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Set the LOGO from a… |
-| [`timely_org_logo_upload_begin`](#timely-org-logo-upload-begin) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Single-use LOGO upl… |
-| [`timely_logo_status`](#timely-logo-status) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). Poll an organisatio… |
+| [`timely_org_get`](#timely_org_get) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). The complete record… |
+| [`timely_org_set`](#timely_org_set) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Replace the organis… |
+| [`timely_org_set_display`](#timely_org_set_display) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). What visitors see i… |
+| [`timely_org_add_website`](#timely_org_add_website) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Append ONE website … |
+| [`timely_org_homepage`](#timely_org_homepage) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). To make Timely the … |
+| [`timely_org_logo_import`](#timely_org_logo_import) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Set the LOGO from a… |
+| [`timely_org_logo_upload_begin`](#timely_org_logo_upload_begin) | write | ORGANISATION (shared by all programmes, web only, never in the PDF). Single-use LOGO upl… |
+| [`timely_logo_status`](#timely_logo_status) | read | ORGANISATION (shared by all programmes, web only, never in the PDF). Poll an organisatio… |
 
 ---
 

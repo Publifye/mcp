@@ -6,8 +6,8 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | What it does |
 |---|---|
-| [`get_buying_power`](#get-buying-power) | Get the buying-power multiplier for one country, for pricing a USD list price in a local market.… |
-| [`list_buying_power`](#list-buying-power) | List the buying-power multiplier for every country the World Bank publishes GNI per capita (PPP)… |
+| [`get_buying_power`](#get_buying_power) | Get the buying-power multiplier for one country, for pricing a USD list price in a local market.… |
+| [`list_buying_power`](#list_buying_power) | List the buying-power multiplier for every country the World Bank publishes GNI per capita (PPP)… |
 
 ---
 

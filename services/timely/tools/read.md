@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_list`](#timely-list) | read | List the programmes of one account (yours unless staff pass owner) in id order, 25 per p… |
-| [`timely_get`](#timely-get) | read | PROGRAMME only (organisation info: timely_org_*). Published and draft revision headers a… |
-| [`timely_history`](#timely-history) | read | Revision headers, newest first (or kind:"audit": the audit trail), 25 per page; pass nex… |
-| [`timely_edit_history`](#timely-edit-history) | read | Your programme's per-call workflow history, newest first, including checkpoints and clar… |
-| [`timely_get_pdf`](#timely-get-pdf) | read | One-hour download URL (anyone holding it can download) for an existing PDF of any revisi… |
-| [`timely_get_widget`](#timely-get-widget) | read | PROGRAMME widget: URL, copyable iframe HTML, allowed websites, language and state. The o… |
+| [`timely_list`](#timely_list) | read | List the programmes of one account (yours unless staff pass owner) in id order, 25 per p… |
+| [`timely_get`](#timely_get) | read | PROGRAMME only (organisation info: timely_org_*). Published and draft revision headers a… |
+| [`timely_history`](#timely_history) | read | Revision headers, newest first (or kind:"audit": the audit trail), 25 per page; pass nex… |
+| [`timely_edit_history`](#timely_edit_history) | read | Your programme's per-call workflow history, newest first, including checkpoints and clar… |
+| [`timely_get_pdf`](#timely_get_pdf) | read | One-hour download URL (anyone holding it can download) for an existing PDF of any revisi… |
+| [`timely_get_widget`](#timely_get_widget) | read | PROGRAMME widget: URL, copyable iframe HTML, allowed websites, language and state. The o… |
 
 ---
 

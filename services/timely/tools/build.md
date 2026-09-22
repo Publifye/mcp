@@ -6,13 +6,13 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_create`](#timely-create) | write | PROGRAMME only (organisation info lives in timely_org_*). Create a programme draft; sele… |
-| [`timely_edit`](#timely-edit) | write | PROGRAMME only (organisation info lives in timely_org_*). Atomically apply explicit oper… |
-| [`timely_request_edit`](#timely-request-edit) | write | Interpret a natural-language request with ISAC, validate changes and prepare a draft. Ne… |
-| [`timely_set_theme`](#timely-set-theme) | write | Set the public programme and widget appearance immediately (not PDF styling). Use genera… |
-| [`timely_set_pdf_layout`](#timely-set-pdf-layout) | write | PDF layout normal or compact (smaller heading, tighter rows, no printed logo); keeps mee… |
-| [`timely_render`](#timely-render) | write | Render the current draft afresh through Doksi (replacing its preview on the SAME revisio… |
-| [`draft_approve`](#draft-approve) | write | AI/MCP callers CAN approve and publish with this tool; no browser or signed confirmation… |
+| [`timely_create`](#timely_create) | write | PROGRAMME only (organisation info lives in timely_org_*). Create a programme draft; sele… |
+| [`timely_edit`](#timely_edit) | write | PROGRAMME only (organisation info lives in timely_org_*). Atomically apply explicit oper… |
+| [`timely_request_edit`](#timely_request_edit) | write | Interpret a natural-language request with ISAC, validate changes and prepare a draft. Ne… |
+| [`timely_set_theme`](#timely_set_theme) | write | Set the public programme and widget appearance immediately (not PDF styling). Use genera… |
+| [`timely_set_pdf_layout`](#timely_set_pdf_layout) | write | PDF layout normal or compact (smaller heading, tighter rows, no printed logo); keeps mee… |
+| [`timely_render`](#timely_render) | write | Render the current draft afresh through Doksi (replacing its preview on the SAME revisio… |
+| [`draft_approve`](#draft_approve) | write | AI/MCP callers CAN approve and publish with this tool; no browser or signed confirmation… |
 
 ---
 

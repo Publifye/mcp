@@ -6,15 +6,15 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`isbn_record_acceptance`](#isbn-record-acceptance) | ADMIN |
-| [`isbn_status`](#isbn-status) | Read your ISBN standing — the fast way to see whether book_isbn_assign will work for you |
-| [`print_get`](#print-get) | Read a book's PHYSICAL-PRINT status — does NOT change anything or render |
-| [`print_set`](#print-set) | Configure a book for PHYSICAL PRINT (print-on-demand) and render a press-ready interior PDF |
-| [`publish_request`](#publish-request) | Request that a book be PUBLISHED (made publicly listed) |
-| [`retail_record_acceptance`](#retail-record-acceptance) | ADMIN |
-| [`retail_status`](#retail-status) | Whether an author is approved to sell books on a live retail shelf, and what the remaining… |
-| [`retail_terms`](#retail-terms) | The retail terms an AUTHOR accepts before a book goes on sale, plus the version string the… |
-| [`store_readiness`](#store-readiness) | Everything standing between this book and a live retail shelf, in one call: the deterministic… |
+| [`isbn_record_acceptance`](#isbn_record_acceptance) | ADMIN |
+| [`isbn_status`](#isbn_status) | Read your ISBN standing — the fast way to see whether book_isbn_assign will work for you |
+| [`print_get`](#print_get) | Read a book's PHYSICAL-PRINT status — does NOT change anything or render |
+| [`print_set`](#print_set) | Configure a book for PHYSICAL PRINT (print-on-demand) and render a press-ready interior PDF |
+| [`publish_request`](#publish_request) | Request that a book be PUBLISHED (made publicly listed) |
+| [`retail_record_acceptance`](#retail_record_acceptance) | ADMIN |
+| [`retail_status`](#retail_status) | Whether an author is approved to sell books on a live retail shelf, and what the remaining… |
+| [`retail_terms`](#retail_terms) | The retail terms an AUTHOR accepts before a book goes on sale, plus the version string the… |
+| [`store_readiness`](#store_readiness) | Everything standing between this book and a live retail shelf, in one call: the deterministic… |
 
 ---
 

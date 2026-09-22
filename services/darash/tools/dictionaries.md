@@ -6,10 +6,10 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`list_dicts`](#list-dicts) | List all 13 Bible dictionaries |
-| [`lookup_dictionary`](#lookup-dictionary) | Search 13 Bible dictionaries |
-| [`multi_dict_lookup`](#multi-dict-lookup) | Search ALL 13 Bible dictionaries in one call |
-| [`list_dict_topics`](#list-dict-topics) | List all topics in a dictionary with byte-based pagination |
+| [`list_dicts`](#list_dicts) | List all 13 Bible dictionaries |
+| [`lookup_dictionary`](#lookup_dictionary) | Search 13 Bible dictionaries |
+| [`multi_dict_lookup`](#multi_dict_lookup) | Search ALL 13 Bible dictionaries in one call |
+| [`list_dict_topics`](#list_dict_topics) | List all topics in a dictionary with byte-based pagination |
 
 ---
 

@@ -6,44 +6,44 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`edit_session_create`](#edit-session-create) | Open (or REUSE) a human WEB-EDITOR link for a book and return {session_id, url, pin, reused,… |
-| [`edit_session_revoke`](#edit-session-revoke) | Immediately disable a web-editor link previously minted by edit_session_create (e.g |
-| [`editorial_list`](#editorial-list) | List the books on YOUR editable shelf (books you own or are a guest editor on) that are IN the… |
-| [`editorial_set`](#editorial-set) | Set a book's EDITORIAL review state — an opt-in, soft workflow separate from the admin… |
-| [`group_accept`](#group-accept) | Accept an invite to a group (you become a member and gain content-edit access to every book… |
-| [`group_admin_set`](#group-admin-set) | Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin… |
-| [`group_autoshare_set`](#group-autoshare-set) | Toggle YOUR autoshare on a group |
-| [`group_create`](#group-create) | Create a GROUP — a named set of Junifye users you can later attach to a book (book_group_add)… |
-| [`group_decline`](#group-decline) | Decline an invite to a group (drops the pending invite; you do NOT join) |
-| [`group_delete`](#group-delete) | Delete a group |
-| [`group_get`](#group-get) | Get one group in detail: members (with display names), each member's admin/owner flag,… |
-| [`group_invite`](#group-invite) | Invite a Junifye user to a group |
-| [`group_invite_cancel`](#group-invite-cancel) | Withdraw a pending group invite |
-| [`group_leave`](#group-leave) | Leave a group you are a member of |
-| [`group_list`](#group-list) | List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role… |
-| [`group_member_remove`](#group-member-remove) | Remove a member from a group |
-| [`group_rename`](#group-rename) | Rename a group |
-| [`group_transfer`](#group-transfer) | Hand ownership of a group to another MEMBER |
-| [`guest_add`](#guest-add) | Invite a Junifye user as a GUEST EDITOR of a book — they get CONTENT-edit access… |
-| [`guest_find_user`](#guest-find-user) | Find Junifye users by NAME to invite as guest editors |
-| [`guest_list`](#guest-list) | List the collaborators of a book |
-| [`guest_remove`](#guest-remove) | Remove a GUEST EDITOR from a book — revokes their content access and drops the book from their… |
-| [`note_delete`](#note-delete) | Delete one authoring NOTE, addressed by anchor / block_id / key (same handle used to set it) |
-| [`note_get`](#note-get) | Read one authoring NOTE in full (subject + body) — private scratch, never part of the rendered… |
-| [`note_list`](#note-list) | List authoring NOTES (private scratch — never part of the rendered book) as a compact catalog… |
-| [`note_patch`](#note-patch) | Surgically edit a NOTE without resending its whole body: replace `find` with `replace` |
-| [`note_set`](#note-set) | Create, replace, or append an authoring NOTE — private scratch for you and the author… |
-| [`question_add`](#question-add) | Create a discoverable question (e.g |
-| [`question_delete`](#question-delete) | Permanently delete a question and all its answer edges (the referenced books/chapters are… |
-| [`question_get`](#question-get) | Fetch one question by id OR slug, with its answer edges resolved (each answer names the… |
-| [`question_link`](#question-link) | Attach an answer: this question is answered by book_id, optionally narrowed to chapter_id |
-| [`question_list`](#question-list) | Browse questions newest-first, paginated |
-| [`question_set`](#question-set) | Edit a question's text/tags/lang |
-| [`question_unlink`](#question-unlink) | Detach one answer edge (book_id, optionally chapter_id) from a question |
-| [`vet_decide`](#vet-decide) | ADMIN |
-| [`vet_list`](#vet-list) | ADMIN |
-| [`vet_status`](#vet-status) | Check whether a book has been approved for public listing, and — if it was rejected — WHY |
-| [`vet_submit_result`](#vet-submit-result) | Report the verdict of an agentic publication-vetting session for a book |
+| [`edit_session_create`](#edit_session_create) | Open (or REUSE) a human WEB-EDITOR link for a book and return {session_id, url, pin, reused,… |
+| [`edit_session_revoke`](#edit_session_revoke) | Immediately disable a web-editor link previously minted by edit_session_create (e.g |
+| [`editorial_list`](#editorial_list) | List the books on YOUR editable shelf (books you own or are a guest editor on) that are IN the… |
+| [`editorial_set`](#editorial_set) | Set a book's EDITORIAL review state — an opt-in, soft workflow separate from the admin… |
+| [`group_accept`](#group_accept) | Accept an invite to a group (you become a member and gain content-edit access to every book… |
+| [`group_admin_set`](#group_admin_set) | Grant or revoke ADMIN on a group member (admins can invite, rename, and remove non-admin… |
+| [`group_autoshare_set`](#group_autoshare_set) | Toggle YOUR autoshare on a group |
+| [`group_create`](#group_create) | Create a GROUP — a named set of Junifye users you can later attach to a book (book_group_add)… |
+| [`group_decline`](#group_decline) | Decline an invite to a group (drops the pending invite; you do NOT join) |
+| [`group_delete`](#group_delete) | Delete a group |
+| [`group_get`](#group_get) | Get one group in detail: members (with display names), each member's admin/owner flag,… |
+| [`group_invite`](#group_invite) | Invite a Junifye user to a group |
+| [`group_invite_cancel`](#group_invite_cancel) | Withdraw a pending group invite |
+| [`group_leave`](#group_leave) | Leave a group you are a member of |
+| [`group_list`](#group_list) | List the GROUPS you belong to — [{id, name, owner, member_count, role, autoshare}] where role… |
+| [`group_member_remove`](#group_member_remove) | Remove a member from a group |
+| [`group_rename`](#group_rename) | Rename a group |
+| [`group_transfer`](#group_transfer) | Hand ownership of a group to another MEMBER |
+| [`guest_add`](#guest_add) | Invite a Junifye user as a GUEST EDITOR of a book — they get CONTENT-edit access… |
+| [`guest_find_user`](#guest_find_user) | Find Junifye users by NAME to invite as guest editors |
+| [`guest_list`](#guest_list) | List the collaborators of a book |
+| [`guest_remove`](#guest_remove) | Remove a GUEST EDITOR from a book — revokes their content access and drops the book from their… |
+| [`note_delete`](#note_delete) | Delete one authoring NOTE, addressed by anchor / block_id / key (same handle used to set it) |
+| [`note_get`](#note_get) | Read one authoring NOTE in full (subject + body) — private scratch, never part of the rendered… |
+| [`note_list`](#note_list) | List authoring NOTES (private scratch — never part of the rendered book) as a compact catalog… |
+| [`note_patch`](#note_patch) | Surgically edit a NOTE without resending its whole body: replace `find` with `replace` |
+| [`note_set`](#note_set) | Create, replace, or append an authoring NOTE — private scratch for you and the author… |
+| [`question_add`](#question_add) | Create a discoverable question (e.g |
+| [`question_delete`](#question_delete) | Permanently delete a question and all its answer edges (the referenced books/chapters are… |
+| [`question_get`](#question_get) | Fetch one question by id OR slug, with its answer edges resolved (each answer names the… |
+| [`question_link`](#question_link) | Attach an answer: this question is answered by book_id, optionally narrowed to chapter_id |
+| [`question_list`](#question_list) | Browse questions newest-first, paginated |
+| [`question_set`](#question_set) | Edit a question's text/tags/lang |
+| [`question_unlink`](#question_unlink) | Detach one answer edge (book_id, optionally chapter_id) from a question |
+| [`vet_decide`](#vet_decide) | ADMIN |
+| [`vet_list`](#vet_list) | ADMIN |
+| [`vet_status`](#vet_status) | Check whether a book has been approved for public listing, and — if it was rejected — WHY |
+| [`vet_submit_result`](#vet_submit_result) | Report the verdict of an agentic publication-vetting session for a book |
 
 ---
 

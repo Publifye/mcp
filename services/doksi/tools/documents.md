@@ -6,9 +6,9 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`doc_validate`](#doc-validate) | read | Check a document against its kind's requirements and report EVERY problem at once, never… |
-| [`doc_compose`](#doc-compose) | write | Compose a document and typeset it in ONE call: validate, render, and return the PDF. Thi… |
-| [`doc_get`](#doc-get) | write | Read the original structured document JSON retained when doc_issue or doc_compose(issue:… |
+| [`doc_validate`](#doc_validate) | read | Check a document against its kind's requirements and report EVERY problem at once, never… |
+| [`doc_compose`](#doc_compose) | write | Compose a document and typeset it in ONE call: validate, render, and return the PDF. Thi… |
+| [`doc_get`](#doc_get) | write | Read the original structured document JSON retained when doc_issue or doc_compose(issue:… |
 
 ---
 

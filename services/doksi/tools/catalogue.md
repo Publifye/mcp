@@ -6,10 +6,10 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`kind_list`](#kind-list) | read | List the eight document kinds doksi makes, with what each one is for. Read this before d… |
-| [`purpose_list`](#purpose-list) | read | List the curated purposes an official letter can have, with the EXTRA fields each one re… |
-| [`block_types`](#block-types) | read | List the building blocks a document body is made of, and which kinds accept each one. Th… |
-| [`doc_requirements`](#doc-requirements) | read | Return the exact field requirements for one kind, optionally composed with one purpose. … |
+| [`kind_list`](#kind_list) | read | List the eight document kinds doksi makes, with what each one is for. Read this before d… |
+| [`purpose_list`](#purpose_list) | read | List the curated purposes an official letter can have, with the EXTRA fields each one re… |
+| [`block_types`](#block_types) | read | List the building blocks a document body is made of, and which kinds accept each one. Th… |
+| [`doc_requirements`](#doc_requirements) | read | Return the exact field requirements for one kind, optionally composed with one purpose. … |
 
 ---
 

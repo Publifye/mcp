@@ -6,40 +6,40 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`block_add_bible_quote`](#block-add-bible-quote) | Add a scripture block quote |
-| [`block_add_figure`](#block-add-figure) | Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH… |
-| [`block_add_general_quote`](#block-add-general-quote) | Add a non-scripture block quote (Church Father, theologian, hymn writer, web source) |
-| [`block_add_heading`](#block-add-heading) | Add a heading block — this is how you make SUB-CHAPTERS inside a chapter |
-| [`block_add_image`](#block-add-image) | Add an image/figure block that renders in BOTH the PDF and the HTML reader |
-| [`block_add_list`](#block-add-list) | Add a list initialised with one item (item_idx=0) containing one text span |
-| [`block_add_paragraph`](#block-add-paragraph) | Add a paragraph initialised with one text span |
-| [`block_add_stat`](#block-add-stat) | Add a stat block (percentage "rings", a donut chart per item) initialised with ONE ring; build… |
-| [`block_add_table`](#block-add-table) | Add a tabular grid in ONE call |
-| [`block_delete`](#block-delete) | Delete a block by its stable id (e.g |
-| [`block_get_source`](#block-get-source) | Return one block as round-trippable source text (markdown-ish) |
-| [`block_list`](#block-list) | Read-only chapter navigation |
-| [`block_move`](#block-move) | Reorder blocks by id |
-| [`block_patch_many`](#block-patch-many) | Apply MANY surgical patches to one chapter in a SINGLE version |
-| [`block_patch_text`](#block-patch-text) | Surgically edit ONE block: replace `find` with `replace` inside that block's SOURCE (exactly… |
-| [`block_set_source`](#block-set-source) | Replace a block's content by parsing source text |
-| [`block_set_stat`](#block-set-stat) | Change a stat block's presentation without touching its rings: color… |
-| [`block_set_table`](#block-set-table) | Replace an existing TABLE block's contents from STRUCTURED data — the only way to edit a table… |
-| [`block_transfer`](#block-transfer) | MOVE whole sections (blocks) from one chapter to another — the two chapters may be in… |
-| [`list_add_item`](#list-add-item) | Append (or insert at at_idx) a new row to a list block |
-| [`list_delete_item`](#list-delete-item) | Delete row item_idx from a list block |
-| [`list_move_item`](#list-move-item) | Reorder rows within a list block |
-| [`span_add_bref`](#span-add-bref) | Append a Bible-reference link span |
-| [`span_add_emph`](#span-add-emph) | Append italic-emphasis span |
-| [`span_add_greek`](#span-add-greek) | Append Greek-script span (may contain accents + breathings) |
-| [`span_add_hebrew`](#span-add-hebrew) | Append Hebrew-script span (may contain nikud) |
-| [`span_add_latin`](#span-add-latin) | Append LTR Latin-script span |
-| [`span_add_link`](#span-add-link) | Append an inline hyperlink span: a visible TITLE + a url |
-| [`span_add_strong`](#span-add-strong) | Append bold-emphasis span |
-| [`span_add_strongs`](#span-add-strongs) | Append a Strong's-concordance code span |
-| [`span_add_text`](#span-add-text) | Append (or insert at at_idx) a plain-text span |
-| [`span_delete`](#span-delete) | Delete the span at idx within the target block |
-| [`span_move`](#span-move) | Reorder spans within a block |
-| [`stat_add_item`](#stat-add-item) | Append a ring to an existing stat block |
+| [`block_add_bible_quote`](#block_add_bible_quote) | Add a scripture block quote |
+| [`block_add_figure`](#block_add_figure) | Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH… |
+| [`block_add_general_quote`](#block_add_general_quote) | Add a non-scripture block quote (Church Father, theologian, hymn writer, web source) |
+| [`block_add_heading`](#block_add_heading) | Add a heading block — this is how you make SUB-CHAPTERS inside a chapter |
+| [`block_add_image`](#block_add_image) | Add an image/figure block that renders in BOTH the PDF and the HTML reader |
+| [`block_add_list`](#block_add_list) | Add a list initialised with one item (item_idx=0) containing one text span |
+| [`block_add_paragraph`](#block_add_paragraph) | Add a paragraph initialised with one text span |
+| [`block_add_stat`](#block_add_stat) | Add a stat block (percentage "rings", a donut chart per item) initialised with ONE ring; build… |
+| [`block_add_table`](#block_add_table) | Add a tabular grid in ONE call |
+| [`block_delete`](#block_delete) | Delete a block by its stable id (e.g |
+| [`block_get_source`](#block_get_source) | Return one block as round-trippable source text (markdown-ish) |
+| [`block_list`](#block_list) | Read-only chapter navigation |
+| [`block_move`](#block_move) | Reorder blocks by id |
+| [`block_patch_many`](#block_patch_many) | Apply MANY surgical patches to one chapter in a SINGLE version |
+| [`block_patch_text`](#block_patch_text) | Surgically edit ONE block: replace `find` with `replace` inside that block's SOURCE (exactly… |
+| [`block_set_source`](#block_set_source) | Replace a block's content by parsing source text |
+| [`block_set_stat`](#block_set_stat) | Change a stat block's presentation without touching its rings: color… |
+| [`block_set_table`](#block_set_table) | Replace an existing TABLE block's contents from STRUCTURED data — the only way to edit a table… |
+| [`block_transfer`](#block_transfer) | MOVE whole sections (blocks) from one chapter to another — the two chapters may be in… |
+| [`list_add_item`](#list_add_item) | Append (or insert at at_idx) a new row to a list block |
+| [`list_delete_item`](#list_delete_item) | Delete row item_idx from a list block |
+| [`list_move_item`](#list_move_item) | Reorder rows within a list block |
+| [`span_add_bref`](#span_add_bref) | Append a Bible-reference link span |
+| [`span_add_emph`](#span_add_emph) | Append italic-emphasis span |
+| [`span_add_greek`](#span_add_greek) | Append Greek-script span (may contain accents + breathings) |
+| [`span_add_hebrew`](#span_add_hebrew) | Append Hebrew-script span (may contain nikud) |
+| [`span_add_latin`](#span_add_latin) | Append LTR Latin-script span |
+| [`span_add_link`](#span_add_link) | Append an inline hyperlink span: a visible TITLE + a url |
+| [`span_add_strong`](#span_add_strong) | Append bold-emphasis span |
+| [`span_add_strongs`](#span_add_strongs) | Append a Strong's-concordance code span |
+| [`span_add_text`](#span_add_text) | Append (or insert at at_idx) a plain-text span |
+| [`span_delete`](#span_delete) | Delete the span at idx within the target block |
+| [`span_move`](#span_move) | Reorder spans within a block |
+| [`stat_add_item`](#stat_add_item) | Append a ring to an existing stat block |
 
 ---
 

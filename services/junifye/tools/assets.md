@@ -6,28 +6,28 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`author_page_get`](#author-page-get) | Get YOUR public author-page state: display name (page_name override, else your directory… |
-| [`author_page_set`](#author-page-set) | Set YOUR public author-page state: `bio` (max 2000 chars — the blurb shown on /a/<handle>),… |
-| [`authors_list`](#authors-list) | List every author whose PUBLIC page is LIVE (they opted in AND have at least one listed book)… |
-| [`description_status`](#description-status) | Check the GENERATED book description job for one of your books |
-| [`dict_add`](#dict-add) | Create a new Dictionary entry |
-| [`dict_delete`](#dict-delete) | Delete a Dictionary entry |
-| [`dict_get`](#dict-get) | Get a Dictionary entry |
-| [`dict_list`](#dict-list) | List all Dictionary entries for a book |
-| [`dict_reorder`](#dict-reorder) | Set the manual sequence for all Dictionary entries |
-| [`dict_update`](#dict-update) | Replace a Dictionary entry's body |
-| [`figure_upload_begin`](#figure-upload-begin) | Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter |
-| [`house_style`](#house-style) | THE one-stop authoring guide — read this ONCE before writing or vetting a book and you have… |
-| [`image_upload_begin`](#image-upload-begin) | Begin an image upload that will be placed in a specific chapter |
-| [`indexnow_run`](#indexnow-run) | ADMIN |
-| [`indexnow_status`](#indexnow-status) | ADMIN |
-| [`owner_logo_upload_begin`](#owner-logo-upload-begin) | Begin uploading YOUR brand logo — the image shown on the social share card (og:image) of every… |
-| [`rotate_share_links`](#rotate-share-links) | ADMIN |
-| [`source_syntax`](#source-syntax) | Return the grammar of the round-trippable block source used by block_get_source /… |
-| [`sync_resolve`](#sync-resolve) | Mark a chapter (or the whole book) reconciled across all language editions — i.e |
-| [`sync_status`](#sync-status) | Cross-edition drift report for a TRANSLATED book: which chapters were edited in one language… |
-| [`user_contact_get`](#user-contact-get) | Get the CALLER's own contact info from pubcontacts (name, email, phone, address, bio, etc.) |
-| [`user_contact_set_field`](#user-contact-set-field) | Update ONE field on the CALLER's own contact (name, phone, address, website, bio, etc.) |
+| [`author_page_get`](#author_page_get) | Get YOUR public author-page state: display name (page_name override, else your directory… |
+| [`author_page_set`](#author_page_set) | Set YOUR public author-page state: `bio` (max 2000 chars — the blurb shown on /a/<handle>),… |
+| [`authors_list`](#authors_list) | List every author whose PUBLIC page is LIVE (they opted in AND have at least one listed book)… |
+| [`description_status`](#description_status) | Check the GENERATED book description job for one of your books |
+| [`dict_add`](#dict_add) | Create a new Dictionary entry |
+| [`dict_delete`](#dict_delete) | Delete a Dictionary entry |
+| [`dict_get`](#dict_get) | Get a Dictionary entry |
+| [`dict_list`](#dict_list) | List all Dictionary entries for a book |
+| [`dict_reorder`](#dict_reorder) | Set the manual sequence for all Dictionary entries |
+| [`dict_update`](#dict_update) | Replace a Dictionary entry's body |
+| [`figure_upload_begin`](#figure_upload_begin) | Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter |
+| [`house_style`](#house_style) | THE one-stop authoring guide — read this ONCE before writing or vetting a book and you have… |
+| [`image_upload_begin`](#image_upload_begin) | Begin an image upload that will be placed in a specific chapter |
+| [`indexnow_run`](#indexnow_run) | ADMIN |
+| [`indexnow_status`](#indexnow_status) | ADMIN |
+| [`owner_logo_upload_begin`](#owner_logo_upload_begin) | Begin uploading YOUR brand logo — the image shown on the social share card (og:image) of every… |
+| [`rotate_share_links`](#rotate_share_links) | ADMIN |
+| [`source_syntax`](#source_syntax) | Return the grammar of the round-trippable block source used by block_get_source /… |
+| [`sync_resolve`](#sync_resolve) | Mark a chapter (or the whole book) reconciled across all language editions — i.e |
+| [`sync_status`](#sync_status) | Cross-edition drift report for a TRANSLATED book: which chapters were edited in one language… |
+| [`user_contact_get`](#user_contact_get) | Get the CALLER's own contact info from pubcontacts (name, email, phone, address, bio, etc.) |
+| [`user_contact_set_field`](#user_contact_set_field) | Update ONE field on the CALLER's own contact (name, phone, address, website, bio, etc.) |
 
 ---
 

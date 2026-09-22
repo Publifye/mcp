@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`doc_issue`](#doc-issue) | write | Typeset a document, KEEP it, and return a permanent link that opens it — no login, no ac… |
-| [`doc_share`](#doc-share) | write | Typeset a document and hand back a TEMPORARY download link a person can open — no login,… |
-| [`doc_share_revoke`](#doc-share-revoke) | write | Kill a temporary link now, before it expires. Use it the moment a document went to the w… |
-| [`doc_link_rotate`](#doc-link-rotate) | write | Replace a document's link with a new one. The old link stops working immediately, the do… |
-| [`doc_link_revoke`](#doc-link-revoke) | write | Kill a document's link with no replacement. Anyone opening it afterwards is told the lin… |
-| [`doc_mail_to_me`](#doc-mail-to-me) | write | Email an issued document to the address you are signed in as. The document is attached a… |
+| [`doc_issue`](#doc_issue) | write | Typeset a document, KEEP it, and return a permanent link that opens it — no login, no ac… |
+| [`doc_share`](#doc_share) | write | Typeset a document and hand back a TEMPORARY download link a person can open — no login,… |
+| [`doc_share_revoke`](#doc_share_revoke) | write | Kill a temporary link now, before it expires. Use it the moment a document went to the w… |
+| [`doc_link_rotate`](#doc_link_rotate) | write | Replace a document's link with a new one. The old link stops working immediately, the do… |
+| [`doc_link_revoke`](#doc_link_revoke) | write | Kill a document's link with no replacement. Anyone opening it afterwards is told the lin… |
+| [`doc_mail_to_me`](#doc_mail_to_me) | write | Email an issued document to the address you are signed in as. The document is attached a… |
 
 ---
 

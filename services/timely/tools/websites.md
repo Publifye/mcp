@@ -6,9 +6,9 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_add_website`](#timely-add-website) | write | Append one owner-requested HTTPS website origin without removing or reordering existing … |
-| [`timely_set_widget`](#timely-set-widget) | write | PROGRAMME widget websites and language (homepage websites: timely_org_add_website). orig… |
-| [`timely_set_widget_identity`](#timely-set-widget-identity) | write | What visitors see of THIS programme in one mode; wins over timely_org_set_display. compa… |
+| [`timely_add_website`](#timely_add_website) | write | Append one owner-requested HTTPS website origin without removing or reordering existing … |
+| [`timely_set_widget`](#timely_set_widget) | write | PROGRAMME widget websites and language (homepage websites: timely_org_add_website). orig… |
+| [`timely_set_widget_identity`](#timely_set_widget_identity) | write | What visitors see of THIS programme in one mode; wins over timely_org_set_display. compa… |
 
 ---
 

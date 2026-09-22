@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`get_chapter`](#get-chapter) | read | Read one chapter of the World English Bible: every verse's text, numbered, plus whether … |
-| [`listen_link`](#listen-link) | read | Links for LISTENING to a chapter (optionally starting at a verse): the public reading pa… |
-| [`prepare_chapter`](#prepare-chapter) | read | Have a chapter read aloud (recorded) if it is not already, using the same queue as the w… |
-| [`chapter_progress`](#chapter-progress) | read | How far a chapter's recording has got, without starting anything. Safe to poll every few… |
-| [`download_link`](#download-link) | read | A personal download link for recorded chapters, as an .opus file (one chapter) or a ZIP … |
-| [`my_allowance`](#my-allowance) | read | The user's standing: plan, download allowance left in the rolling 24 hours and when the … |
+| [`get_chapter`](#get_chapter) | read | Read one chapter of the World English Bible: every verse's text, numbered, plus whether … |
+| [`listen_link`](#listen_link) | read | Links for LISTENING to a chapter (optionally starting at a verse): the public reading pa… |
+| [`prepare_chapter`](#prepare_chapter) | read | Have a chapter read aloud (recorded) if it is not already, using the same queue as the w… |
+| [`chapter_progress`](#chapter_progress) | read | How far a chapter's recording has got, without starting anything. Safe to poll every few… |
+| [`download_link`](#download_link) | read | A personal download link for recorded chapters, as an .opus file (one chapter) or a ZIP … |
+| [`my_allowance`](#my_allowance) | read | The user's standing: plan, download allowance left in the rolling 24 hours and when the … |
 
 ---
 

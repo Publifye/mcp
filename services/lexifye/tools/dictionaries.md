@@ -6,20 +6,20 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`dict_create`](#dict-create) | Create a new dictionary |
-| [`dict_delete`](#dict-delete) | Delete a dict |
-| [`dict_enrich`](#dict-enrich) | Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced… |
-| [`dict_freeze`](#dict-freeze) | ADMIN |
-| [`dict_get`](#dict-get) | Fetch a dict by id with a PAGE of its entries and their definitions inlined |
-| [`dict_group_add`](#dict-group-add) | Attach a GROUP to a dict so every member of the group becomes a content editor of it (resolved… |
-| [`dict_group_remove`](#dict-group-remove) | Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any… |
-| [`dict_list`](#dict-list) | List the dictionaries you OWN, newest first |
-| [`dict_list_for_user`](#dict-list-for-user) | SERVICE/ADMIN ONLY |
-| [`dict_replace`](#dict-replace) | Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring… |
-| [`dict_restore`](#dict-restore) | Restore a soft-deleted dict, with every entry, definition, version history and private note… |
-| [`dict_set_field`](#dict-set-field) | Atomically set ONE field on a dict by key |
-| [`dict_transfer`](#dict-transfer) | Hand ownership of YOUR dictionary to another user |
-| [`dict_unfreeze`](#dict-unfreeze) | ADMIN |
+| [`dict_create`](#dict_create) | Create a new dictionary |
+| [`dict_delete`](#dict_delete) | Delete a dict |
+| [`dict_enrich`](#dict_enrich) | Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced… |
+| [`dict_freeze`](#dict_freeze) | ADMIN |
+| [`dict_get`](#dict_get) | Fetch a dict by id with a PAGE of its entries and their definitions inlined |
+| [`dict_group_add`](#dict_group_add) | Attach a GROUP to a dict so every member of the group becomes a content editor of it (resolved… |
+| [`dict_group_remove`](#dict_group_remove) | Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any… |
+| [`dict_list`](#dict_list) | List the dictionaries you OWN, newest first |
+| [`dict_list_for_user`](#dict_list_for_user) | SERVICE/ADMIN ONLY |
+| [`dict_replace`](#dict_replace) | Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring… |
+| [`dict_restore`](#dict_restore) | Restore a soft-deleted dict, with every entry, definition, version history and private note… |
+| [`dict_set_field`](#dict_set_field) | Atomically set ONE field on a dict by key |
+| [`dict_transfer`](#dict_transfer) | Hand ownership of YOUR dictionary to another user |
+| [`dict_unfreeze`](#dict_unfreeze) | ADMIN |
 
 ---
 

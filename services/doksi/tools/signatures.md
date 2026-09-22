@@ -6,13 +6,13 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`signature_describe`](#signature-describe) | read | Describe recipients and available named signature slots in a document. Signing is OPTION… |
-| [`signature_request_create`](#signature-request-create) | write | Freeze a complete document revision and create optional signing requests for selected na… |
-| [`signature_request_get`](#signature-request-get) | read | Get owner-only status for a signing collection: document revision, requester, each signe… |
-| [`signature_request_replace`](#signature-request-replace) | write | Request a new signature for ONE person/slot on the same frozen document. Always creates … |
-| [`signature_request_revoke`](#signature-request-revoke) | write | Withdraw one signer request or the whole collection and delete its temporary signature m… |
-| [`signature_request_render`](#signature-request-render) | write | Explicitly render and issue the completed document after ALL selected signing slots are … |
-| [`signature_request_email`](#signature-request-email) | write | Explicitly email ONE named signer's pending link through Pubmail's transactional lane. A… |
+| [`signature_describe`](#signature_describe) | read | Describe recipients and available named signature slots in a document. Signing is OPTION… |
+| [`signature_request_create`](#signature_request_create) | write | Freeze a complete document revision and create optional signing requests for selected na… |
+| [`signature_request_get`](#signature_request_get) | read | Get owner-only status for a signing collection: document revision, requester, each signe… |
+| [`signature_request_replace`](#signature_request_replace) | write | Request a new signature for ONE person/slot on the same frozen document. Always creates … |
+| [`signature_request_revoke`](#signature_request_revoke) | write | Withdraw one signer request or the whole collection and delete its temporary signature m… |
+| [`signature_request_render`](#signature_request_render) | write | Explicitly render and issue the completed document after ALL selected signing slots are … |
+| [`signature_request_email`](#signature_request_email) | write | Explicitly email ONE named signer's pending link through Pubmail's transactional lane. A… |
 
 ---
 

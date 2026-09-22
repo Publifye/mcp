@@ -6,11 +6,11 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | What it does |
 |---|---|
-| [`get_rate`](#get-rate) | Get the exchange rate between any two currencies on a specific date. Returns the rate and its in… |
+| [`get_rate`](#get_rate) | Get the exchange rate between any two currencies on a specific date. Returns the rate and its in… |
 | [`convert`](#convert) | Convert a monetary amount from one currency to another using Norges Bank exchange rates. Support… |
-| [`get_all_rates`](#get-all-rates) | Get all 38 currency rates for a single date. Returns each currency code, full name, and rate (NO… |
-| [`get_rates_range`](#get-rates-range) | Get daily exchange rates for a single currency over a date range. Returns an array of {date, rat… |
-| [`list_currencies`](#list-currencies) | List all 38 available currency codes with their full names. Returns the base currency (NOK) and … |
+| [`get_all_rates`](#get_all_rates) | Get all 38 currency rates for a single date. Returns each currency code, full name, and rate (NO… |
+| [`get_rates_range`](#get_rates_range) | Get daily exchange rates for a single currency over a date range. Returns an array of {date, rat… |
+| [`list_currencies`](#list_currencies) | List all 38 available currency codes with their full names. Returns the base currency (NOK) and … |
 
 ---
 

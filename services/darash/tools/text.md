@@ -6,17 +6,17 @@ See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`get_verse`](#get-verse) | Get verse(s) by reference |
-| [`get_chapter`](#get-chapter) | Get entire chapter with all verses[END] |
-| [`get_book`](#get-book) | Get entire book with all chapters and verses[END] |
-| [`list_books`](#list-books) | List all 66 books of the Bible with chapters and testament |
-| [`list_bibles`](#list-bibles) | List all 59 Bible translations with metadata (abbreviation, name, language, year)[END] |
-| [`get_bible`](#get-bible) | Get detailed metadata and complete structure for a Bible translation (books, chapters per… |
-| [`compare_verses`](#compare-verses) | Compare the same verse across multiple Bible translations in one call |
-| [`export_bible`](#export-bible) | Export an entire Bible translation as structured JSON |
-| [`export_bible_book`](#export-bible-book) | Export a single book from a Bible translation as structured JSON |
-| [`verse_to_position`](#verse-to-position) | INVERSE of position_to_verse: given a Torah verse reference, return its exact letter-offset… |
-| [`position_to_verse`](#position-to-verse) | INVERSE OF els tool position-output: given a raw Torah LETTER OFFSET, return the verse… |
+| [`get_verse`](#get_verse) | Get verse(s) by reference |
+| [`get_chapter`](#get_chapter) | Get entire chapter with all verses[END] |
+| [`get_book`](#get_book) | Get entire book with all chapters and verses[END] |
+| [`list_books`](#list_books) | List all 66 books of the Bible with chapters and testament |
+| [`list_bibles`](#list_bibles) | List all 59 Bible translations with metadata (abbreviation, name, language, year)[END] |
+| [`get_bible`](#get_bible) | Get detailed metadata and complete structure for a Bible translation (books, chapters per… |
+| [`compare_verses`](#compare_verses) | Compare the same verse across multiple Bible translations in one call |
+| [`export_bible`](#export_bible) | Export an entire Bible translation as structured JSON |
+| [`export_bible_book`](#export_bible_book) | Export a single book from a Bible translation as structured JSON |
+| [`verse_to_position`](#verse_to_position) | INVERSE of position_to_verse: given a Torah verse reference, return its exact letter-offset… |
+| [`position_to_verse`](#position_to_verse) | INVERSE OF els tool position-output: given a raw Torah LETTER OFFSET, return the verse… |
 
 ---
 
