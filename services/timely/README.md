@@ -10,7 +10,7 @@ over HTTPS.**
 | Endpoint | `https://timely.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
-| Registry | `pro.publifye/timely` ([server.json](server.json); not yet published to the registry) |
+| Registry | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://timely.publifye.com> |
 | Capability tools | **31** ([full schemas](tools.json)) |
 | Surface described | version 0.1.190 (source `354ee8b`), not yet released to production |

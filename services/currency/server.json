@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "pro.publifye/currency",
   "title": "Currency Exchange",
-  "description": "Norges Bank daily exchange rates for AI: 38 currencies against NOK with history back to ~1980, conversion, and World Bank buying-power multipliers",
+  "description": "Norges Bank exchange rates for AI: 38 currencies against NOK since ~1980, plus buying power",
   "version": "1.0.2",
   "websiteUrl": "https://currency.publifye.com",
   "repository": {

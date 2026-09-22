@@ -11,7 +11,7 @@ MCP server over HTTPS.**
 | Endpoint | `https://brreg.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · no API keys |
-| Registry | `pro.publifye/brreg` ([server.json](server.json); not yet published to the registry) |
+| Registry | [`pro.publifye/brreg`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://brreg.publifye.com> |
 | What it solves | <https://publifye.com/brreg> |
 | Capability tools | **6** ([full schemas](tools.json)) |

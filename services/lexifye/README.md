@@ -9,7 +9,7 @@ book. It runs as a hosted MCP server over HTTPS.**
 | Endpoint | `https://lexifye.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · or `X-API-Key` |
-| Registry | `pro.publifye/lexifye` |
+| Registry | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://lexifye.publifye.com> |
 | What it solves | <https://publifye.com/lexifye> |
 | Capability tools | **63** ([full schemas](tools.json)) |

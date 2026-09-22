@@ -10,7 +10,7 @@ for the result. It runs as a hosted MCP server over HTTPS.**
 | Endpoint | `https://audiobible.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
-| Registry | `pro.publifye/audiobible` ([server.json](server.json); not yet published to the registry) |
+| Registry | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://audiobible.publifye.com> |
 | Capability tools | **10** ([full schemas](tools.json)) |
 

@@ -10,7 +10,7 @@ markets. It runs as a hosted MCP server over HTTPS.**
 | Endpoint | `https://currency.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · no API keys |
-| Registry | `pro.publifye/currency` ([server.json](server.json)) |
+| Registry | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://currency.publifye.com> |
 | What it solves | <https://publifye.com/currency> |
 | Capability tools | **7** ([full schemas](tools.json)) |

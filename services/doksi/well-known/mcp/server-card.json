@@ -1,7 +1,7 @@
 {
   "name": "pro.publifye/doksi",
   "title": "Doksi",
-  "description": "Professional PDFs from structured documents for AI: letters, notices, agreements, covenants, checklists, meeting agendas and schedules, with optional signatures by link or QR",
+  "description": "Professional PDFs for AI: letters, agreements, agendas, checklists — signatures by link or QR",
   "version": "1.0.0",
   "websiteUrl": "https://doksi.publifye.com",
   "remotes": [

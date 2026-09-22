@@ -9,7 +9,7 @@ by individual link or QR code. It runs as a hosted MCP server over HTTPS.**
 | Endpoint | `https://doksi.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
-| Registry | `pro.publifye/doksi` ([server.json](server.json); not yet published to the registry) |
+| Registry | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://doksi.publifye.com> |
 | Capability tools | **22** ([full schemas](tools.json)) |
 

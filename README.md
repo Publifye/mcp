@@ -48,12 +48,12 @@ you pay for anything.
 | **Darash** | Bible research | `https://darash-api.publifye.com/mcp` | 34 | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/darash](services/darash) |
 | **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 151 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
 | **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 63 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
-| **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | `pro.publifye/brreg` (not yet published) | [services/brreg](services/brreg) |
-| **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
+| **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | [`pro.publifye/brreg`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/brreg](services/brreg) |
+| **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | [`pro.publifye/lexar`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
-| **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | `pro.publifye/doksi` (not yet published) | [services/doksi](services/doksi) |
-| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
-| **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | `pro.publifye/audiobible` (not yet published) | [services/audiobible](services/audiobible) |
+| **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
+| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
+| **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration, or a personal API key — except Brreg, which is OAuth only. See

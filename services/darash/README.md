@@ -10,7 +10,7 @@ MCP server over HTTPS — there is nothing to install.**
 | Endpoint | `https://darash-api.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open · or `X-API-Key` |
-| Registry | `pro.publifye/darash` |
+| Registry | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://darash.publifye.com> |
 | What it solves | <https://publifye.com/darash> |
 | Capability tools | **34** ([full schemas](tools.json)) |

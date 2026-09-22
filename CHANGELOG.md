@@ -2,6 +2,17 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-23
+
+- **All nine servers are in the official MCP registry.** Published: `pro.publifye/brreg`,
+  `lexar`, `doksi`, `timely` and `audiobible` at 1.0.0, and `currency` republished at 1.0.2 — the
+  1.0.1 record advertised `currency.publifye.pro` and carried no `repository`. Every record now names
+  a `.com` endpoint and points back to its folder here. Verified against
+  `registry.modelcontextprotocol.io` after publishing.
+- **Descriptions fit the registry's 100-character limit.** Doksi, Timely, Audio Bible and Currency
+  were longer and the registry refused them with a 422; `server.json` and the server cards now
+  carry the shorter text.
+
 ## 2026-09-22
 
 - **Timely: the publishing narrative is corrected** — the Timely page and the index said

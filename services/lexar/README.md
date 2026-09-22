@@ -10,7 +10,7 @@ you what it does not cover.**
 | Endpoint | `https://lexar-api.publifye.com/mcp` |
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
-| Registry | `pro.publifye/lexar` — not yet published |
+| Registry | [`pro.publifye/lexar`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://lexar.publifye.com> |
 | What it solves | <https://publifye.com/lexar> |
 | Research tools | **7** ([full schemas](tools.json)) |
