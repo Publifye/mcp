@@ -1,7 +1,7 @@
 # Issue, share and deliver
 
-**How does someone else get at it, and how do I take it back?** 6 Doksi MCP tools, listed with the exact description and
-input schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
+**How does someone else get at it, and how do I take it back?** 6 Doksi MCP tools, listed with the exact description and input
+schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
@@ -92,4 +92,4 @@ Reports the document as QUEUED, never as delivered: pubmail accepts it for sendi
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-20, version 0.1.54. Regenerate rather than edit by hand.*
+2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*

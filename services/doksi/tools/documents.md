@@ -1,7 +1,7 @@
 # Compose and validate
 
-**Is this document well formed, and what does it render to?** 3 Doksi MCP tools, listed with the exact description and
-input schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
+**Is this document well formed, and what does it render to?** 3 Doksi MCP tools, listed with the exact description and input
+schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
@@ -26,7 +26,7 @@ Check a document against its kind's requirements and report EVERY problem at onc
 
 **Doc Compose** — writes, closed-world · access: `write`.
 
-Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.
+Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. For formal application letters, including job applications, use kind letter_official with content.purpose.id application; doc_requirements(kind:letter_official, purpose:application) describes the required fields. This creates a PDF; it does not submit an application. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -47,4 +47,4 @@ Read the original structured document JSON retained when doc_issue or doc_compos
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-20, version 0.1.54. Regenerate rather than edit by hand.*
+2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*

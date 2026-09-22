@@ -1,0 +1,317 @@
+{
+  "service": "audiobible",
+  "endpoint": "https://audiobible.publifye.com/mcp",
+  "captured": "2026-09-22",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-22, version 0.1.113. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "counts": {
+    "callable_by_a_customer": 11,
+    "capability_tools": 10,
+    "session_and_cache_plumbing": 0,
+    "excluded_help_and_health": 1,
+    "excluded_admin_only": 3,
+    "excluded_ops_and_logging": 10,
+    "total_on_the_wire": 24
+  },
+  "excluded": {
+    "help_and_health": [
+      "service_status"
+    ],
+    "admin_only": [
+      "admin_jobs",
+      "admin_prepare_chapter",
+      "admin_recordings"
+    ],
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "set_log_capacity",
+      "set_log_level"
+    ]
+  },
+  "tools": [
+    {
+      "name": "get_chapter",
+      "title": "Get Chapter",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read one chapter of the World English Bible: every verse's text, numbered, plus whether its audio is recorded. Quote the verses exactly as returned; do not paraphrase them as scripture. Free for any signed-in user.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Get Chapter"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "description": "Chapter number within the book, starting at 1.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "book",
+          "chapter"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "listen_link",
+      "title": "Listen Link",
+      "kind": "capability",
+      "access": "read",
+      "description": "Links for LISTENING to a chapter (optionally starting at a verse): the public reading page, which plays the audio with the verse highlighted, and the direct streaming audio URL with the verse's start and end in seconds. Listening is free and uses no download allowance. If the chapter is not recorded yet the result says so — call prepare_chapter.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Listen Link"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "description": "Chapter number within the book, starting at 1.",
+            "type": "integer"
+          },
+          "verse": {
+            "description": "Optional verse to start at.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "book",
+          "chapter"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "prepare_chapter",
+      "title": "Prepare Chapter",
+      "kind": "capability",
+      "access": "read",
+      "description": "Have a chapter read aloud (recorded) if it is not already, using the same queue as the website's Read button. Returns progress immediately; recording takes about one to two minutes — poll chapter_progress. Already-recorded or in-progress chapters cost nothing. Each user may commission 20 new chapters per UTC day through their assistant; do not loop over books — prepare only what the user asked to hear.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Prepare Chapter"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "description": "Chapter number within the book, starting at 1.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "book",
+          "chapter"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "chapter_progress",
+      "title": "Chapter Progress",
+      "kind": "capability",
+      "access": "read",
+      "description": "How far a chapter's recording has got, without starting anything. Safe to poll every few seconds while prepare_chapter's work runs.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Progress"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "description": "Chapter number within the book, starting at 1.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "book",
+          "chapter"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "download_link",
+      "title": "Download Link",
+      "kind": "capability",
+      "access": "read",
+      "description": "A personal download link for recorded chapters, as an .opus file (one chapter) or a ZIP (several chapters — Annual plan). Give the user the URL: it works in their browser, expires (default 1 hour, max 24 hours), and is charged to their rolling 24-hour download allowance only when they OPEN it; opening it again before it expires is free. Chapters not yet recorded are listed as pending — call prepare_chapter for those first. Free plan: 4 chapters per rolling 24 hours, one at a time; Annual: 40, ZIP allowed.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Download Link"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "description": "Chapter number within the book, starting at 1.",
+            "type": "integer"
+          },
+          "chapters": {
+            "description": "Several chapters for one ZIP, each 'book/chapter' such as 'john/3' (Annual plan). Use instead of book+chapter.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "expires_in_seconds": {
+            "default": 3600,
+            "description": "Link lifetime, 60 to 86400. Default 3600.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "my_allowance",
+      "title": "My Allowance",
+      "kind": "capability",
+      "access": "read",
+      "description": "The user's standing: plan, download allowance left in the rolling 24 hours and when the next one frees up, chapter preparations left today, the assistant call quota, and where to upgrade. Call it before promising the user a download.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "My Allowance"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_books",
+      "title": "List Books",
+      "kind": "capability",
+      "access": "read",
+      "description": "Every book of the canon with its chapter count, in canon order. The canon is loaded from darash, never written down in this service, so it cannot disagree with the text.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "List Books"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_chapters",
+      "title": "Search Chapters",
+      "kind": "capability",
+      "access": "read",
+      "description": "The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 23' into the single search field at the top of every page would be offered.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Search Chapters"
+      },
+      "inputSchema": {
+        "properties": {
+          "limit": {
+            "default": 10,
+            "description": "Maximum suggestions.",
+            "type": "integer"
+          },
+          "query": {
+            "description": "What the reader typed.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "chapter_status",
+      "title": "Chapter Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "Whether one chapter's audio exists, and what it was made from. With no arguments it answers for Genesis 1 and says so.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Chapter Status"
+      },
+      "inputSchema": {
+        "properties": {
+          "book": {
+            "default": "genesis",
+            "description": "Book slug, e.g. 'genesis' or 'first-samuel'. Call list_books for all 66.",
+            "type": "string"
+          },
+          "chapter": {
+            "default": 1,
+            "description": "Chapter number within the book.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "coverage",
+      "title": "Coverage",
+      "kind": "capability",
+      "access": "read",
+      "description": "How much of the Bible has actually been generated and how much is still pending. Read straight off the audio volume, so it stays true even when the index is empty.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Coverage"
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    }
+  ]
+}

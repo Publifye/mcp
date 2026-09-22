@@ -11,7 +11,7 @@ approves; an AI cannot. It runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | `pro.publifye/timely` ([server.json](server.json); not yet published to the registry) |
 | Product site | <https://timely.publifye.com> |
-| Capability tools | **8** ([full schemas](tools.json)) |
+| Capability tools | **28** ([full schemas](tools.json)) |
 
 ## Connect
 
@@ -50,17 +50,28 @@ and can be used separately; Timely simply does not re-implement document renderi
 
 ## What the tools do
 
-Every tool is documented with its exact description, annotations and input schema — 8 in all,
+Every tool is documented with its exact description, annotations and input schema — 28 in all,
 generated from the service's own registry, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
-| **[Read a programme](tools/read.md)** | What is published, what is drafted, and what changed? | 3 |
+| **[Read a programme](tools/read.md)** | What is published, what is drafted, and what changed? | 5 |
 | **[Build and render](tools/build.md)** | Create, edit, restyle, preview — and where approval stops. | 5 |
+| **[Websites and widgets](tools/websites.md)** | Where may the programme appear, and how does it look there? | 3 |
+| **[Organisation and homepage](tools/organisation.md)** | What does the shared organisation page say, and how does it become a homepage? | 8 |
+| **[Export, import and the bin](tools/lifecycle.md)** | How is a programme backed up, restored, or taken down? | 7 |
 
-Machine-readable: **[tools.json](tools.json)** carries all 8 with full JSON Schema, plus every
-excluded bucket listed by name so the count is auditable. `admin_timely_list` is staff-only and is
-excluded from the customer surface.
+Machine-readable: **[tools.json](tools.json)** carries all 28 with full JSON Schema, plus every
+excluded bucket listed by name so the count is auditable. Twelve staff-only `admin_*` tools and the
+`operator_guide`/`instance_status` pair are excluded from the customer surface.
+
+## Nothing is deleted in one step
+
+`timely_delete` moves a programme — or the organisation page — to a bin: it leaves every public
+address at once and can be brought back with `timely_restore` until the purge date that
+`timely_trash_list` shows. `timely_export` returns a lossless, schema-versioned JSON backup with a
+SHA-256 over its exact bytes, and `timely_import` only ever creates a new programme from a file that
+validates against `timely_export_schema` — it never overwrites an existing one.
 
 ## What it does not do
 

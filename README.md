@@ -1,10 +1,10 @@
-# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law, exchange rates, documents and meeting programmes, for AI clients
+# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law, exchange rates, documents, meeting programmes and an audio Bible, for AI clients
 
-**Publifye AS runs eight hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
+**Publifye AS runs nine hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
 Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
 Greek text of Scripture, write and typeset a book, build a dictionary, look up Norwegian
 organisations in Enhetsregisteret, read the current text of Norwegian law, convert a currency at a
-published central-bank rate, render a document to PDF, or build a meeting programme — over an
+published central-bank rate, render a document to PDF, build a meeting programme, or listen to the World English Bible read aloud — over an
 authenticated HTTPS endpoint, with no local install.**
 
 ## Quickstart — connect in under a minute
@@ -23,7 +23,8 @@ and nothing to install.
     "lexar":   { "type": "http", "url": "https://lexar-api.publifye.com/mcp" },
     "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" },
     "doksi":   { "type": "http", "url": "https://doksi.publifye.com/mcp" },
-    "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" }
+    "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" },
+    "audiobible": { "type": "http", "url": "https://audiobible.publifye.com/mcp" }
   }
 }
 ```
@@ -51,7 +52,8 @@ you pay for anything.
 | **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | `pro.publifye/doksi` (not yet published) | [services/doksi](services/doksi) |
-| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 8 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
+| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 28 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
+| **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | `pro.publifye/audiobible` (not yet published) | [services/audiobible](services/audiobible) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration, or a personal API key — except Brreg, which is OAuth only. See
@@ -187,6 +189,18 @@ assistants — or an assistant and a person — cannot quietly overwrite each ot
 
 ---
 
+## Audio Bible — quoted, heard, kept
+
+The World English Bible as text and sound. `get_chapter` returns every verse numbered and tells the
+assistant to quote it as returned rather than paraphrase it as scripture; `listen_link` starts the
+audio at a given verse with its timing in seconds; `prepare_chapter` has a chapter read aloud on
+demand when it is not yet recorded; `download_link` mints a personal, expiring file, and
+`my_allowance` says what is left before an assistant promises one. Listening is free.
+
+→ **[services/audiobible](services/audiobible)** · [tool schemas](services/audiobible/tools.json)
+
+---
+
 ## Three ways in
 
 **You study the biblical languages.** Darash is the one that matters. Start with `word_study`,
@@ -224,6 +238,7 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
 | Doksi | [doksi.publifye.com](https://doksi.publifye.com) | — |
 | Timely | [timely.publifye.com](https://timely.publifye.com) | — |
+| Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) | — |
 
 The left column sells the product and gates access. The right column is one
 page on the company site saying what the server is for and when one of the

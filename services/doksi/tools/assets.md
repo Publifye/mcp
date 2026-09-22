@@ -1,7 +1,7 @@
 # Assets
 
-**How do I get a logo or a mark into a document?** 2 Doksi MCP tools, listed with the exact description and
-input schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
+**How do I get a logo or a mark into a document?** 2 Doksi MCP tools, listed with the exact description and input
+schema the server itself returns. Endpoint: `https://doksi.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
@@ -50,4 +50,4 @@ A document may reference a mark that is not ready yet — that is a normal trans
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-20, version 0.1.54. Regenerate rather than edit by hand.*
+2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*

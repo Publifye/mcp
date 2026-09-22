@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/audiobible",
+  "title": "Audio Bible",
+  "description": "The World English Bible read aloud for AI: every verse's text, listening links with verse timings, on-demand recording and personal download links",
+  "version": "1.0.0",
+  "websiteUrl": "https://audiobible.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/audiobible"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://audiobible.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://audiobible.publifye.com/static/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}

@@ -1,17 +1,23 @@
 {
   "service": "doksi",
   "endpoint": "https://doksi.publifye.com/mcp",
-  "captured": "2026-09-20",
-  "how_this_was_made": "Marshalled from the service's own amcp registry — the same New() that cmd/doksi runs at boot, with EnableSigning called as production does — on the source serving production on 2026-09-20, version 0.1.54. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. NOTE: registration is guarded on dependencies (h.filer, h.store, h.mailer, h.assets), so a dump built with nil dependencies silently yields 8 tools instead of 24; this one passes non-nil stores so every branch registers. Counts follow the convention used by the other services here: capability_tools is the public surface, callable_by_a_customer adds the help/health pair, and total_on_the_wire adds alogui's admin log surface.",
+  "captured": "2026-09-22",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-22, version 0.1.67. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
   "counts": {
     "callable_by_a_customer": 24,
     "capability_tools": 22,
     "session_and_cache_plumbing": 0,
-    "excluded_ops_and_logging": 10,
     "excluded_help_and_health": 2,
+    "excluded_admin_only": 0,
+    "excluded_ops_and_logging": 10,
     "total_on_the_wire": 34
   },
   "excluded": {
+    "help_and_health": [
+      "operator_guide",
+      "service_status"
+    ],
+    "admin_only": [],
     "ops": [
       "clear_server_logs",
       "debug_session",
@@ -23,10 +29,6 @@
       "list_log_writers",
       "set_log_capacity",
       "set_log_level"
-    ],
-    "help_and_health": [
-      "operator_guide",
-      "service_status"
     ]
   },
   "tools": [
@@ -35,7 +37,7 @@
       "title": "Kind List",
       "kind": "capability",
       "access": "read",
-      "description": "List the eight document kinds doksi makes, with what each one is for. Read this before doc_compose if you are unsure which kind fits: the kinds differ in LAYOUT, not in wording. A request, a complaint or a resignation are not kinds — they are purposes on letter_official (see purpose_list).",
+      "description": "List the eight document kinds doksi makes, with what each one is for. Read this before doc_compose if you are unsure which kind fits: the kinds differ in LAYOUT, not in wording. An application, request, complaint or resignation is a purpose on letter_official (see purpose_list), not a separate kind. For a formal job, admission, grant or permit application, call doc_requirements(kind:letter_official, purpose:application). letter_personal is for private correspondence.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -52,7 +54,7 @@
       "title": "Purpose List",
       "kind": "capability",
       "access": "read",
-      "description": "List the curated purposes an official letter can have, with the EXTRA fields each one requires. A purpose supplies default subject, salutation and closing wording in Norwegian and English, and may demand fields the kind alone does not — a request needs a response-by date, a termination needs an effective date and a notice period.",
+      "description": "List the curated purposes an official letter can have, with the EXTRA fields each one requires. A purpose supplies default subject, salutation and closing wording in Norwegian and English, and may demand fields the kind alone does not — a request needs a response-by date, a termination needs an effective date and a notice period. Applications use application: content.purpose.concerning.what must name the role, programme, grant or permission sought. Purposes are optional on official letters and forbidden on personal letters; do not invent purpose IDs.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -61,46 +63,6 @@
         "title": "Purpose List"
       },
       "inputSchema": {
-        "type": "object"
-      }
-    },
-    {
-      "name": "doc_requirements",
-      "title": "Doc Requirements",
-      "kind": "capability",
-      "access": "read",
-      "description": "Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Read this before composing.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Doc Requirements"
-      },
-      "inputSchema": {
-        "properties": {
-          "kind": {
-            "description": "Document kind",
-            "enum": [
-              "letter_personal",
-              "letter_official",
-              "notice",
-              "agreement",
-              "covenant",
-              "checklist",
-              "meeting",
-              "schedule"
-            ],
-            "type": "string"
-          },
-          "purpose": {
-            "description": "Optional purpose id, for letter_official only",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind"
-        ],
         "type": "object"
       }
     },
@@ -138,6 +100,46 @@
       }
     },
     {
+      "name": "doc_requirements",
+      "title": "Doc Requirements",
+      "kind": "capability",
+      "access": "read",
+      "description": "Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Meetings and schedules support qr_url and qr_placement (bottom_center default, top_right, hidden); supplied owner names are printed. Read this before composing. For an application letter pass kind:letter_official and purpose:application. Ask for missing required facts; never invent addresses, qualifications or reference numbers.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Requirements"
+      },
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "description": "Document kind",
+            "enum": [
+              "letter_personal",
+              "letter_official",
+              "notice",
+              "agreement",
+              "covenant",
+              "checklist",
+              "meeting",
+              "schedule"
+            ],
+            "type": "string"
+          },
+          "purpose": {
+            "description": "Optional purpose id, for letter_official only",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "type": "object"
+      }
+    },
+    {
       "name": "doc_validate",
       "title": "Doc Validate",
       "kind": "capability",
@@ -168,7 +170,7 @@
       "title": "Doc Compose",
       "kind": "capability",
       "access": "write",
-      "description": "Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.",
+      "description": "Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. For formal application letters, including job applications, use kind letter_official with content.purpose.id application; doc_requirements(kind:letter_official, purpose:application) describes the required fields. This creates a PDF; it does not submit an application. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -222,6 +224,36 @@
         },
         "required": [
           "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_issue",
+      "title": "Doc Issue",
+      "kind": "capability",
+      "access": "write",
+      "description": "Typeset a document, KEEP it, and return a permanent link that opens it — no login, no account, no expiry. This is the normal way to deliver a document: give the person the link.\n\nThe link is the credential, so treat it like one: it is not indexed anywhere and it is not guessable, but anyone holding it can open the document. If it reaches the wrong person, doc_link_rotate replaces it and doc_link_revoke kills it — which is exactly what an emailed attachment can never do.\n\nThe stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Issue"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "The whole document object",
+            "type": "object"
+          },
+          "filename": {
+            "description": "What the person sees when saving, e.g. oppsigelse.pdf",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document"
         ],
         "type": "object"
       }
@@ -286,36 +318,6 @@
         },
         "required": [
           "file_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "doc_issue",
-      "title": "Doc Issue",
-      "kind": "capability",
-      "access": "write",
-      "description": "Typeset a document, KEEP it, and return a permanent link that opens it — no login, no account, no expiry. This is the normal way to deliver a document: give the person the link.\n\nThe link is the credential, so treat it like one: it is not indexed anywhere and it is not guessable, but anyone holding it can open the document. If it reaches the wrong person, doc_link_rotate replaces it and doc_link_revoke kills it — which is exactly what an emailed attachment can never do.\n\nThe stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Doc Issue"
-      },
-      "inputSchema": {
-        "properties": {
-          "document": {
-            "description": "The whole document object",
-            "type": "object"
-          },
-          "filename": {
-            "description": "What the person sees when saving, e.g. oppsigelse.pdf",
-            "type": "string"
-          }
-        },
-        "required": [
-          "document"
         ],
         "type": "object"
       }
