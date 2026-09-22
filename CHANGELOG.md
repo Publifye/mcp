@@ -2,6 +2,19 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-22
+
+- **Timely: the publishing narrative is corrected** — the Timely page and the index said
+  `draft_approve` refuses every MCP caller. It does not: an assistant can publish, but only with
+  `user_confirmed: true` and the `revision`, `content_hash` and `pdf_hash` of the exact preview the
+  user was shown, after asking; the tool's description says a request to edit is not consent.
+  Both pages now say so.
+- **Timely's surface regenerated at 31 tools** — from the registry of source `354ee8b`, version
+  0.1.190, which is not yet released to production. New in the customer surface:
+  `timely_edit_history`, `timely_request_edit` and `timely_set_pdf_layout`; several descriptions
+  are shorter. Fourteen `admin_*` tools and ten log tools stay excluded, listed by name in
+  `tools.json`.
+
 ## 2026-09-18
 
 - **Brreg search near a point** — `entity_search` takes `lat`, `lon` and `radius_km` (all three or

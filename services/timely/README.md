@@ -1,8 +1,9 @@
 # Timely — meeting programme MCP server for Claude, Cursor and any MCP client
 
 **Timely builds a meeting programme — a fixed number of meetings, or everything inside a calendar
-period — keeps every revision, and renders the approved version to a PDF through Doksi. A person
-approves; an AI cannot. It runs as a hosted MCP server over HTTPS.**
+period — keeps every revision, and renders the approved version to a PDF through Doksi. An assistant may
+publish only the exact revision and PDF the user has just confirmed. It runs as a hosted MCP server
+over HTTPS.**
 
 | | |
 |---|---|
@@ -11,7 +12,8 @@ approves; an AI cannot. It runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | `pro.publifye/timely` ([server.json](server.json); not yet published to the registry) |
 | Product site | <https://timely.publifye.com> |
-| Capability tools | **28** ([full schemas](tools.json)) |
+| Capability tools | **31** ([full schemas](tools.json)) |
+| Surface described | version 0.1.190 (source `354ee8b`), not yet released to production |
 
 ## Connect
 
@@ -23,17 +25,23 @@ Claude Code: `claude mcp add --transport http timely https://timely.publifye.com
 to sign in. The discovery chain is the same as for the other servers:
 **[../../docs/connect.md](../../docs/connect.md)**.
 
-## An AI cannot publish a programme
+## Publishing needs the user's explicit yes, for the exact revision and PDF
 
-`draft_approve` exists, is documented, and **refuses every MCP caller**. It returns:
+An assistant **can** publish a programme with `draft_approve`; no browser step or signed
+confirmation page is involved. What it cannot do is publish on its own initiative. The tool's own
+description tells the assistant to show the user the exact revision, the PDF download link and the
+public address, to flag open assumptions, and to **ask** — a general request to edit is not consent.
+The server then enforces the part it can check:
 
-> human approval required: open the account preview and approve there; MCP cannot publish
+- `user_confirmed` must be `true`; otherwise the call is refused with *"ask the user explicitly
+  before publishing; user_confirmed must be true only after their affirmative answer"*;
+- `revision`, `content_hash` and `pdf_hash` must name the exact preview that was shown; if the
+  programme or its PDF has changed since, the approval does not match and nothing is published;
+- the stored PDF is published as it is, without re-rendering, so what was approved is what goes out.
 
-That is the whole design, not a limitation waiting to be lifted. An assistant may create a
-programme, edit it, restyle it and render a preview — everything up to the point where a document
-becomes the one a congregation or a committee will actually read. Publishing needs a person looking
-at the rendered preview and confirming it. The tool is present rather than absent so an agent
-discovers the boundary by reading the surface, instead of by guessing why nothing was published.
+`user_confirmed` is the assistant's statement that the user said yes; the server records it in the
+programme's audit trail (`mcp_user_confirmed_publication`) but cannot see the conversation. The
+hashes are what make a yes apply to one revision and one PDF only.
 
 ## Edits are atomic against a hash
 
@@ -50,20 +58,21 @@ and can be used separately; Timely simply does not re-implement document renderi
 
 ## What the tools do
 
-Every tool is documented with its exact description, annotations and input schema — 28 in all,
+Every tool is documented with its exact description, annotations and input schema — 31 in all,
 generated from the service's own registry, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
-| **[Read a programme](tools/read.md)** | What is published, what is drafted, and what changed? | 5 |
-| **[Build and render](tools/build.md)** | Create, edit, restyle, preview — and where approval stops. | 5 |
+| **[Read a programme](tools/read.md)** | What is published, what is drafted, and what changed? | 6 |
+| **[Build and render](tools/build.md)** | Create, edit, restyle, preview — and where approval stops. | 7 |
 | **[Websites and widgets](tools/websites.md)** | Where may the programme appear, and how does it look there? | 3 |
 | **[Organisation and homepage](tools/organisation.md)** | What does the shared organisation page say, and how does it become a homepage? | 8 |
 | **[Export, import and the bin](tools/lifecycle.md)** | How is a programme backed up, restored, or taken down? | 7 |
 
-Machine-readable: **[tools.json](tools.json)** carries all 28 with full JSON Schema, plus every
-excluded bucket listed by name so the count is auditable. Twelve staff-only `admin_*` tools and the
-`operator_guide`/`instance_status` pair are excluded from the customer surface.
+Machine-readable: **[tools.json](tools.json)** carries all 31 with full JSON Schema, plus every
+excluded bucket listed by name so the count is auditable. Fourteen staff-only `admin_*` tools, ten
+log and operations tools, and the `operator_guide`/`instance_status` pair are excluded from the
+customer surface.
 
 ## Nothing is deleted in one step
 
@@ -75,7 +84,8 @@ validates against `timely_export_schema` — it never overwrites an existing one
 
 ## What it does not do
 
-- **It does not publish.** See above. This is the point of the product, not a gap in it.
+- **It does not publish on its own.** Publishing takes the user's explicit yes for one revision
+  and its PDF; see above.
 - **It is not a calendar or a booking system.** Timely produces the programme document; it does not
   invite anyone, hold availability or send reminders.
 - **It does not render its own PDFs.** That is Doksi's job, and the artifact is content-addressed so

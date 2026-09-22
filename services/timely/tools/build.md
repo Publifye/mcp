@@ -1,6 +1,6 @@
 # Build and render
 
-**Create, edit, restyle, preview — and where approval stops.** 5 Timely MCP tools, listed with the exact description and input
+**Create, edit, restyle, preview — and where approval stops.** 7 Timely MCP tools, listed with the exact description and input
 schema the server itself returns. Endpoint: `https://timely.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to sign in.
 
@@ -8,8 +8,10 @@ See [connect](../../../docs/connect.md) to sign in.
 |---|---|---|
 | [`timely_create`](#timely-create) | write | PROGRAMME only (organisation info lives in timely_org_*). Create a programme draft; sele… |
 | [`timely_edit`](#timely-edit) | write | PROGRAMME only (organisation info lives in timely_org_*). Atomically apply explicit oper… |
+| [`timely_request_edit`](#timely-request-edit) | write | Interpret a natural-language request with ISAC, validate changes and prepare a draft. Ne… |
 | [`timely_set_theme`](#timely-set-theme) | write | Set the public programme and widget appearance immediately (not PDF styling). Use genera… |
-| [`timely_render`](#timely-render) | write | Always render the current draft afresh through Doksi, even when a PDF already exists. Re… |
+| [`timely_set_pdf_layout`](#timely-set-pdf-layout) | write | PDF layout normal or compact (smaller heading, tighter rows, no printed logo); keeps mee… |
+| [`timely_render`](#timely-render) | write | Render the current draft afresh through Doksi (replacing its preview on the SAME revisio… |
 | [`draft_approve`](#draft-approve) | write | AI/MCP callers CAN approve and publish with this tool; no browser or signed confirmation… |
 
 ---
@@ -23,7 +25,7 @@ PROGRAMME only (organisation info lives in timely_org_*). Create a programme dra
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `content` | object | yes | Programme content: title, language, timezone, selection, grouping, events and bounded series |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |
 | `slug` | string | yes | Public slug |
 
 ## `timely_edit`
@@ -37,7 +39,20 @@ PROGRAMME only (organisation info lives in timely_org_*). Atomically apply expli
 | `base_hash` | string | yes | Expected current content hash |
 | `dry_run` | boolean | no | Validate and return proposed draft/diffs without storing a revision or changing state |
 | `id` | string | yes | Programme id |
-| `operations` | array | yes | Typed changes including shift_events, event, series, selection, grouping, style, timezone or title; call operator_guide for exact examples |
+| `operations` | array of object | yes | Typed changes including shift_events, event, series, selection, grouping, style, timezone or title; call operator_guide for exact examples |
+
+## `timely_request_edit`
+
+**Timely Request Edit** — writes, closed-world · access: `write`.
+
+Interpret a natural-language request with ISAC, validate changes and prepare a draft. Never publishes. message_id deduplicates retries; previous_job continues a clarification.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `id` | string | yes | Programme id |
+| `message` | string | yes | Requested changes |
+| `message_id` | string | yes | Stable caller message id |
+| `previous_job` | string | no | Previous clarification job id |
 
 ## `timely_set_theme`
 
@@ -51,11 +66,25 @@ Set the public programme and widget appearance immediately (not PDF styling). Us
 | `id` | string | yes | Programme id |
 | `theme` | object | yes | mode, font, light:{background,text,accent}, dark:{background,text,accent} |
 
+## `timely_set_pdf_layout`
+
+**Timely Set PDF Layout** — writes, closed-world · access: `write`.
+
+PDF layout normal or compact (smaller heading, tighter rows, no printed logo); keeps meetings and style. Queues a new draft and PDF, never publishes; poll timely_edit_history, then ask before publishing. base_hash from timely_get; stable message_id.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `base_hash` | string | yes | Expected current content hash |
+| `id` | string | yes | Programme id |
+| `layout` | string | yes | normal or compact; normal is standard |
+| `message_id` | string | yes | Stable request id for safe retries |
+| `show_qr` | boolean | no | QR in the PDF (omit to keep) |
+
 ## `timely_render`
 
 **Timely Render** — writes, closed-world · access: `write`.
 
-Always render the current draft afresh through Doksi, even when a PDF already exists. Replaces the preview on the SAME draft revision without changing its content. Returns the new PDF and a one-hour download URL. Does not create a draft, approve, or publish. Use timely_get_pdf to download an existing render. Published/historical revisions cannot be re-rendered in place.
+Render the current draft afresh through Doksi (replacing its preview on the SAME revision) and return a one-hour download URL. Never creates a draft, approves or publishes; existing PDFs: timely_get_pdf.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -75,8 +104,3 @@ AI/MCP callers CAN approve and publish with this tool; no browser or signed conf
 | `pdf_hash` | string | yes | Exact rendered PDF hash shown for approval |
 | `revision` | integer | yes | Exact revision confirmed by the user |
 | `user_confirmed` | boolean | yes | True ONLY after explicit user confirmation for this exact revision and PDF |
-
----
-
-*Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.173. Regenerate rather than edit by hand.*

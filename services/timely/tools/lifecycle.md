@@ -6,11 +6,11 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`timely_export`](#timely-export) | read | Backup of ONE programme, returned INLINE: 'json_string' (the exact file bytes, complete,… |
-| [`timely_export_all`](#timely-export-all) | read | Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a REST do… |
+| [`timely_export`](#timely-export) | read | Backup of ONE programme: a summary plus signed one-hour download links (json_url restora… |
+| [`timely_export_all`](#timely-export-all) | read | Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a downloa… |
 | [`timely_export_schema`](#timely-export-schema) | read | The embedded JSON Schema that every export validates against and that timely_import ENFO… |
-| [`timely_import`](#timely-import) | write | Create a NEW programme from a schema-verified JSON export. ONLY JSON that validates agai… |
-| [`timely_delete`](#timely-delete) | write | Move a programme (kind programme, id) or the organisation page (kind organisation) to th… |
+| [`timely_import`](#timely-import) | write | Create a NEW draft programme from a JSON export that validates against timely_export_sch… |
+| [`timely_delete`](#timely-delete) | write | ONLY on the user's explicit request (confirm:true): move a programme (kind programme, id… |
 | [`timely_restore`](#timely-restore) | write | Restore ONE item from the bin (timely_trash_list) exactly as it was: its address, publis… |
 | [`timely_trash_list`](#timely-trash-list) | read | The bin: programmes and organisation pages that were deleted, newest first, with purge_a… |
 
@@ -20,24 +20,25 @@ See [connect](../../../docs/connect.md) to sign in.
 
 **Timely Export** — read-only, idempotent, closed-world · access: `read`.
 
-Backup of ONE programme, returned INLINE: 'json_string' (the exact file bytes, complete, lossless, schema timely-programme-export/v1; json_sha256 covers exactly these bytes; restore with timely_import json_string + sha256) and/or 'text' (for people only; never importable), with sha256, byte sizes and a summary. The owner's organisation is included in the JSON under 'organisation', marked as organisation data. Read-only; see operator_guide BACKUP.
+Backup of ONE programme: a summary plus signed one-hour download links (json_url restorable, text_url for people). inline:true also returns json_string, the exact file bytes json_sha256 covers (restore with timely_import json_string + sha256). Read-only; see operator_guide topic backup.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `format` | string | no | json, text or both (default both) |
 | `id` | string | yes | Programme id |
+| `inline` | boolean | no | Also return the file content (json_string / text) |
 
 ## `timely_export_all`
 
 **Timely Export All** — read-only, idempotent, closed-world · access: `read`.
 
-Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a REST download_url: no login needed, expires in one hour, treat it like a password. Returns expires_at, file count, total bytes and the manifest (sha256 per file). Staff: owner for a customer, or scope all_customers for everyone. See operator_guide BACKUP.
+Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a download_url (no login, one hour: treat it like a password) with a sha256 manifest. Staff: owner, or scope all_customers. operator_guide topic backup.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `format` | string | no | json, text or both (default both) |
 | `include_organisation` | boolean | no | Include organisation.json (default true) |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |
 | `scope` | string | no | owner (default: one account) or all_customers (staff only) |
 
 ## `timely_export_schema`
@@ -55,27 +56,28 @@ The embedded JSON Schema that every export validates against and that timely_imp
 
 **Timely Import** — writes, closed-world · access: `write`.
 
-Create a NEW programme from a schema-verified JSON export. ONLY JSON that validates against timely_export_schema is accepted: never text, zip garbage or HTML. It never overwrites or changes an existing programme, picks a free slug if taken, and lands as a DRAFT (never published). ALWAYS call with dry_run:true first, show the user what would be created, then dry_run:false. A refusal lists every problem with its JSON path; nothing is written. Organisation data in the export is NOT imported (use timely_org_set). Staff disaster recovery: mode "restore" (see operator_guide DISASTER RESTORE).
+Create a NEW draft programme from a JSON export that validates against timely_export_schema (never text or HTML); never overwrites or publishes; a taken slug gets a free one; organisation data is not imported. ALWAYS dry_run:true first and show the user, then dry_run:false. A refusal lists every problem by JSON path and writes nothing. Staff: mode restore (operator_guide topic staff).
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `bundle_base64` | string | no | mode restore: a whole timely_export_all zip, base64 (max 48 MiB) |
-| `bundle_url` | string | no | An /export/<token> link from timely_export_all |
+| `bundle_base64` | string | no | restore: timely_export_all zip, base64 (≤48 MiB) |
+| `bundle_url` | string | no | timely_export_all's download_url |
 | `dry_run` | boolean | yes | true: validate and report only, write nothing |
-| `export` | object | no | An export JSON object (e.g. a .json file's parsed content); prefer json_string |
-| `json_string` | string | no | The exact text of an exported .json file, or timely_export's json_string unchanged (use with sha256) |
-| `mode` | string | no | copy (default): a NEW programme as a draft. restore (staff only, disaster recovery): write it back exactly with its original id, address, owner and published version, only where id AND address are unused |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
+| `export` | object | no | Parsed export object; prefer json_string |
+| `json_string` | string | no | Exact export file text (with sha256) |
+| `json_url` | string | no | timely_export's json_url |
+| `mode` | string | no | copy (default) or restore (staff) |
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |
 | `pick_slug` | string | no | With bundle_url: which programme |
 | `restore_token` | string | no | mode restore: the token from the dry run of this same input |
-| `sha256` | string | no | Optional checksum of json_string: timely_export's json_sha256 or the file's sha256 in manifest.json |
+| `sha256` | string | no | json_sha256 of json_string |
 | `slug` | string | no | Optional new address; a free one is chosen if taken |
 
 ## `timely_delete`
 
 **Timely Delete** — writes, closed-world · access: `write`.
 
-Move a programme (kind programme, id) or the organisation page (kind organisation) to the BIN. It leaves every public address at once and can be restored with timely_restore for the bin period (timely_trash_list shows purge_at); after that it is deleted permanently. Deleting the organisation does NOT touch programmes. ONLY on the user's explicit request; confirm must be true. Use generation from timely_get / timely_org_get.
+ONLY on the user's explicit request (confirm:true): move a programme (kind programme, id) or the organisation (kind organisation; programmes untouched) to the BIN. It leaves every public address at once; timely_restore brings it back until purge_at (timely_trash_list); after that it is deleted permanently. Generation from timely_get / timely_org_get.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -83,7 +85,7 @@ Move a programme (kind programme, id) or the organisation page (kind organisatio
 | `generation` | integer | yes | Current generation |
 | `id` | string | no | Programme id (kind programme) |
 | `kind` | string | yes | programme or organisation |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |
 
 ## `timely_restore`
 
@@ -96,7 +98,7 @@ Restore ONE item from the bin (timely_trash_list) exactly as it was: its address
 | `from_purge_hold` | boolean | no | Staff only: bring back an item purged in the last 48 hours |
 | `id` | string | yes | Id from timely_trash_list |
 | `kind` | string | yes | programme or organisation |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |
 
 ## `timely_trash_list`
 
@@ -108,9 +110,4 @@ The bin: programmes and organisation pages that were deleted, newest first, with
 |---|---|---|---|
 | `cursor` | string | no | next_cursor from the previous page |
 | `limit` | integer | no | Page size |
-| `owner` | string | no | Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. |
-
----
-
-*Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.173. Regenerate rather than edit by hand.*
+| `owner` | string | no | Staff only: customer owner id or organisation id (idg…) |

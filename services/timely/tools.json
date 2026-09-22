@@ -2,15 +2,15 @@
   "service": "timely",
   "endpoint": "https://timely.publifye.com/mcp",
   "captured": "2026-09-22",
-  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-22, version 0.1.173. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot (mcp.New with the log tools, then the workflow tools) — on a clean export of source commit 354ee8b, version 0.1.190. Descriptions, annotations and input schemas are exactly what tools/list serves (it leaves out the annotation title; the title here is the registry's). Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
   "counts": {
-    "callable_by_a_customer": 30,
-    "capability_tools": 28,
+    "callable_by_a_customer": 33,
+    "capability_tools": 31,
     "session_and_cache_plumbing": 0,
     "excluded_help_and_health": 2,
-    "excluded_admin_only": 12,
+    "excluded_admin_only": 14,
     "excluded_ops_and_logging": 10,
-    "total_on_the_wire": 52
+    "total_on_the_wire": 57
   },
   "excluded": {
     "help_and_health": [
@@ -21,12 +21,14 @@
       "admin_activate_render",
       "admin_force_render",
       "admin_instance_drain",
+      "admin_logs",
       "admin_org_list",
       "admin_org_transfer",
       "admin_programme_check",
       "admin_rebuild_indexes",
       "admin_render_sweep",
       "admin_self_test",
+      "admin_storage_migrate",
       "admin_system_status",
       "admin_timely_transfer",
       "admin_workflow_debug"
@@ -50,7 +52,7 @@
       "title": "Timely List",
       "kind": "capability",
       "access": "read",
-      "description": "List the programmes of one account (yours unless staff pass owner) in id order, 25 per page (limit 1..100); pass next_cursor back as cursor until it is empty. Staff: owner \"*\" pages EVERY customer's programmes the same way.",
+      "description": "List the programmes of one account (yours unless staff pass owner) in id order, 25 per page (limit 1..30); pass next_cursor back as cursor until it is empty. Staff: owner \"*\" pages EVERY customer's programmes the same way.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -59,23 +61,23 @@
         "title": "Timely List"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "cursor": {
-            "description": "next_cursor from the previous page",
-            "type": "string"
+            "type": "string",
+            "description": "next_cursor from the previous page"
           },
           "limit": {
+            "type": "integer",
             "description": "Page size",
-            "maximum": 100,
             "minimum": 1,
-            "type": "integer"
+            "maximum": 30
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account. Staff may pass \"*\" for all customers.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…) Staff may pass \"*\" for all customers."
           }
-        },
-        "type": "object"
+        }
       }
     },
     {
@@ -83,7 +85,7 @@
       "title": "Timely Get",
       "kind": "capability",
       "access": "read",
-      "description": "PROGRAMME only. Current published programme and outstanding draft, plus a READ-ONLY organisation summary (organisation info lives in timely_org_*; edit it with timely_org_set, never through a programme). Use timely_history for older revisions and timely_get_pdf with id and revision to download any rendered PDF. Use timely_get_widget for embed code and widget settings.",
+      "description": "PROGRAMME only (organisation info: timely_org_*). Published and draft revision headers and URLs. For ONE revision (revision, default the draft) include: meetings (paged by meetings_cursor, meetings_limit ≤500), content, changes, artifact_history.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -92,16 +94,35 @@
         "title": "Timely Get"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
+          },
+          "include": {
+            "type": "array",
+            "description": "meetings, content, changes, artifact_history",
+            "items": {
+              "type": "string"
+            }
+          },
+          "meetings_cursor": {
+            "type": "string",
+            "description": "meetings_next_cursor"
+          },
+          "meetings_limit": {
+            "type": "integer",
+            "description": "Default 100"
+          },
+          "revision": {
+            "type": "integer",
+            "description": "For include (default: draft, else published)"
           }
         },
         "required": [
           "id"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -109,7 +130,7 @@
       "title": "Timely History",
       "kind": "capability",
       "access": "read",
-      "description": "Your programme's immutable revisions (newest first, with changes and PDF references) or, with kind:\"audit\", its audit trail. 25 per page (limit 1..100); pass next_cursor back as cursor.",
+      "description": "Revision headers, newest first (or kind:\"audit\": the audit trail), 25 per page; pass next_cursor back as cursor. include:[\"bodies\"] for full revisions.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -118,34 +139,76 @@
         "title": "Timely History"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "cursor": {
-            "description": "next_cursor from the previous page",
-            "type": "string"
+            "type": "string",
+            "description": "next_cursor"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
+          },
+          "include": {
+            "type": "array",
+            "description": "bodies",
+            "items": {
+              "type": "string"
+            }
           },
           "kind": {
+            "type": "string",
             "description": "revisions (default) or audit",
             "enum": [
               "revisions",
               "audit"
-            ],
-            "type": "string"
+            ]
           },
           "limit": {
-            "description": "Page size",
-            "maximum": 100,
+            "type": "integer",
             "minimum": 1,
-            "type": "integer"
+            "maximum": 100
           }
         },
         "required": [
           "id"
-        ],
-        "type": "object"
+        ]
+      }
+    },
+    {
+      "name": "timely_edit_history",
+      "title": "Timely Edit History",
+      "kind": "capability",
+      "access": "read",
+      "description": "Your programme's per-call workflow history, newest first, including checkpoints and clarification questions. 25 per page (limit 1..100); pass next_cursor back as cursor.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Timely Edit History"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page"
+          },
+          "id": {
+            "type": "string",
+            "description": "Programme id"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Page size",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "id"
+        ]
       }
     },
     {
@@ -153,7 +216,7 @@
       "title": "Timely Get PDF",
       "kind": "capability",
       "access": "read",
-      "description": "Get a one-hour download URL for an existing rendered PDF, including private drafts and historical revisions. Requires programme ownership (or staff admin). Returns the exact stored artifact; does not approve, publish, or re-render. Anyone given the URL can download that PDF until expiry. Specify the revision from timely_get or timely_history.",
+      "description": "One-hour download URL (anyone holding it can download) for an existing PDF of any revision, exactly as stored; never renders or publishes. Revision from timely_get or timely_history.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -162,25 +225,25 @@
         "title": "Timely Get PDF"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "pdf_hash": {
-            "description": "Optional previous PDF hash from artifact_history",
-            "type": "string"
+            "type": "string",
+            "description": "Optional previous PDF hash from artifact_history"
           },
           "revision": {
-            "description": "Rendered revision number",
-            "type": "integer"
+            "type": "integer",
+            "description": "Rendered revision number"
           }
         },
         "required": [
           "id",
           "revision"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -188,7 +251,7 @@
       "title": "Timely Get Widget",
       "kind": "capability",
       "access": "read",
-      "description": "PROGRAMME widget. The ordinary programme widget shows only the programme and needs NO organisation information: it sits inside the website the organisation already has. Only the full-page mode (and the organisation homepage, timely_org_homepage) shows organisation info above the programme. Get your widget URL, copyable iframe HTML, allowed websites, language options and publication state. Private preview_url requires your Timely account session and never publishes. Public widget shows only approved content.",
+      "description": "PROGRAMME widget: URL, copyable iframe HTML, allowed websites, language and state. The ordinary widget needs NO organisation information (it sits inside their own website); only full-page mode and timely_org_homepage show it. preview_url needs the owner's session; the public widget shows approved content only.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -197,16 +260,16 @@
         "title": "Timely Get Widget"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           }
         },
         "required": [
           "id"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -223,25 +286,25 @@
         "title": "Timely Create"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "content": {
-            "description": "Programme content: title, language, timezone, selection, grouping, events and bounded series",
-            "type": "object"
+            "type": "object",
+            "description": "Programme content: title, language, timezone, selection, grouping, events and bounded series"
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "slug": {
-            "description": "Public slug",
-            "type": "string"
+            "type": "string",
+            "description": "Public slug"
           }
         },
         "required": [
           "slug",
           "content"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -258,33 +321,73 @@
         "title": "Timely Edit"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "base_hash": {
-            "description": "Expected current content hash",
-            "type": "string"
+            "type": "string",
+            "description": "Expected current content hash"
           },
           "dry_run": {
-            "description": "Validate and return proposed draft/diffs without storing a revision or changing state",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Validate and return proposed draft/diffs without storing a revision or changing state"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "operations": {
+            "type": "array",
             "description": "Typed changes including shift_events, event, series, selection, grouping, style, timezone or title; call operator_guide for exact examples",
             "items": {
               "type": "object"
-            },
-            "type": "array"
+            }
           }
         },
         "required": [
           "id",
           "base_hash",
           "operations"
-        ],
-        "type": "object"
+        ]
+      }
+    },
+    {
+      "name": "timely_request_edit",
+      "title": "Timely Request Edit",
+      "kind": "capability",
+      "access": "write",
+      "description": "Interpret a natural-language request with ISAC, validate changes and prepare a draft. Never publishes. message_id deduplicates retries; previous_job continues a clarification.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Request Edit"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Programme id"
+          },
+          "message": {
+            "type": "string",
+            "description": "Requested changes"
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Stable caller message id"
+          },
+          "previous_job": {
+            "type": "string",
+            "description": "Previous clarification job id"
+          }
+        },
+        "required": [
+          "id",
+          "message_id",
+          "message"
+        ]
       }
     },
     {
@@ -301,26 +404,71 @@
         "title": "Timely Set Theme"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "Expected generation from timely_get",
-            "type": "integer"
+            "type": "integer",
+            "description": "Expected generation from timely_get"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "theme": {
-            "description": "mode, font, light:{background,text,accent}, dark:{background,text,accent}",
-            "type": "object"
+            "type": "object",
+            "description": "mode, font, light:{background,text,accent}, dark:{background,text,accent}"
           }
         },
         "required": [
           "id",
           "generation",
           "theme"
-        ],
-        "type": "object"
+        ]
+      }
+    },
+    {
+      "name": "timely_set_pdf_layout",
+      "title": "Timely Set PDF Layout",
+      "kind": "capability",
+      "access": "write",
+      "description": "PDF layout normal or compact (smaller heading, tighter rows, no printed logo); keeps meetings and style. Queues a new draft and PDF, never publishes; poll timely_edit_history, then ask before publishing. base_hash from timely_get; stable message_id.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Timely Set PDF Layout"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "base_hash": {
+            "type": "string",
+            "description": "Expected current content hash"
+          },
+          "id": {
+            "type": "string",
+            "description": "Programme id"
+          },
+          "layout": {
+            "type": "string",
+            "description": "normal or compact; normal is standard"
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Stable request id for safe retries"
+          },
+          "show_qr": {
+            "type": "boolean",
+            "description": "QR in the PDF (omit to keep)"
+          }
+        },
+        "required": [
+          "id",
+          "base_hash",
+          "message_id",
+          "layout"
+        ]
       }
     },
     {
@@ -328,7 +476,7 @@
       "title": "Timely Render",
       "kind": "capability",
       "access": "write",
-      "description": "Always render the current draft afresh through Doksi, even when a PDF already exists. Replaces the preview on the SAME draft revision without changing its content. Returns the new PDF and a one-hour download URL. Does not create a draft, approve, or publish. Use timely_get_pdf to download an existing render. Published/historical revisions cannot be re-rendered in place.",
+      "description": "Render the current draft afresh through Doksi (replacing its preview on the SAME revision) and return a one-hour download URL. Never creates a draft, approves or publishes; existing PDFs: timely_get_pdf.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -337,21 +485,21 @@
         "title": "Timely Render"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "revision": {
-            "description": "Current draft revision number",
-            "type": "integer"
+            "type": "integer",
+            "description": "Current draft revision number"
           }
         },
         "required": [
           "id",
           "revision"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -368,26 +516,27 @@
         "title": "Draft Approve"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "content_hash": {
-            "description": "Exact content hash shown for approval",
-            "type": "string"
+            "type": "string",
+            "description": "Exact content hash shown for approval"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "pdf_hash": {
-            "description": "Exact rendered PDF hash shown for approval",
-            "type": "string"
+            "type": "string",
+            "description": "Exact rendered PDF hash shown for approval"
           },
           "revision": {
-            "description": "Exact revision confirmed by the user",
-            "type": "integer"
+            "type": "integer",
+            "description": "Exact revision confirmed by the user"
           },
           "user_confirmed": {
-            "description": "True ONLY after explicit user confirmation for this exact revision and PDF",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "True ONLY after explicit user confirmation for this exact revision and PDF"
           }
         },
         "required": [
@@ -396,8 +545,7 @@
           "content_hash",
           "pdf_hash",
           "user_confirmed"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -414,26 +562,26 @@
         "title": "Timely Add Website"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "Expected generation",
-            "type": "integer"
+            "type": "integer",
+            "description": "Expected generation"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "origin": {
-            "description": "Exact HTTPS website origin, e.g. https://www.example.org; no path or wildcard",
-            "type": "string"
+            "type": "string",
+            "description": "Exact HTTPS website origin, e.g. https://www.example.org; no path or wildcard"
           }
         },
         "required": [
           "id",
           "generation",
           "origin"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -441,7 +589,7 @@
       "title": "Timely Set Widget",
       "kind": "capability",
       "access": "write",
-      "description": "PROGRAMME widget websites only (organisation homepage websites are timely_org_add_website). Configure the widget websites and language. Supply the COMPLETE desired origins list (HTTPS only, no wildcards, maximum 20), not just additions. Order matters: the FIRST origin is the default programme QR destination (unless an explicit content.qr_url override is set). Empty origins falls back to the Timely programme page. Existing printed PDFs require re-render and approval to update their QR. Only add websites the owner requested. Returns the full resulting configuration. Uses generation from timely_get. Does not publish.",
+      "description": "PROGRAMME widget websites and language (homepage websites: timely_org_add_website). origins is the COMPLETE list (https, no wildcards, ≤20) of sites the owner asked for; the FIRST is the default PDF QR destination (a printed PDF changes only after re-render and approval). Generation from timely_get. Never publishes.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -450,29 +598,30 @@
         "title": "Timely Set Widget"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "Expected generation",
-            "type": "integer"
+            "type": "integer",
+            "description": "Expected generation"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "language": {
-            "description": "Default widget language",
-            "type": "string"
+            "type": "string",
+            "description": "Default widget language"
           },
           "language_selector": {
-            "description": "Allow visitors to choose language",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Allow visitors to choose language"
           },
           "origins": {
+            "type": "array",
             "description": "Complete HTTPS website origin list",
             "items": {
               "type": "string"
-            },
-            "type": "array"
+            }
           }
         },
         "required": [
@@ -481,8 +630,7 @@
           "origins",
           "language",
           "language_selector"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -490,7 +638,7 @@
       "title": "Timely Set Widget Identity",
       "kind": "capability",
       "access": "write",
-      "description": "PROGRAMME widget display: choose, for THIS programme and one widget mode, what visitors see. Switches: show_org_info, show_contact, show_logo, show_title, show_addresses, show_links, show_org_line, show_place, show_speaker. Organisation facts come from the organisation record (timely_org_*); this only decides whether they are shown. Layers: mode default, then the organisation's choice (timely_org_set_display), then this programme's choice (this tool). Defaults: full shows everything; programme (also used by next) shows only the programme, with place and speaker. A switched-off item is removed from the page HTML entirely, not hidden with CSS. compact=true defaults this mode to a minimal embedded view (next meeting/date/time/speaker and QR) without projector enlargement; visitors can override compact locally. Supply at least one switch or inherit; omitted switches keep their value; inherit resets named switches (or compact) to follow the organisation again. Requires ownership and generation from timely_get. Applies immediately, is audited, and does not change the PDF or publish a draft.",
+      "description": "What visitors see of THIS programme in one mode; wins over timely_org_set_display. compact:true = minimal embed. A hidden item is removed from the page HTML. Omitted switches keep their value; inherit follows the organisation again. Generation from timely_get. Immediate, never changes the PDF or publishes. operator_guide topic widget.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -499,68 +647,60 @@
         "title": "Timely Set Widget Identity"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "compact": {
-            "description": "Default to minimal embedded view",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Default to minimal embedded view"
           },
           "generation": {
-            "description": "Expected generation",
-            "type": "integer"
+            "type": "integer",
+            "description": "Expected generation"
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
           },
           "inherit": {
+            "type": "array",
             "description": "Switch names to reset so they follow the organisation's choice again, e.g. [\"show_place\"]",
             "items": {
               "type": "string"
-            },
-            "type": "array"
+            }
           },
           "mode": {
+            "type": "string",
             "description": "full or programme (programme also covers next)",
             "enum": [
               "full",
               "programme"
-            ],
-            "type": "string"
+            ]
           },
           "show_addresses": {
-            "description": "Show the Visit and Post addresses at the bottom. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_contact": {
-            "description": "Show the organisation email address and phone number. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_links": {
-            "description": "Show the organisation's links (social media, podcast) at the bottom. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_logo": {
-            "description": "Show the organisation logo in the heading. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_org_info": {
-            "description": "Show the one-line description and What / Where / When / How with their details. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_org_line": {
-            "description": "Show the organisation details line at the bottom, e.g. organisation number. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_place": {
-            "description": "Show each meeting's place. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_speaker": {
-            "description": "Show each meeting's speaker, including a speaker repeated after a dash in the title. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_title": {
-            "description": "Show the organisation name (or programme title) and the time zone line in the heading. Omit to keep the current value.",
             "type": "boolean"
           }
         },
@@ -568,8 +708,7 @@
           "id",
           "generation",
           "mode"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -577,7 +716,7 @@
       "title": "Timely Org Get",
       "kind": "capability",
       "access": "read",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Read the organisation: the complete record, its generation (needed by timely_org_set), paused state and its homepage URLs. include:[\"audit\"] adds the audit trail newest first, include:[\"bin_history\"] what was deleted, restored and permanently deleted (title and date only). Each extra pages on its own: audit_limit/audit_cursor (pass audit_next_cursor back) and bin_history_limit/bin_history_cursor (pass bin_history_next_cursor back), 1..100, default 25. For customers, actor reads you, Publifye, system or another account. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). The complete record, generation (for timely_org_set), paused state and homepage URLs. Opt-in: include [\"audit\"] and/or [\"bin_history\"], each paged by its own *_cursor/*_limit (default 25). Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -586,40 +725,38 @@
         "title": "Timely Org Get"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "audit_cursor": {
-            "description": "audit_next_cursor from the previous call",
-            "type": "string"
+            "type": "string",
+            "description": "audit_next_cursor"
           },
           "audit_limit": {
-            "description": "Audit page size",
-            "maximum": 100,
+            "type": "integer",
             "minimum": 1,
-            "type": "integer"
+            "maximum": 100
           },
           "bin_history_cursor": {
-            "description": "bin_history_next_cursor from the previous call",
-            "type": "string"
+            "type": "string",
+            "description": "bin_history_next_cursor"
           },
           "bin_history_limit": {
-            "description": "Bin history page size",
-            "maximum": 100,
+            "type": "integer",
             "minimum": 1,
-            "type": "integer"
+            "maximum": 100
           },
           "include": {
-            "description": "Optional extras: \"audit\", \"bin_history\"",
+            "type": "array",
+            "description": "audit, bin_history",
             "items": {
               "type": "string"
-            },
-            "type": "array"
+            }
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
-        },
-        "type": "object"
+        }
       }
     },
     {
@@ -627,7 +764,7 @@
       "title": "Timely Org Set",
       "kind": "capability",
       "access": "write",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Replace the organisation information with the COMPLETE record: read timely_org_get, change only what the user asked, send everything back with the generation you read. Omitted fields are CLEARED. A stale generation is refused; read again and reapply. Refusals list every problem with its exact path. Or send ONLY paused (true/false) with the generation to pause or resume every public page of the organisation. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Replace the organisation with the COMPLETE record read from timely_org_get plus only the requested change, with its generation; OMITTED FIELDS ARE CLEARED; a stale generation is refused (read again). Or send only paused with the generation. Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -636,28 +773,28 @@
         "title": "Timely Org Set"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "generation from timely_org_get",
-            "type": "integer"
+            "type": "integer",
+            "description": "generation from timely_org_get"
           },
           "organisation": {
-            "description": "The COMPLETE organisation object: name, tagline (240 chars each); what/where/when/how each {text ≤240, detail ≤500}; contact {email, phone ≤40: digits, spaces, + - ( )}; visit/postal/org_line arrays of ≤6 lines ≤160 chars; links ≤3 {label ≤80, url https}; slug (optional short address, lowercase); homepage_origins (exact https origins); homepage_programmes (programme ids in display order, [] = automatic). OMITTED FIELDS ARE CLEARED. Required unless paused is sent.",
-            "type": "object"
+            "type": "object",
+            "description": "The COMPLETE record: name, tagline, what/where/when/how {text, detail}, contact {email, phone}, visit, postal, org_line, links, slug, homepage_origins, homepage_programmes ([] = automatic); limits: operator_guide topic organisation. OMITTED FIELDS ARE CLEARED. Required unless paused is sent."
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "paused": {
-            "description": "Only this: true hides the homepage and every programme page, PDF and widget calmly until false",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Alone: true hides every public page, PDF and widget until false"
           }
         },
         "required": [
           "generation"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -665,7 +802,7 @@
       "title": "Timely Org Set Display",
       "kind": "capability",
       "access": "write",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Choose what visitors see, for the whole organisation, in one widget mode: full (the homepage and every full-page widget) or programme (every ordinary programme widget, also next). Switches: show_org_info, show_contact, show_logo, show_title, show_addresses, show_links, show_org_line, show_place, show_speaker. Defaults: full shows everything; programme shows only the programme, with place and speaker. A programme can still make its own choice with timely_set_widget_identity, which wins for that programme. A switched-off item is removed from the page HTML entirely, not hidden with CSS. Supply at least one switch or inherit; omitted switches keep their value; inherit resets named switches to the mode default. Uses generation from timely_org_get; the organisation must be saved first. Immediate, audited, no approval, never changes a PDF.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). What visitors see in one mode (full: homepage and full-page widgets; programme: every programme widget), for all programmes; a programme's own choice (timely_set_widget_identity) wins. A hidden item is removed from the page HTML. Omitted switches keep their value; inherit resets to the mode default. Generation from timely_org_get. Immediate, never changes a PDF. operator_guide topic widget.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -674,72 +811,63 @@
         "title": "Timely Org Set Display"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "generation from timely_org_get",
-            "type": "integer"
+            "type": "integer",
+            "description": "generation from timely_org_get"
           },
           "inherit": {
+            "type": "array",
             "description": "Switch names to reset so they follow the mode default again, e.g. [\"show_place\"]",
             "items": {
               "type": "string"
-            },
-            "type": "array"
+            }
           },
           "mode": {
+            "type": "string",
             "description": "full or programme",
             "enum": [
               "full",
               "programme"
-            ],
-            "type": "string"
+            ]
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "show_addresses": {
-            "description": "Show the Visit and Post addresses at the bottom. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_contact": {
-            "description": "Show the organisation email address and phone number. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_links": {
-            "description": "Show the organisation's links (social media, podcast) at the bottom. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_logo": {
-            "description": "Show the organisation logo in the heading. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_org_info": {
-            "description": "Show the one-line description and What / Where / When / How with their details. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_org_line": {
-            "description": "Show the organisation details line at the bottom, e.g. organisation number. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_place": {
-            "description": "Show each meeting's place. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_speaker": {
-            "description": "Show each meeting's speaker, including a speaker repeated after a dash in the title. Omit to keep the current value.",
             "type": "boolean"
           },
           "show_title": {
-            "description": "Show the organisation name (or programme title) and the time zone line in the heading. Omit to keep the current value.",
             "type": "boolean"
           }
         },
         "required": [
           "generation",
           "mode"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -747,7 +875,7 @@
       "title": "Timely Org Add Website",
       "kind": "capability",
       "access": "write",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Append ONE website to homepage_origins (the sites allowed to show the homepage), without changing anything else. Only add a website the user asked for. Accepts example.org or https://www.example.org. Uses generation from timely_org_get. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Append ONE website the user asked for to homepage_origins (example.org or https://…), changing nothing else. Generation from timely_org_get. Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -756,25 +884,25 @@
         "title": "Timely Org Add Website"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "generation": {
-            "description": "generation from timely_org_get",
-            "type": "integer"
+            "type": "integer",
+            "description": "generation from timely_org_get"
           },
           "origin": {
-            "description": "The website, e.g. https://www.example.org",
-            "type": "string"
+            "type": "string",
+            "description": "The website, e.g. https://www.example.org"
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
         },
         "required": [
           "generation",
           "origin"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -782,7 +910,7 @@
       "title": "Timely Org Homepage",
       "kind": "capability",
       "access": "read",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Everything to make Timely the organisation's homepage: the index.html source to upload, upload instructions to relay to the user verbatim, the shareable homepage URL, embed code for an existing website, and which websites are allowed and which still need adding (timely_org_add_website). Read-only. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). To make Timely the homepage: index.html to upload, upload instructions (relay verbatim), homepage URL, embed code, and origins_still_to_add. Read-only. Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -791,28 +919,28 @@
         "title": "Timely Org Homepage"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "lang": {
-            "description": "Page language for index.html (default en)",
+            "type": "string",
+            "description": "index.html language (default en)",
             "enum": [
               "en",
               "nb",
               "es",
               "zh",
               "ko"
-            ],
-            "type": "string"
+            ]
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "site": {
-            "description": "Optional: the website the file will live on, e.g. https://www.example.org",
-            "type": "string"
+            "type": "string",
+            "description": "Website the file will live on"
           }
-        },
-        "type": "object"
+        }
       }
     },
     {
@@ -820,7 +948,7 @@
       "title": "Timely Org Logo Import",
       "kind": "capability",
       "access": "write",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Set the organisation LOGO from a public HTTPS image URL (PNG/JPEG ≤5 MiB, ≤16 MP). Timely downloads it with SSRF protection and hosts it publicly; confirm_public must be true. It appears on the homepage and full-page widget at once, and new programmes use it in their PDF; existing programmes and PDFs are NOT changed. Poll timely_logo_status. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Set the LOGO from a public HTTPS image (PNG/JPEG ≤5 MiB, ≤16 MP; confirm_public:true); new programmes use it in their PDF, existing PDFs never change. Poll timely_logo_status. Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -829,25 +957,25 @@
         "title": "Timely Org Logo Import"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "confirm_public": {
-            "description": "Confirm the logo may be hosted publicly",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Confirm the logo may be hosted publicly"
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "url": {
-            "description": "Public HTTPS image URL",
-            "type": "string"
+            "type": "string",
+            "description": "Public HTTPS image URL"
           }
         },
         "required": [
           "url",
           "confirm_public"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -855,7 +983,7 @@
       "title": "Timely Org Logo Upload Begin",
       "kind": "capability",
       "access": "write",
-      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Start a single-use upload of the organisation LOGO: returns upload_url; POST the raw PNG/JPEG bytes within 30 minutes, then poll timely_logo_status. Never put image bytes into MCP. confirm_public must be true. Existing programmes and PDFs are NOT changed. Only needed when Timely is the organisation's homepage (the full page, /o/ link or downloaded index.html). The ordinary programme widget does NOT need it: it sits inside the website they already have, which already says who they are, where and how to reach them. Saving is immediate, needs no approval and never changes a PDF. Read operator_guide (ORGANISATION) first.",
+      "description": "ORGANISATION (shared by all programmes, web only, never in the PDF). Single-use LOGO upload: returns upload_url; POST the raw PNG/JPEG within 30 minutes (never bytes in MCP), then poll timely_logo_status. confirm_public:true. Not needed for the ordinary programme widget (it sits inside the website they already have). Immediate, no approval, never changes a PDF. operator_guide topic organisation.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -864,20 +992,20 @@
         "title": "Timely Org Logo Upload Begin"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "confirm_public": {
-            "description": "Confirm the logo may be hosted publicly",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Confirm the logo may be hosted publicly"
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
         },
         "required": [
           "confirm_public"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -894,16 +1022,16 @@
         "title": "Timely Logo Status"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "job_id": {
-            "description": "Job from timely_org_logo_import or timely_org_logo_upload_begin",
-            "type": "string"
+            "type": "string",
+            "description": "Job from timely_org_logo_import or timely_org_logo_upload_begin"
           }
         },
         "required": [
           "job_id"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -911,7 +1039,7 @@
       "title": "Timely Export",
       "kind": "capability",
       "access": "read",
-      "description": "Backup of ONE programme, returned INLINE: 'json_string' (the exact file bytes, complete, lossless, schema timely-programme-export/v1; json_sha256 covers exactly these bytes; restore with timely_import json_string + sha256) and/or 'text' (for people only; never importable), with sha256, byte sizes and a summary. The owner's organisation is included in the JSON under 'organisation', marked as organisation data. Read-only; see operator_guide BACKUP.",
+      "description": "Backup of ONE programme: a summary plus signed one-hour download links (json_url restorable, text_url for people). inline:true also returns json_string, the exact file bytes json_sha256 covers (restore with timely_import json_string + sha256). Read-only; see operator_guide topic backup.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -920,25 +1048,29 @@
         "title": "Timely Export"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "format": {
+            "type": "string",
             "description": "json, text or both (default both)",
             "enum": [
               "json",
               "text",
               "both"
-            ],
-            "type": "string"
+            ]
           },
           "id": {
-            "description": "Programme id",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id"
+          },
+          "inline": {
+            "type": "boolean",
+            "description": "Also return the file content (json_string / text)"
           }
         },
         "required": [
           "id"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -946,7 +1078,7 @@
       "title": "Timely Export All",
       "kind": "capability",
       "access": "read",
-      "description": "Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a REST download_url: no login needed, expires in one hour, treat it like a password. Returns expires_at, file count, total bytes and the manifest (sha256 per file). Staff: owner for a customer, or scope all_customers for everyone. See operator_guide BACKUP.",
+      "description": "Backup of ALL programmes of one account (plus organisation.json) as ONE zip at a download_url (no login, one hour: treat it like a password) with a sha256 manifest. Staff: owner, or scope all_customers. operator_guide topic backup.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -955,34 +1087,34 @@
         "title": "Timely Export All"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "format": {
+            "type": "string",
             "description": "json, text or both (default both)",
             "enum": [
               "json",
               "text",
               "both"
-            ],
-            "type": "string"
+            ]
           },
           "include_organisation": {
-            "description": "Include organisation.json (default true)",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Include organisation.json (default true)"
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "scope": {
+            "type": "string",
             "description": "owner (default: one account) or all_customers (staff only)",
             "enum": [
               "owner",
               "all_customers"
-            ],
-            "type": "string"
+            ]
           }
-        },
-        "type": "object"
+        }
       }
     },
     {
@@ -999,22 +1131,22 @@
         "title": "Timely Export Schema"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "kind": {
+            "type": "string",
             "description": "programme, organisation or bundle",
             "enum": [
               "programme",
               "organisation",
               "bundle"
-            ],
-            "type": "string"
+            ]
           },
           "version": {
-            "description": "e.g. timely-programme-export/v1",
-            "type": "string"
+            "type": "string",
+            "description": "e.g. timely-programme-export/v1"
           }
-        },
-        "type": "object"
+        }
       }
     },
     {
@@ -1022,7 +1154,7 @@
       "title": "Timely Import",
       "kind": "capability",
       "access": "write",
-      "description": "Create a NEW programme from a schema-verified JSON export. ONLY JSON that validates against timely_export_schema is accepted: never text, zip garbage or HTML. It never overwrites or changes an existing programme, picks a free slug if taken, and lands as a DRAFT (never published). ALWAYS call with dry_run:true first, show the user what would be created, then dry_run:false. A refusal lists every problem with its JSON path; nothing is written. Organisation data in the export is NOT imported (use timely_org_set). Staff disaster recovery: mode \"restore\" (see operator_guide DISASTER RESTORE).",
+      "description": "Create a NEW draft programme from a JSON export that validates against timely_export_schema (never text or HTML); never overwrites or publishes; a taken slug gets a free one; organisation data is not imported. ALWAYS dry_run:true first and show the user, then dry_run:false. A refusal lists every problem by JSON path and writes nothing. Staff: mode restore (operator_guide topic staff).",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -1031,60 +1163,64 @@
         "title": "Timely Import"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "bundle_base64": {
-            "description": "mode restore: a whole timely_export_all zip, base64 (max 48 MiB)",
-            "type": "string"
+            "type": "string",
+            "description": "restore: timely_export_all zip, base64 (≤48 MiB)"
           },
           "bundle_url": {
-            "description": "An /export/<token> link from timely_export_all",
-            "type": "string"
+            "type": "string",
+            "description": "timely_export_all's download_url"
           },
           "dry_run": {
-            "description": "true: validate and report only, write nothing",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "true: validate and report only, write nothing"
           },
           "export": {
-            "description": "An export JSON object (e.g. a .json file's parsed content); prefer json_string",
-            "type": "object"
+            "type": "object",
+            "description": "Parsed export object; prefer json_string"
           },
           "json_string": {
-            "description": "The exact text of an exported .json file, or timely_export's json_string unchanged (use with sha256)",
-            "type": "string"
+            "type": "string",
+            "description": "Exact export file text (with sha256)"
+          },
+          "json_url": {
+            "type": "string",
+            "description": "timely_export's json_url"
           },
           "mode": {
-            "description": "copy (default): a NEW programme as a draft. restore (staff only, disaster recovery): write it back exactly with its original id, address, owner and published version, only where id AND address are unused",
+            "type": "string",
+            "description": "copy (default) or restore (staff)",
             "enum": [
               "copy",
               "restore"
-            ],
-            "type": "string"
+            ]
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           },
           "pick_slug": {
-            "description": "With bundle_url: which programme",
-            "type": "string"
+            "type": "string",
+            "description": "With bundle_url: which programme"
           },
           "restore_token": {
-            "description": "mode restore: the token from the dry run of this same input",
-            "type": "string"
+            "type": "string",
+            "description": "mode restore: the token from the dry run of this same input"
           },
           "sha256": {
-            "description": "Optional checksum of json_string: timely_export's json_sha256 or the file's sha256 in manifest.json",
-            "type": "string"
+            "type": "string",
+            "description": "json_sha256 of json_string"
           },
           "slug": {
-            "description": "Optional new address; a free one is chosen if taken",
-            "type": "string"
+            "type": "string",
+            "description": "Optional new address; a free one is chosen if taken"
           }
         },
         "required": [
           "dry_run"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -1092,7 +1228,7 @@
       "title": "Timely Delete",
       "kind": "capability",
       "access": "write",
-      "description": "Move a programme (kind programme, id) or the organisation page (kind organisation) to the BIN. It leaves every public address at once and can be restored with timely_restore for the bin period (timely_trash_list shows purge_at); after that it is deleted permanently. Deleting the organisation does NOT touch programmes. ONLY on the user's explicit request; confirm must be true. Use generation from timely_get / timely_org_get.",
+      "description": "ONLY on the user's explicit request (confirm:true): move a programme (kind programme, id) or the organisation (kind organisation; programmes untouched) to the BIN. It leaves every public address at once; timely_restore brings it back until purge_at (timely_trash_list); after that it is deleted permanently. Generation from timely_get / timely_org_get.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -1101,38 +1237,38 @@
         "title": "Timely Delete"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "confirm": {
-            "description": "Must be true: the user asked for this deletion",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Must be true: the user asked for this deletion"
           },
           "generation": {
-            "description": "Current generation",
-            "type": "integer"
+            "type": "integer",
+            "description": "Current generation"
           },
           "id": {
-            "description": "Programme id (kind programme)",
-            "type": "string"
+            "type": "string",
+            "description": "Programme id (kind programme)"
           },
           "kind": {
+            "type": "string",
             "description": "programme or organisation",
             "enum": [
               "programme",
               "organisation"
-            ],
-            "type": "string"
+            ]
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
         },
         "required": [
           "kind",
           "generation",
           "confirm"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -1149,33 +1285,33 @@
         "title": "Timely Restore"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "from_purge_hold": {
-            "description": "Staff only: bring back an item purged in the last 48 hours",
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Staff only: bring back an item purged in the last 48 hours"
           },
           "id": {
-            "description": "Id from timely_trash_list",
-            "type": "string"
+            "type": "string",
+            "description": "Id from timely_trash_list"
           },
           "kind": {
+            "type": "string",
             "description": "programme or organisation",
             "enum": [
               "programme",
               "organisation"
-            ],
-            "type": "string"
+            ]
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
         },
         "required": [
           "kind",
           "id"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -1192,23 +1328,23 @@
         "title": "Timely Trash List"
       },
       "inputSchema": {
+        "type": "object",
         "properties": {
           "cursor": {
-            "description": "next_cursor from the previous page",
-            "type": "string"
+            "type": "string",
+            "description": "next_cursor from the previous page"
           },
           "limit": {
+            "type": "integer",
             "description": "Page size",
-            "maximum": 100,
             "minimum": 1,
-            "type": "integer"
+            "maximum": 100
           },
           "owner": {
-            "description": "Staff only: organisation id (idg…) or owner id of the customer to act for (see admin_org_list). Leave it out for your own account.",
-            "type": "string"
+            "type": "string",
+            "description": "Staff only: customer owner id or organisation id (idg…)"
           }
-        },
-        "type": "object"
+        }
       }
     }
   ]

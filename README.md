@@ -52,7 +52,7 @@ you pay for anything.
 | **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | `pro.publifye/lexar` (not yet published) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | `pro.publifye/doksi` (not yet published) | [services/doksi](services/doksi) |
-| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 28 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
+| **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | `pro.publifye/timely` (not yet published) | [services/timely](services/timely) |
 | **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | `pro.publifye/audiobible` (not yet published) | [services/audiobible](services/audiobible) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
@@ -171,16 +171,17 @@ render, mail. A signer gets an individual link or a QR code, and a revoked link 
 
 ---
 
-## Timely — an AI cannot publish the programme
+## Timely — publishing takes the user's explicit yes
 
 A meeting programme for a fixed number of meetings or a calendar period, with every revision kept
 immutably and the approved one rendered through Doksi.
 
-`draft_approve` is present, documented, and refuses every MCP caller: *"human approval required:
-open the account preview and approve there; MCP cannot publish."* An assistant can create, edit,
-restyle and preview; a person decides what a congregation actually reads. The tool exists rather
-than being absent so an agent discovers the boundary by reading the surface instead of guessing why
-nothing happened.
+An assistant can create, edit, restyle, preview — and publish, with `draft_approve`. The tool
+publishes only when `user_confirmed` is `true` and `revision`, `content_hash` and `pdf_hash` name
+the exact preview the user was shown; its description tells the assistant to ask first and says a
+request to edit is not consent. `user_confirmed` is the assistant's word that the user said yes (the
+server records it but cannot see the conversation); the hashes make that yes apply to one revision
+and one PDF only, and the stored PDF is published without re-rendering.
 
 Edits apply against a `base_hash` and are refused rather than merged if the programme moved, so two
 assistants — or an assistant and a person — cannot quietly overwrite each other.
