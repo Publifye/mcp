@@ -1,11 +1,10 @@
-# Publifye MCP Servers — Scripture research, book authoring, dictionaries, Norwegian company data, Norwegian law, exchange rates, documents, meeting programmes and an audio Bible, for AI clients
+# Publifye MCP servers
 
-**Publifye AS runs nine hosted [Model Context Protocol](https://modelcontextprotocol.io) servers.
-Point Claude, Cursor, VS Code or any MCP client at them and your assistant can read the Hebrew and
-Greek text of Scripture, write and typeset a book, build a dictionary, look up Norwegian
-organisations in Enhetsregisteret, read the current text of Norwegian law, convert a currency at a
-published central-bank rate, render a document to PDF, build a meeting programme, or listen to the World English Bible read aloud — over an
-authenticated HTTPS endpoint, with no local install.**
+**Ten MCP servers from Publifye AS, a publishing house in Oslo. Connect them to Claude, Cursor,
+VS Code or any other MCP client and your assistant can study the Bible in Hebrew and Greek, write
+and publish a book, keep a dictionary, look up Norwegian companies and laws, check exchange rates,
+make PDFs, plan meetings, play the Bible aloud and keep your CV. They all run on our servers, so
+there is nothing to install.**
 
 ## Quickstart — connect in under a minute
 
@@ -24,7 +23,8 @@ and nothing to install.
     "currency":{ "type": "http", "url": "https://currency.publifye.com/mcp" },
     "doksi":   { "type": "http", "url": "https://doksi.publifye.com/mcp" },
     "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" },
-    "audiobible": { "type": "http", "url": "https://audiobible.publifye.com/mcp" }
+    "audiobible": { "type": "http", "url": "https://audiobible.publifye.com/mcp" },
+    "vitae":      { "type": "http", "url": "https://vitae.publifye.com/mcp" }
   }
 }
 ```
@@ -54,6 +54,7 @@ you pay for anything.
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
 | **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
+| **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration, or a personal API key — except Brreg, which is OAuth only. See
@@ -202,6 +203,17 @@ demand when it is not yet recorded; `download_link` mints a personal, expiring f
 
 ---
 
+## Vitae — your CV, kept by you
+
+Your CV as a document you own, stored in the open JSON Resume format so you can take it with you.
+Your assistant edits it with you, `parity_check` shows where the language versions no longer match,
+and every change is kept so you can go back. A new CV starts unpublished; a published one is never
+added to search engines, and you can give it a new address at any time.
+
+→ **[services/vitae](services/vitae)** · [tool schemas](services/vitae/tools.json)
+
+---
+
 ## Three ways in
 
 **You study the biblical languages.** Darash is the one that matters. Start with `word_study`,
@@ -240,6 +252,7 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Doksi | [doksi.publifye.com](https://doksi.publifye.com) | — |
 | Timely | [timely.publifye.com](https://timely.publifye.com) | — |
 | Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) | — |
+| Vitae | [vitae.publifye.com](https://vitae.publifye.com) | — |
 
 The left column sells the product and gates access. The right column is one
 page on the company site saying what the server is for and when one of the

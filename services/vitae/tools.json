@@ -1,0 +1,1558 @@
+{
+  "service": "vitae",
+  "endpoint": "https://vitae.publifye.com/mcp",
+  "captured": "2026-09-24",
+  "how_this_was_made": "Marshalled from the service's own amcp registry on a clean checkout of the source serving production on 2026-09-24, version 0.2.63. Registration is guarded on the store and the document writer, so the dump passes non-nil ones — with nils it silently yields only the status and admin tools. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written.",
+  "counts": {
+    "callable_by_a_customer": 44,
+    "capability_tools": 42,
+    "session_and_cache_plumbing": 0,
+    "excluded_help_and_health": 2,
+    "excluded_admin_only": 7,
+    "excluded_ops_and_logging": 10,
+    "total_on_the_wire": 61
+  },
+  "excluded": {
+    "help_and_health": [
+      "operator_guide",
+      "service_status"
+    ],
+    "admin_only": [
+      "admin_cv_list",
+      "admin_identity_link",
+      "admin_identity_link_get",
+      "admin_identity_unlink",
+      "admin_slug_release",
+      "admin_system_status",
+      "cv_delete"
+    ],
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "set_log_capacity",
+      "set_log_level"
+    ]
+  },
+  "tools": [
+    {
+      "name": "cv_create",
+      "title": "CV Create",
+      "kind": "capability",
+      "access": "write",
+      "description": "Create a CV: {cv_id, slug, name, langs[]}. Returns the new document.\n  It lands UNPUBLISHED, always. Publishing is a separate deliberate act (visibility_set published) — nothing here is visible to anyone until its owner says so.\n  Creates one empty JSON Resume edition per language, all carrying the same basics.name, because the editions must name the same person.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Create"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "langs": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "name": {
+            "description": "the person's name, as published",
+            "type": "string"
+          },
+          "slug": {
+            "description": "the public URL segment; must be free",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "slug",
+          "name",
+          "langs"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_list",
+      "title": "CV List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the CVs you own: {cvs:[{id, slug, visibility, langs, updated_at, unpublish_at?}]}.\n  visibility is \"published\" or \"unpublished\" — the only two states (a legacy stored link/public reads as published, private/password as unpublished). unpublish_at appears only when visibility_set was given a ttl. The old `indexable` field is gone: nothing is ever search-indexed.\n  Returns YOUR documents only — ownership is checked per document against the caller's identity, and `tool_access_levels` are service-wide roles, not per-document permission (spec §8.1). Reads the per-user index, never a key scan.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV List"
+      },
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_get",
+      "title": "CV Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read one CV edition: {cv:{...}, document:{JSON Resume}, entries:{work:[...], education:[...]}}.\n  `entries` is the ADDRESS BOOK — each item carries `key` (\"Employer@2025-04\"), `fingerprint` and `index`. Pass the key to entry_update, entry_delete, entry_update_pair or entry_delete_pair. Do not build a key by hand and do not use a bare index: entries are sorted by date, so a position can move between reading and writing.\n  The OWNER view — complete, unredacted. What a non-owner sees comes from the single redaction function and is a different shape; do not confuse the two.\n  Returns an error rather than an empty document when the edition does not exist: absent and empty are different answers.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "description": "the document id",
+            "type": "string"
+          },
+          "lang": {
+            "description": "language edition, e.g. \"en\" or \"no\"",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_set",
+      "title": "CV Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Change a CV's ADDRESS and appearance: {cv_id, slug?, theme?}. At least one of them.\n  THE OLD ADDRESS STOPS RESOLVING AND THERE IS NO REDIRECT. That is deliberate (spec §4): a redirect from the old name proves that a named person's CV moved here, which is itself a disclosure. Anyone holding the old link gets the same \"nothing here\" as a stranger guessing.\n  What does NOT lapse is publication. Renaming changes where the CV answers; it does not unpublish it, and visibility is untouched — use visibility_set for that.\n  REFUSES a slug that is already taken and REFUSES a reserved word (health, mcp, admin, cv, api, …) rather than mangling it into something free. A slug that shadowed a route would replace a working page with someone's CV.\n  Does NOT change the PERSON'S NAME. That lives in basics.name inside each language edition — change it with cv_import, or copy it from your account with contact_sync.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "slug": {
+            "description": "the new public URL segment: letters, digits, - and _ , max 64. Must be free and not reserved.",
+            "type": "string"
+          },
+          "theme": {
+            "description": "render theme id: lowercase letters, digits and - , max 32",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_validate",
+      "title": "CV Validate",
+      "kind": "capability",
+      "access": "read",
+      "description": "Validate a JSON Resume document WITHOUT storing it. Returns {valid:true} or every problem found at once.\n  Use before cv_import to see what would be rejected. The service REJECTS malformed documents rather than repairing them (principle 3), so this is how you find out what to fix.\n  Reports ALL problems, not the first — an agent driving this cannot see the file, and one error per round trip makes fixing an import a dozen calls.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV Validate"
+      },
+      "inputSchema": {
+        "properties": {
+          "document": {
+            "description": "the JSON Resume document to check",
+            "type": "object"
+          }
+        },
+        "required": [
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_import",
+      "title": "CV Import",
+      "kind": "capability",
+      "access": "write",
+      "description": "REPLACE one edition wholesale with a supplied JSON Resume document: {cv_id, lang, document}.\n  THIS IS A WHOLE-DOCUMENT REPLACE, NOT A MERGE. Everything not in `document` is GONE — including edits made after you read the document. To change one role or course use entry_update / education_update instead; reach for cv_import only when you genuinely mean to replace the entire edition.\n  PASS `expect_source_hash` — take it from cv_get and the import REFUSES to run if the stored edition changed in between, instead of silently reverting the change. Importing over an EXISTING edition without it is refused outright; use `replace_unconditionally` only for a first import or to repair a quarantined edition.\n  Validated at the gate — a malformed document is REJECTED, never repaired by guessing. Use cv_validate first to see every problem at once.\n  The previous content becomes a version, so an import can be undone with cv_revert.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Import"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "document": {
+            "description": "a JSON Resume v1 document — the COMPLETE edition, since this replaces rather than merges",
+            "type": "object"
+          },
+          "expect_source_hash": {
+            "description": "the source_hash from the cv_get you based this document on. REQUIRED IN PRACTICE when the edition already exists: without it, or without replace_unconditionally, the import is refused rather than overwriting blind.",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "replace_unconditionally": {
+            "description": "discard whatever is stored without checking. For a FIRST import, or for repairing an edition so broken that cv_get quarantines it and no source_hash can be obtained. Never the convenient way to skip the check.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "import_stage",
+      "title": "Import Stage",
+      "kind": "capability",
+      "access": "write",
+      "description": "Stage an import for review WITHOUT writing anything: {cv_id, editions:{lang: document}, source?}. Returns the stage_id and what it would change.\n  THE PRODUCER FOR import_confirm, and the safe way to replace several editions at once: nothing is written until you confirm, every edition is validated now rather than at apply time, and the source_hash of each target is recorded so a confirmation cannot silently overwrite an edit made while you were reviewing.\n  Prefer this over cv_import when replacing MORE THAN ONE edition — cv_import writes one language immediately, and two of those cannot be made atomic. Prefer entry_update / education_update over both when changing a single entry.\n  One pending import per CV: staging again replaces what was waiting.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Import Stage"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "editions": {
+            "description": "lang -> a complete JSON Resume v1 document, e.g. {\"en\":{...},\"no\":{...}}. Each REPLACES that whole edition.",
+            "type": "object"
+          },
+          "source": {
+            "description": "where this came from, for the audit trail and the review screen — e.g. \"linkedin\", \"jsonresume\", \"hand-edited\". Defaults to \"mcp\".",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "editions"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "import_confirm",
+      "title": "Import Confirm",
+      "kind": "capability",
+      "access": "write",
+      "description": "Apply an import that is waiting for confirmation: {cv_id, stage_id?}.\n  Call it WITHOUT stage_id to see what is pending — which editions, how many roles, and the stage_id. Call it again WITH that stage_id to apply. Nothing is written on the first call.\n  The stage_id names exactly the content you reviewed. If a newer upload replaced it in between, the id no longer matches and the call is REFUSED rather than applying something you did not look at.\n  It also REFUSES if a target edition changed after staging — the preview lists those under `changed_since_staged`. Confirming would discard edits made while the import waited, so say replace_unconditionally if that is genuinely what you mean.\n  Every edition is validated BEFORE any is written, and a single invalid edition refuses the whole import — a malformed document is rejected, never repaired by guessing.\n  Recoverable: what each edition held becomes a version first, so cv_history and cv_revert bring the old content back. Use cv_validate to see what is wrong with a rejected import.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Import Confirm"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "replace_unconditionally": {
+            "description": "apply even though editions changed after staging, discarding those changes. The preview names them under changed_since_staged; read them first.",
+            "type": "boolean"
+          },
+          "stage_id": {
+            "description": "the id from the pending listing. Omit to see what is pending without writing anything.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_export",
+      "title": "CV Export",
+      "kind": "capability",
+      "access": "read",
+      "description": "Export a CV as JSON Resume — the anti-lock-in promise (spec §5): owners export their own data in full, free, on every plan, and export is NEVER metered.\n  OWNER ONLY. This tool refuses anyone else outright rather than returning a redacted view — a non-owner who wants the public document reads the public URL, which goes through internal/redact.ForPublic, the same redaction that serves the page and the PDF.\n  Output validates against the published JSON Resume schema, so it renders in any third-party theme.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV Export"
+      },
+      "inputSchema": {
+        "properties": {
+          "allow_partial": {
+            "description": "return the editions that ARE readable, with an explicit problems list, instead of refusing. Default false: a partial export must never be mistaken for a whole one.",
+            "type": "boolean"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "description": "one edition; omit for all",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "basics_set",
+      "title": "Basics Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Set the identity and contact block: {cv_id, basics:{name?, label?, email?, phone?, url?, location?}, lang?}.\n  A PARTIAL UPDATE, unlike most write tools here: only the keys you send are touched, and sending a key with \"\" CLEARS it. That is the difference between adding a phone number and removing one, and a whole-block replace could not express the second.\n  OMIT `lang` to write EVERY edition, which is the right default — a phone number, an email and a city are the same facts in every language, and the editions must name the same person. Pass `lang` only for something genuinely language-specific, such as `label`, and run parity_check after.\n  The summary is NOT here: use section_set(section=\"summary\"). basics.image and basics.profiles are §6 always-hidden and are not settable.\n  Unknown or camelCase keys are REFUSED, never dropped — a silently ignored `countryCode` is a contact detail the owner believes they set.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Basics Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "basics": {
+            "description": "snake_case. name, label, email, phone, url, location{city, region, country_code, address, postal_code}. Only the keys present are changed; \"\" clears a field.",
+            "type": "object"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "description": "one edition; OMIT to write them all",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "basics"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "section_set",
+      "title": "Section Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace a whole non-work section in one edition: {cv_id, lang, section, items}.\n  section is one of: skills, languages, certificates, summary. Replaces the section outright — read it with cv_get first if you mean to append.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Section Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "items": {
+            "description": "for skills/languages/certificates; \"Name: a, b, c\" is split into name and keywords",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "skills",
+              "languages",
+              "certificates",
+              "summary"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "description": "for summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "section"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_add",
+      "title": "Entry Add",
+      "kind": "capability",
+      "access": "write",
+      "description": "Append a WORK role to one language edition (for a degree or course use education_add): {cv_id, lang, entry:{name, position, start_date, end_date?, summary?, highlights?[]}}.\n  OMIT end_date for an ongoing role. An empty string is REJECTED, not read as \"ongoing\" — JSON Resume expresses ongoing by the ABSENCE of the key, and guessing which the author meant is the coercion this service refuses.\n  Single-language writes are the ESCAPE HATCH, not the default: prefer entry_add_pair, because parity between editions is the thing this service is for. Run parity_check after.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Add"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry": {
+            "properties": {
+              "end_date": {
+                "description": "OMIT ENTIRELY for an ongoing role",
+                "type": "string"
+              },
+              "highlights": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "name": {
+                "description": "employer or organisation",
+                "type": "string"
+              },
+              "position": {
+                "type": "string"
+              },
+              "start_date": {
+                "description": "ISO 8601: YYYY, YYYY-MM or YYYY-MM-DD",
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "start_date"
+            ],
+            "type": "object"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "entry"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_update",
+      "title": "Entry Update",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace one WORK role in one edition: {cv_id, lang, key | index, entry}.\n  WORK ONLY. For a degree or a course use education_update — the sections are addressed separately, and a key that exists in education is simply not found here.\n  ADDRESS IT BY `key` (\"Employer@2025-04\", from cv_get/cv_diff/cv_changelog). Entries are sorted by date on every write, so an INDEX read a moment ago can point at a different role by the time you write — that has overwritten the wrong job on a real CV. A key does not depend on order.\n  If you must use `index`, send `fingerprint` (from cv_get) and the write is REFUSED if that slot now holds something else.\n  ONE LANGUAGE ONLY. To change a role in both editions use entry_update_pair, which writes both or neither — two separate calls can leave the editions divergent, which is the thing parity exists to prevent.\n  Fields are snake_case: start_date, end_date. To mark a role FINISHED supply end_date; to mark it ONGOING omit the key entirely.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Update"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry": {
+            "type": "object"
+          },
+          "fingerprint": {
+            "description": "content hash of the entry you read, from cv_get; refuses the write if the slot moved",
+            "type": "string"
+          },
+          "index": {
+            "description": "0-based position in work[]; prefer key",
+            "type": "integer"
+          },
+          "key": {
+            "description": "Employer@YYYY-MM — preferred, survives reordering",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "entry"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_delete",
+      "title": "Entry Delete",
+      "kind": "capability",
+      "access": "write",
+      "description": "Remove one WORK role from one edition: {cv_id, lang, key | index}.\n  ADDRESS IT BY `key` (\"Employer@2025-04\"). Entries are sorted by date, so an index can move between reading and writing — and a delete aimed at a stale position removes a job the caller never looked at. With `index`, send `fingerprint` from cv_get and the delete is refused if the slot moved.\n  Recoverable: the previous state is a version, so cv_history and cv_revert bring it back. 365 edits per edition on every plan.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Delete"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "description": "content hash from cv_get",
+            "type": "string"
+          },
+          "index": {
+            "type": "integer"
+          },
+          "key": {
+            "description": "Employer@YYYY-MM — preferred",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_move",
+      "title": "Entry Move",
+      "kind": "capability",
+      "access": "write",
+      "description": "Reorder a role within one edition: {cv_id, lang, from, to}.\n  ONLY MEANINGFUL BETWEEN ROLES THAT START IN THE SAME MONTH. Entries are stored and rendered in reverse-chronological order, applied on every write and again on every render, so a move that contradicts the dates is undone immediately. It is REFUSED rather than silently reverted, and the refusal names entry_update — if a role is in the wrong place, its DATES are wrong, and fixing the order without fixing the dates would leave the CV lying about when the work happened.\n  Two roles that began the same month keep whatever order you give them: the sort is stable, so that is the case this tool is for.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Move"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "from": {
+            "type": "integer"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "to": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "from",
+          "to"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_add_pair",
+      "title": "Entry Add Pair",
+      "kind": "capability",
+      "access": "write",
+      "description": "Append the SAME role to two language editions, atomically across both or neither: {cv_id, lang_a, entry_a, lang_b, entry_b}.\n  THE DEFAULT WAY TO ADD A ROLE. Parity between editions is this service's differentiator, and a role added to one language only is how a CV quietly starts saying different things to different readers.\n  Refused before anything is written if the two entries would leave the editions structurally diverged — different dates, or one ongoing and one ended. Prose and job titles are expected to differ; that is what a translation IS.\n  On any failure mid-write, BOTH editions are rolled back to what they were.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Add Pair"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry_a": {
+            "description": "the role as written in lang_a",
+            "type": "object"
+          },
+          "entry_b": {
+            "description": "the SAME role as written in lang_b — same dates, same ongoing state",
+            "type": "object"
+          },
+          "lang_a": {
+            "type": "string"
+          },
+          "lang_b": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang_a",
+          "entry_a",
+          "lang_b",
+          "entry_b"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_update_pair",
+      "title": "Entry Update Pair",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace the SAME role in both editions, atomically: {cv_id, key | index, entry_a, entry_b, lang_a, lang_b}.\n  Both editions or neither. Two separate entry_update calls can leave the languages divergent — this cannot, and it refuses if the result would not be in parity.\n  ADDRESS BY `key` (\"Employer@2025-04\"): entries are sorted by date, so an index can point at a different role by the time the write lands, and the two editions need not even hold that role at the same position.\n  Fields are snake_case: start_date, end_date. Omit end_date for an ongoing role.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Update Pair"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry_a": {
+            "type": "object"
+          },
+          "entry_b": {
+            "type": "object"
+          },
+          "index": {
+            "description": "fallback only; prefer key",
+            "type": "integer"
+          },
+          "key": {
+            "description": "Employer@YYYY-MM — preferred; resolved per edition",
+            "type": "string"
+          },
+          "lang_a": {
+            "type": "string"
+          },
+          "lang_b": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang_a",
+          "lang_b",
+          "entry_a",
+          "entry_b"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "entry_delete_pair",
+      "title": "Entry Delete Pair",
+      "kind": "capability",
+      "access": "write",
+      "description": "Remove the SAME role from both editions, atomically: {cv_id, key, lang_a, lang_b}.\n  Both editions or neither. Deleting a role from one language and forgetting the other is how a CV comes to say different things to different readers.\n  Recoverable: the previous state of each edition is a version, so cv_history and cv_revert bring it back.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Entry Delete Pair"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "key": {
+            "description": "Employer@YYYY-MM, from cv_get or cv_changelog",
+            "type": "string"
+          },
+          "lang_a": {
+            "type": "string"
+          },
+          "lang_b": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang_a",
+          "lang_b",
+          "key"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "education_add",
+      "title": "Education Add",
+      "kind": "capability",
+      "access": "write",
+      "description": "Add one education entry to one edition: {cv_id, lang, entry}.\n  entry: {institution, study_type, area, start_date, end_date, url, score, courses}. Snake_case — sending JSON Resume's studyType or startDate is REFUSED rather than dropped.\n  Inserted in date order automatically; there is no position to choose. Studies still in progress OMIT end_date entirely.\n  Adding the same entry to both editions? Do both, then parity_check.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Education Add"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry": {
+            "type": "object"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "entry"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "education_update",
+      "title": "Education Update",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace one education entry: {cv_id, lang, key | index, entry}.\n  EDUCATION ONLY. For a job use entry_update.\n  ADDRESS BY `key` (\"NTNU in Trondheim@2003-08\", from cv_get's `entries`). Entries are sorted by date, so an index can point at a different entry by the time the write lands.\n  The entry REPLACES the old one wholly — send every field you want to keep, or it is dropped.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Education Update"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "entry": {
+            "type": "object"
+          },
+          "index": {
+            "type": "integer"
+          },
+          "key": {
+            "description": "Institution@YYYY-MM — preferred",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "entry"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "education_delete",
+      "title": "Education Delete",
+      "kind": "capability",
+      "access": "write",
+      "description": "Remove one education entry: {cv_id, lang, key | index}.\n  ADDRESS BY `key`. A delete aimed at a stale position removes something the caller never looked at.\n  Recoverable: the previous state is a version, so cv_history and cv_revert bring it back.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Education Delete"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer"
+          },
+          "key": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "parity_check",
+      "title": "Parity Check",
+      "kind": "capability",
+      "access": "read",
+      "description": "Compare two language editions STRUCTURALLY and report where they disagree: {in_parity:bool, divergences:[{path, a, b, message}]}.\n  Prose is expected to differ — that is what an edition IS. What must not differ is the skeleton: the same roles in the same order, the same dates, and the same ones marked ongoing. A reader of either edition must learn the same facts.\n  The check that matters most: one edition saying a role is CURRENT while the other says it ended. Run by hand three times in one session against the old app, it found a real defect.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Parity Check"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang_a": {
+            "type": "string"
+          },
+          "lang_b": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang_a",
+          "lang_b"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "versions_get",
+      "title": "Versions Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read how deep this CV's history goes: {cv_id} -> {max_versions, default, per_edition:[{lang, retained}]}.\n  365 by default — a year of daily edits, far more than a CV sees. History is never a paid feature and never expires with a subscription.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Versions Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "versions_set",
+      "title": "Versions Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Set how deep this CV's history goes: {cv_id, max_versions, confirm_destroy?}.\n  RAISING it is free and takes effect on the next edit. LOWERING it evicts immediately and IRREVERSIBLY — the versions beyond the new depth are gone, and their bodies are deleted once nothing else references them.\n  So a lowering call is REFUSED unless confirm_destroy names the exact number of versions it will destroy. Call it once without that field to be told the number; the service will not guess that you meant it.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Versions Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "confirm_destroy": {
+            "description": "required when LOWERING: the exact number of versions this will destroy",
+            "type": "integer"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "max_versions": {
+            "description": "retained edits per edition; 365 is the default",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cv_id",
+          "max_versions"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_history",
+      "title": "CV History",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the retained versions of one edition, newest first: {versions:[{hash, at, by}]}.\n  365 edits per language edition, for every user on every plan, always — history is not a paid feature and never expires with a subscription. Eviction is strictly oldest-first; the newest edit is never the one dropped.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV History"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_changelog",
+      "title": "CV Changelog",
+      "kind": "capability",
+      "access": "read",
+      "description": "The history AS A CHANGELOG: what actually changed at each edit, newest first.\n  {cv_id, lang, limit?} -> [{hash, at, by, text, changes:[{section, key, kind, label, summary}]}]\n  `text` is the human-readable rendering; `changes` is the structured form to act on. kind is added | removed | modified | ambiguous.\n  `removed` is the interesting one: it is what USED to be in the CV, which is exactly what you are looking at when you want something back — feed its `key` straight to cv_cherry_pick.\n  `ambiguous` is the one you CANNOT act on: two or more entries share that employer and start date, so the service will not guess which one moved and cv_cherry_pick will refuse the key. Fix it with entry_update, or pick the whole section.\n  CHEAP. Each edit's diff was recorded when the edit happened, so this reads pointers and summaries only and decompresses no documents. Comparing versions that are NOT adjacent is cv_diff, which does have to decompress.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV Changelog"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "limit": {
+            "description": "how many recent edits to return; default 50",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_diff",
+      "title": "CV Diff",
+      "kind": "capability",
+      "access": "read",
+      "description": "Compare ANY two points in the history, however far apart: {cv_id, lang, from|since, to?|until?}.\n  Address the ends by HASH (from/to) or by TIME (since/until) — \"what changed since yesterday\" is the common question and should not require looking up hashes first.\n  COSTS TWO READS REGARDLESS OF THE GAP. Comparing across 89 edits decompresses the two EDGE versions and diffs them; it does not walk the 88 in between. So asking for a wide range is cheap, and the answer is the NET change — if you added a role and removed it again, it will not appear.\n  Entries are matched by EMPLOYER + START DATE, not by position: a role that moved because a newer job was added is still the same role.\n  include_documents also returns BOTH full documents, for when you want to read them side by side rather than only what differs. Off by default — a CV is several kB each.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV Diff"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "from": {
+            "description": "older version hash, from cv_changelog",
+            "type": "string"
+          },
+          "include_documents": {
+            "description": "also return both full documents",
+            "type": "boolean"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "since": {
+            "description": "RFC3339 time instead of a from-hash: the newest version at or before this moment",
+            "type": "string"
+          },
+          "to": {
+            "description": "newer version hash; omit for the current document",
+            "type": "string"
+          },
+          "until": {
+            "description": "RFC3339 time instead of a to-hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_revert",
+      "title": "CV Revert",
+      "kind": "capability",
+      "access": "write",
+      "description": "Restore one edition to an earlier version: {cv_id, lang, hash}.\n  Hashes come from cv_history. The revert is itself an edit: it becomes the newest version, so reverting is never destructive and can be undone by reverting again.\n  Reverts ONE language. Check parity_check afterwards, or the editions will disagree.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Revert"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "hash": {
+            "description": "a hash from cv_history",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "hash"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_restore",
+      "title": "CV Restore",
+      "kind": "capability",
+      "access": "write",
+      "description": "Roll the WHOLE CV back to how it stood at a moment in time: {cv_id, at}.\n  This is the snapshot restore. cv_revert restores ONE edition, which is not the same thing: reverting each language separately walks the document through states it was never actually in, and a failure halfway leaves it in one of them permanently.\n  Every edition is resolved to its newest version at or before `at`, then all of them are written ALL OR NOTHING. An edition with no version that old is LEFT ALONE, not emptied — \"did not exist yet\" and \"was empty\" are different facts and the service will not guess between them.\n  Non-destructive: the restore is itself an edit, so it becomes the newest version and you can undo it by restoring to a moment before it. Bounded by the retained depth (versions_get) — anything evicted is genuinely gone.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Restore"
+      },
+      "inputSchema": {
+        "properties": {
+          "at": {
+            "description": "RFC3339 timestamp, e.g. 2026-08-11T09:00:00Z. Times come from cv_history.",
+            "type": "string"
+          },
+          "cv_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "at"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_cherry_pick",
+      "title": "CV Cherry Pick",
+      "kind": "capability",
+      "access": "write",
+      "description": "Take ONE thing back from a past version, leaving everything else alone: {cv_id, lang, hash, section, key}.\n  The surgical alternative to cv_revert (whole edition) and cv_restore (whole document). The realistic case: you cut a role for one application and want it back without undoing everything since.\n  section is work | education | summary | skills | languages | certificates. For work and education, `key` names ONE entry and comes from cv_diff or cv_changelog. The other sections are replaced whole, because they are lists people rewrite as a unit and merging them item by item would invent an ordering nobody chose.\n  A restored role is reinserted in DATE ORDER, not appended — a CV is read by recency, and a 2019 role sitting after a 2025 one looks wrong in a way its owner may not notice before sending it.\n  An ordinary edit: validated, versioned, undoable. It changes ONE language, so run parity_check after.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Cherry Pick"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "hash": {
+            "description": "the version to take it from",
+            "type": "string"
+          },
+          "key": {
+            "description": "required for work and education: the entry key from cv_diff",
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "section": {
+            "enum": [
+              "work",
+              "education",
+              "summary",
+              "skills",
+              "languages",
+              "certificates"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "lang",
+          "hash",
+          "section"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "visibility_set",
+      "title": "Visibility Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Publish or unpublish a CV: {cv_id, visibility: \"published\"|\"unpublished\", ttl?}.\n  TWO STATES, because a CV is public by definition (owner ruling 2026-09-23: \"a cv is public by definition. So no cv no details — no cv at all\"). published = anyone with the CV's address reads it, with the owner's email, phone and city — there is no per-field contact switch; the street address and postcode are never shown. A published CV is NEVER offered to search engines (noindex, and absent from robots and the sitemap). unpublished = NO CV for anyone but the owner — the page in every language, the PDF, every direct-file PDF link and the photo answer the same 404 as an address nobody ever took, immediately (published copies are served private, no-store, so no cache keeps one). Publishing again restores every address; to kill links already handed out, also call link_rotate / pdf_uuid_rotate.\n  OLD VALUES ARE ACCEPTED AS ALIASES so existing agents keep working: link and public mean published; private and password mean unpublished. There is no password gate and no indexing switch any more — the old `indexable` argument is ignored if sent. The answer always reports the two-state word.\n  ttl UNPUBLISHES AT A DATE: a number and a unit — 7d, 24h, 4w, 3M, 1y. 0 or omitted = published until you unpublish. When the time passes the CV is refused to everyone but the owner exactly as if unpublished; it is refused on read, so the guarantee needs no sweeper. Only meaningful with published; refused with unpublished.\n  Written to the durable record and the audit trail BEFORE the index learns about it, so a crash leaves the more restrictive value in force.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Visibility Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "ttl": {
+            "description": "unpublish automatically after this long, e.g. 7d, 24h, 4w, 3M, 1y. 0 or omitted = until you unpublish. Only with published.",
+            "type": "string"
+          },
+          "visibility": {
+            "description": "published or unpublished. link/public (= published) and private/password (= unpublished) are accepted aliases.",
+            "enum": [
+              "published",
+              "unpublished",
+              "link",
+              "public",
+              "private",
+              "password"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "visibility"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "link_rotate",
+      "title": "Link Rotate",
+      "kind": "capability",
+      "access": "write",
+      "description": "REVOKE the current share link and issue a new one: {cv_id}. Everyone holding the old address loses access the moment this returns.\n  The address IS the share link: a fresh unguessable slug is minted and the previous one is released, with no redirect (spec §4). There is no window in which both work.\n  REFUSED unless the CV is published. An unpublished CV shares nothing, so rotating would be theatre.\n  A CUSTOM SLUG IS LOST when you rotate: the new one is 32 random hex characters, because a memorable share link is a guessable one. Set a new memorable slug with cv_set afterwards if you meant to keep it (and accept that it is then guessable).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Link Rotate"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "pdf_uuid_rotate",
+      "title": "PDF Uuid Rotate",
+      "kind": "capability",
+      "access": "write",
+      "description": "Rotate the direct-file token: {cv_id}. The previous /pdf/<uuid> link dies immediately.\n  Revocable INDEPENDENTLY of the share link (spec §6.1): rotating this leaves /<slug> alone, and link_rotate leaves this alone. That separation is the point — a PDF handed to one recruiter can be revoked without disturbing everyone else's link.\n  THE TOKEN IS NOT AN EXEMPTION FROM THE ACCESS RULES. It resolves to the REDACTED variant, never the owner's complete PDF, and it is refused outright while the CV is unpublished. A bearer URL that bypassed visibility would make every other control here decorative.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "PDF Uuid Rotate"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "relay_set",
+      "title": "Relay Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Record whether you would like this CV's email to go through a per-CV forwarding relay, once one exists: {cv_id, enabled}.\n  THE RELAY IS NOT BUILT, and this is a PREFERENCE ONLY. Today a published CV shows your REAL email address, together with your phone and city, on the page and in the PDF — a CV is public by definition, and a CV a reader cannot answer is not doing its job. Calling this changes nothing a reader sees. If you do not want your email seen, do not publish the CV (visibility_set unpublished): there is no per-field contact switch.\n  The street address and postal code are never published under any setting.\n  If the relay is ever built it would be plus-addressing on one mailbox (cv+<token>@publifye.com), forwarded from our own domain with Reply-To set so SPF/DKIM stay aligned, rate-limited per CV and disableable here — and would replace the real address only for owners who enabled it.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Relay Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "enabled": {
+            "description": "true records a preference for a relayed address once a relay exists, false for none. Neither changes what is shown today: a published CV shows the real email.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cv_id",
+          "enabled"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "contact_sync",
+      "title": "Contact Sync",
+      "kind": "capability",
+      "access": "write",
+      "description": "Copy account contact details into the CV's basics: {cv_id, contact:{name?, label?, email?, url?}, langs?}.\n  A COPY TAKEN AT THIS MOMENT, NEVER A LIVE LINK (spec §7). Changing your billing email later does not rewrite a published CV, and this call is the only thing that ever updates it. The two identities are deliberately separate: the account email is for login and invoices and is never rendered.\n  Applied to EVERY language edition by default, because the editions must name the same person — a contact that differs between languages is the parity defect this service exists to catch.\n  REFUSES phone and location. They are not account contact details, and a copy of the account is not the door they come in through — set them deliberately with basics_set. Note what a published CV shows: email, phone and city; never the street address or postal code.\n  Phase 1 has no Lighthouse account to read, so contact must be supplied. When the customer plane lands, omitting it will read the account contact.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Contact Sync"
+      },
+      "inputSchema": {
+        "properties": {
+          "contact": {
+            "properties": {
+              "email": {
+                "description": "contact address; shown to readers whenever the CV is published",
+                "type": "string"
+              },
+              "label": {
+                "description": "headline, e.g. \"Systems developer\"",
+                "type": "string"
+              },
+              "name": {
+                "description": "the person's name, as published",
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "langs": {
+            "description": "editions to update; omit for all",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "cv_id",
+          "contact"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_render",
+      "title": "CV Render",
+      "kind": "capability",
+      "access": "write",
+      "description": "Render a CV edition to a typeset PDF: {cv_id, lang?, audience?, force?}.\n  TWO VARIANTS EXIST PER EDITION and they are different documents: `owner` is complete, `redacted` is what everyone else gets (internal/redact.ForPublic — the same redaction the public page uses). Omit `audience` and BOTH are rendered, which is the normal thing to want: the public URL serves one and the owner's download the other.\n  Content-addressed by the source document plus the audience, so re-rendering an unchanged edition costs nothing and returns the cached bytes. Pass force:true only when the TEMPLATE changed rather than the document.\n  Returns metadata, not the file: {renders:[{lang, audience, filename, etag, bytes, cached, source_hash}]}. Fetch the bytes from the URL cv_pdf_link gives you — the same access rules apply there as to the page, and a PDF is never a way around them.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "CV Render"
+      },
+      "inputSchema": {
+        "properties": {
+          "audience": {
+            "description": "omit for BOTH variants",
+            "enum": [
+              "owner",
+              "redacted"
+            ],
+            "type": "string"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "force": {
+            "description": "re-render even when the cached PDF matches the document. For a template change, not a content change.",
+            "type": "boolean"
+          },
+          "lang": {
+            "description": "one edition; omit for every edition this CV has",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "cv_pdf_link",
+      "title": "CV PDF Link",
+      "kind": "capability",
+      "access": "read",
+      "description": "Where the PDFs of a CV can be fetched: {cv_id, lang?}.\n  Two URLs per edition, because there are two documents. `owner_url` needs your session and serves the COMPLETE PDF; `public_url` serves the REDACTED one under exactly the rules the page obeys — an unpublished CV answers the same 404 a slug nobody has taken answers.\n  `uuid_url` is the DIRECT FILE LINK, present only once pdf_uuid_rotate has minted a token. It reaches the same redacted file without putting the slug in the address, and it is NOT an exemption from anything: refused while the CV is unpublished, never the owner variant, and dead the instant the token is rotated. Treat it as a credential — it is never search-indexed and never cached by anything shared.\n  `public_resolves` tells you whether that public URL works for a stranger RIGHT NOW. It is derived from the visibility, never from whether a file has been rendered: a link that exists and a link that opens are different facts, and an owner pasting one into an application needs the second.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "CV PDF Link"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "description": "one edition; omit for every edition",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "render_status",
+      "title": "Render Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "What has been rendered, and whether it is still the current document: {cv_id, lang?}.\n  Per edition and per audience: {cached, current, bytes, rendered_at, state}. `current` compares the hash the PDF was rendered from against the document as it stands NOW, so a stale PDF is a fact this tool reports rather than something you infer from timestamps.\n  IT RENDERS NOTHING. A status call that quietly repaired what it reports on could not be used to find out whether the repair was needed — and it would be the call that costs thirty seconds of tectonic.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Render Status"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "description": "one edition; omit for every edition",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "photo_get",
+      "title": "Photo Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read the profile photo back: {cv_id, include_bytes?}. Owner only.\n  Without include_bytes it reports what is stored — type, size, dimensions, when it was set. With include_bytes it returns the file itself, base64.\n  IT EXISTS SO AN AGENT CAN DO WHAT AN OWNER CAN (rule 4) AND SO EXPORT IS NEVER WITHHELD (spec principle 5): a photo you can upload and never retrieve would be data of yours we hold and do not hand back. cv_export returns the JSON Resume document; this returns the one artifact that is not inside it.\n  A stranger and a CV that does not exist get the same answer, and so does an impersonating admin.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Photo Get"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "include_bytes": {
+            "description": "return the image itself, base64. Default false.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "photo_set",
+      "title": "Photo Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Upload the profile photo: {cv_id, image_base64, content_type?}. Replaces any existing one.\n  UPLOADING IS NOT PUBLISHING. A photo stored by this tool is shown to YOU and to nobody else until you say otherwise: no published page, no redacted PDF, no non-owner export. Publish it per language edition with photo_visibility_set — and hide it again with the same tool, which is NOT the same as photo_clear: hiding keeps the file, clearing destroys it.\n  REPLACING A PHOTO DOES NOT REPUBLISH IT ANYWHERE NEW. The editions you had already published it in keep showing the new one; the ones you had not are untouched.\n  JPEG AND PNG ONLY, and the format is decided by DECODING the bytes — the content type you declare and the name of the file you read it from are both ignored for that decision, and a content_type that disagrees with the bytes is an ERROR rather than a silent correction. SVG is refused outright: it is a script document, not a photograph.\n  THE IMAGE IS RE-ENCODED, which is how the EXIF goes. GPS coordinates in a profile photo are a home-address disclosure, and camera serials and timestamps are not yours to publish either. What gets stored is the re-encoded file; your original bytes are never written anywhere.\n  REFUSED, NEVER REPAIRED: over 5 MB, under 64px on a side, over 8000px on a side or over 16 megapixels. Nothing is downscaled or converted on your behalf — a photo you did not choose is not your photo. Resize it and send it again.\n  SIZE NOTE FOR SHELL CALLERS: base64 of a photo is usually 100 KB-2 MB, which is past the ~128 KB argv limit of a command line. Call this over the HTTP MCP endpoint, not by pasting the argument into a shell.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Photo Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "content_type": {
+            "description": "optional. \"image/jpeg\" or \"image/png\". If supplied it must MATCH what the bytes decode as.",
+            "type": "string"
+          },
+          "cv_id": {
+            "type": "string"
+          },
+          "image_base64": {
+            "description": "the image file, base64 (standard or URL-safe alphabet, padding optional). A data: URL prefix is refused, not stripped.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id",
+          "image_base64"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "photo_clear",
+      "title": "Photo Clear",
+      "kind": "capability",
+      "access": "write",
+      "description": "Remove the profile photo: {cv_id}. The file is destroyed, not hidden.\n  THIS IS NOT THE SAME AS HIDING IT. To stop showing a photo while keeping it, use photo_visibility_set(show=false) — the file stays and you can publish it again later. This tool destroys the file: there is no trash and no undo, because a stored photograph of a person is not something to keep a copy of after they asked for it to go.\n  The published-in list is cleared too, so a photo uploaded afterwards starts hidden again rather than inheriting where the old one was shown.\n  Your CV, its editions and its history are untouched: the photo is platform metadata, not document content, so removing it consumes no version.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Photo Clear"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cv_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "photo_visibility_set",
+      "title": "Photo Visibility Set",
+      "kind": "capability",
+      "access": "write",
+      "description": "Show or hide the profile photo to READERS, per language edition: {cv_id, show, lang?}.\n  PER EDITION, and that is the point rather than a detail. Photo norms differ by country: a Norwegian CV commonly carries a photograph, and a US-facing English edition commonly must not. So `photo_visibility_set(lang=\"no\", show=true)` and `photo_visibility_set(lang=\"en\", show=false)` is a normal, correct configuration — the one thing that is SUPPOSED to differ between editions of a CV that is otherwise held in parity. parity_check does not complain about it.\n  OMIT `lang` to set every edition at once. Unlike basics_set, that is NOT the recommended default here — it is the one field where writing all editions the same way is usually the wrong answer.\n  HIDING IS NOT DELETING. show=false stops readers seeing it and keeps the file; you can show it again later without re-uploading. photo_clear destroys the file.\n  THE DEFAULT IS HIDDEN. A newly uploaded photo is shown to nobody until this tool says otherwise, and a CV with no photo cannot be set to show one — there would be nothing behind the frame.\n  WHAT SHOWING IT MEANS, EXACTLY: readers of that edition's page see it, that edition's redacted PDF embeds it, and its image URL answers to anyone the PAGE would answer to — no wider. An unpublished CV shows nothing to anyone whatever this is set to, because the whole document is refused first.\n  It changes no document content and consumes no version of your history: this is platform metadata, like visibility and the slug.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Photo Visibility Set"
+      },
+      "inputSchema": {
+        "properties": {
+          "cv_id": {
+            "type": "string"
+          },
+          "lang": {
+            "description": "one language edition, e.g. \"no\". OMIT to set every edition — rarely what you want for this field.",
+            "type": "string"
+          },
+          "show": {
+            "description": "true publishes the photo to readers of the edition(s); false hides it and keeps the file.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cv_id",
+          "show"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

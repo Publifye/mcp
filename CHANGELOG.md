@@ -2,6 +2,12 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-24
+
+- **Vitae joins the index**, the tenth server: your CV as a document you own, 42 tools, generated
+  from the service's own registry. Published to the MCP registry as `pro.publifye/vitae`.
+- **The index opening is rewritten in plain language.**
+
 ## 2026-09-23
 
 - **All nine servers are in the official MCP registry.** Published: `pro.publifye/brreg`,

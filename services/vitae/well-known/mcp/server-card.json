@@ -1,0 +1,13 @@
+{
+  "name": "pro.publifye/vitae",
+  "title": "Vitae",
+  "description": "Your CV as a document you own, edited by your AI assistant, in several languages, as a typeset PDF",
+  "version": "1.0.0",
+  "websiteUrl": "https://vitae.publifye.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://vitae.publifye.com/mcp"
+    }
+  ]
+}
