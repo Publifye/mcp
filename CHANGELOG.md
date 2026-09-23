@@ -21,7 +21,7 @@ Dates are the date the change was made, not the date it was written up.
   user was shown, after asking; the tool's description says a request to edit is not consent.
   Both pages now say so.
 - **Timely's surface regenerated at 31 tools** — from the registry of source `354ee8b`, version
-  0.1.190, which is not yet released to production. New in the customer surface:
+  0.1.190. That surface is live in production as 0.1.198 (`9ce28e3`, 2026-09-23). New in the customer surface:
   `timely_edit_history`, `timely_request_edit` and `timely_set_pdf_layout`; several descriptions
   are shorter. Fourteen `admin_*` tools and ten log tools stay excluded, listed by name in
   `tools.json`.

@@ -13,7 +13,7 @@ over HTTPS.**
 | Registry | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://timely.publifye.com> |
 | Capability tools | **31** ([full schemas](tools.json)) |
-| Surface described | version 0.1.190 (source `354ee8b`), not yet released to production |
+| Surface described | generated from source `354ee8b`; the same tool surface is live in production as version 0.1.198 (`9ce28e3`, released 2026-09-23) |
 
 ## Connect
 
