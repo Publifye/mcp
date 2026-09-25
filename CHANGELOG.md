@@ -2,6 +2,13 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-25
+
+- **Marriage covenants** at [marriage.publifye.com](https://marriage.publifye.com) are described in
+  the Doksi section and in `services/doksi`: a couple's own vows, a Bible verse and one of nine
+  designs, typeset by Doksi as a one-page PDF to sign and frame. It uses the Doksi server; there is
+  no new server.
+
 ## 2026-09-24
 
 - **Vitae joins the index**, the tenth server: your CV as a document you own, 42 tools, generated

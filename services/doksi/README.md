@@ -44,6 +44,31 @@ boolean on a document: create it, describe it, fetch it, replace it, revoke it, 
 it. A signer receives an individual link or a QR code; a revoked link stops working; rotating a link
 does not invalidate the document it points at.
 
+## Marriage covenants: marriage.publifye.com
+
+**<https://marriage.publifye.com>** is Doksi's website for marriage covenants. A couple, or their
+pastor or officiant, tells their own AI assistant what the covenant should say: both names, the date
+and place, each person's vow, a Bible verse and the witnesses. They choose one of nine designs and
+get back a typeset one-page PDF in A4, or A3 for framing, to sign and hang on the wall.
+
+- **Nine designs.** Four painted in watercolour (Champagne Butterfly, Something Blue, Blush
+  Petunias, Bridal Lilies), four drawn (Together in Bloom, Butterfly Garden, Hearts Entwined, Olive &
+  Promise), and Star & Blossom, with a Star of David, made for a Jewish marriage.
+- **The couple's own words.** Each person writes their own vow. The 1662 Book of Common Prayer vows
+  are there as an example of wording. The Bible verse is Ecclesiastes 4:12 unless the couple chooses
+  one to three others, or none.
+- **English and Norwegian.** Sign in ink, or by a personal signing link or QR code.
+- **A keepsake, not a certificate.** Every covenant says at its foot that it is not a civil marriage
+  certificate. A marriage is registered the way the couple's country requires.
+- **Private.** A finished covenant is emailed only to the account that asked for it, and its link
+  is never listed or indexed.
+
+There is no separate server to connect. The site uses the Doksi server above: the assistant calls
+`doc_requirements` with `kind: covenant` to learn the fields, then `doc_compose` with
+`content.occasion: marriage`. Designing, checking the wording and a full preview marked PREVIEW are free with
+a Publifye account. The print-ready covenant needs a 7-day marriage pass, a Doksi credit or a Doksi
+plan; current prices are on <https://marriage.publifye.com/store>.
+
 ## What the tools do
 
 Every tool is documented with its exact description, annotations and input schema — 22 in all,

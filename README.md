@@ -168,6 +168,12 @@ learns by being refused.
 Signing is a request with a lifecycle, not a flag on a document: create, describe, replace, revoke,
 render, mail. A signer gets an individual link or a QR code, and a revoked link stops working.
 
+**Marriage covenants.** [marriage.publifye.com](https://marriage.publifye.com) uses Doksi to make a
+marriage covenant: the couple's own vows, a Bible verse, their witnesses and one of nine painted or
+drawn designs, typeset as a one-page PDF to sign and frame. It is a keepsake, not a civil
+certificate. The assistant connects to the same Doksi server; there is nothing extra to install.
+[More in services/doksi](services/doksi#marriage-covenants-marriagepublifyecom).
+
 → **[services/doksi](services/doksi)** · [tool schemas](services/doksi/tools.json)
 
 ---
@@ -249,7 +255,7 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
 | Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
 | Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
-| Doksi | [doksi.publifye.com](https://doksi.publifye.com) | — |
+| Doksi | [doksi.publifye.com](https://doksi.publifye.com) · marriage covenants: [marriage.publifye.com](https://marriage.publifye.com) | — |
 | Timely | [timely.publifye.com](https://timely.publifye.com) | — |
 | Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) | — |
 | Vitae | [vitae.publifye.com](https://vitae.publifye.com) | — |
