@@ -53,7 +53,7 @@ you pay for anything.
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
-| **Audio Bible** | The World English Bible, read aloud | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
+| **Audio Bible** | Two Bibles, read aloud — WEB and NB2026 | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
 | **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
@@ -199,11 +199,14 @@ assistants — or an assistant and a person — cannot quietly overwrite each ot
 
 ## Audio Bible — quoted, heard, kept
 
-The World English Bible as text and sound. `get_chapter` returns every verse numbered and tells the
-assistant to quote it as returned rather than paraphrase it as scripture; `listen_link` starts the
-audio at a given verse with its timing in seconds; `prepare_chapter` has a chapter read aloud on
-demand when it is not yet recorded; `download_link` mints a personal, expiring file, and
-`my_allowance` says what is left before an assistant promises one. Listening is free.
+Two Bibles as text and sound: the World English Bible and Bibelen Anno 2026 (NB2026, a Norwegian
+Bokmål translation, at <https://audiobible.publifye.com/nb2026>, being recorded now). Every
+capability tool takes an optional `bible` argument to choose between them. `get_chapter` returns
+every verse numbered and tells the assistant to quote it as returned rather than paraphrase it as
+scripture; `listen_link` starts the audio at a given verse with its timing in seconds;
+`prepare_chapter` has a chapter read aloud on demand when it is not yet recorded; `download_link`
+mints a personal, expiring file, and `my_allowance` says what is left before an assistant promises
+one. Listening is free.
 
 → **[services/audiobible](services/audiobible)** · [tool schemas](services/audiobible/tools.json)
 

@@ -6,10 +6,10 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`list_books`](#list_books) | read | Every book of the canon with its chapter count, in canon order. The canon is loaded from… |
-| [`search_chapters`](#search_chapters) | read | The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 23' into th… |
-| [`chapter_status`](#chapter_status) | read | Whether one chapter's audio exists, and what it was made from. With no arguments it answ… |
-| [`coverage`](#coverage) | read | How much of the Bible has actually been generated and how much is still pending. Read st… |
+| [`list_books`](#list_books) | read | Every book of the canon with its chapter count, in canon order. The canon is l… |
+| [`search_chapters`](#search_chapters) | read | The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 2… |
+| [`chapter_status`](#chapter_status) | read | Whether one chapter's audio exists, and what it was made from. With no argumen… |
+| [`coverage`](#coverage) | read | How much of the Bible has actually been generated and how much is still pendin… |
 
 ---
 
@@ -19,7 +19,9 @@ See [connect](../../../docs/connect.md) to sign in.
 
 Every book of the canon with its chapter count, in canon order. The canon is loaded from darash, never written down in this service, so it cannot disagree with the text.
 
-*No parameters.*
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 
 ## `search_chapters`
 
@@ -29,6 +31,7 @@ The site's own chapter search: what a reader typing 'john 3', '1 sam' or 'ps 23'
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `limit` | integer | no | Maximum suggestions. |
 | `query` | string | yes | What the reader typed. |
 
@@ -40,6 +43,7 @@ Whether one chapter's audio exists, and what it was made from. With no arguments
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | no | Book slug, e.g. 'genesis' or 'first-samuel'. Call list_books for all 66. |
 | `chapter` | integer | no | Chapter number within the book. |
 
@@ -49,9 +53,12 @@ Whether one chapter's audio exists, and what it was made from. With no arguments
 
 How much of the Bible has actually been generated and how much is still pending. Read straight off the audio volume, so it stays true even when the index is empty.
 
-*No parameters.*
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
+| `source` | string | no | disk (default): read straight off the volume. index: the Redis index's counters, one round trip; rebuilt from disk by admin_reindex. |
 
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.113. Regenerate rather than edit by hand.*
+2026-09-29, version 0.4.29, with BIBLES=web,nb2026 set. Regenerate rather than edit by hand.*

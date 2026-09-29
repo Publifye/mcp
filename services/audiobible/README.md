@@ -1,9 +1,11 @@
-# Audio Bible — World English Bible audio MCP server for Claude, Cursor and any MCP client
+# Audio Bible — two Bibles, read aloud, for Claude, Cursor and any MCP client
 
-**Audio Bible gives an AI assistant the World English Bible as text and as sound: every verse of a
-chapter, numbered, a listening link that starts at a given verse with its timing in seconds, a
-recording made on demand when a chapter has not been read aloud yet, and a personal download link
-for the result. It runs as a hosted MCP server over HTTPS.**
+**Audio Bible gives an AI assistant a Bible as text and as sound: every verse of a chapter,
+numbered, a listening link that starts at a given verse with its timing in seconds, a recording
+made on demand when a chapter has not been read aloud yet, and a personal download link for the
+result. Two Bibles are offered — the World English Bible (English) and Bibelen Anno 2026 (NB2026,
+Norwegian Bokmål) — and every capability tool takes a `bible` argument to choose between them. It
+runs as a hosted MCP server over HTTPS.**
 
 | | |
 |---|---|
@@ -11,7 +13,7 @@ for the result. It runs as a hosted MCP server over HTTPS.**
 | Transport | Streamable HTTP |
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
-| Product site | <https://audiobible.publifye.com> |
+| Product site | <https://audiobible.publifye.com> · NB2026 at <https://audiobible.publifye.com/nb2026> |
 | Capability tools | **10** ([full schemas](tools.json)) |
 
 ## Connect
@@ -23,6 +25,13 @@ for the result. It runs as a hosted MCP server over HTTPS.**
 Claude Code: `claude mcp add --transport http audiobible https://audiobible.publifye.com/mcp`, then
 `/mcp` to sign in. The discovery chain is the same as for the other servers:
 **[../../docs/connect.md](../../docs/connect.md)**.
+
+## Two Bibles, one tool surface
+
+Every capability tool accepts an optional `bible` argument (`web` or `nb2026`); the World English
+Bible stays the default when it is omitted. NB2026 — Bibelen Anno 2026, a Norwegian Bokmål
+translation — is being recorded now; `coverage` and `chapter_status` report how far each Bible has
+got, per Bible.
 
 ## The text is quoted, not remembered
 
@@ -52,13 +61,14 @@ generated from the service's own registry, never written by hand.
 | **[What is recorded](tools/catalogue.md)** | Which books exist, and how much has been read aloud? | 4 |
 
 Machine-readable: **[tools.json](tools.json)** carries all 10 with full JSON Schema, plus every
-excluded bucket listed by name so the count is auditable. Three staff-only tools (`admin_jobs`,
-`admin_recordings`, `admin_prepare_chapter`) are excluded from the customer surface.
+excluded bucket listed by name so the count is auditable. 35 staff-only admin tools (recording
+runs, voice options, deletion and restore, batch narration) are excluded from the customer surface.
 
 ## What it does not do
 
-- **One translation.** The World English Bible, and no other. For the Hebrew and Greek, other
-  translations, lexicons and cross-references, see **[Darash](../darash)**.
+- **Two translations, not the originals.** The World English Bible and NB2026, and no other. For
+  the Hebrew and Greek, other translations, lexicons and cross-references, see
+  **[Darash](../darash)**.
 - **No commentary or interpretation.** Text and audio only.
 - **Not a crawler endpoint.** Audio, generation, downloads and accounts are for people and their
   assistants; the public chapter pages are what search engines should read.

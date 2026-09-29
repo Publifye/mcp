@@ -1,25 +1,57 @@
 {
   "service": "audiobible",
   "endpoint": "https://audiobible.publifye.com/mcp",
-  "captured": "2026-09-22",
-  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-22, version 0.1.113. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-29, version 0.4.29, with BIBLES=web,nb2026 set (the live configuration: readers choose between the World English Bible and Bibelen Anno 2026). Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
   "counts": {
     "callable_by_a_customer": 11,
     "capability_tools": 10,
     "session_and_cache_plumbing": 0,
     "excluded_help_and_health": 1,
-    "excluded_admin_only": 3,
+    "excluded_admin_only": 35,
     "excluded_ops_and_logging": 10,
-    "total_on_the_wire": 24
+    "total_on_the_wire": 56
   },
   "excluded": {
     "help_and_health": [
       "service_status"
     ],
     "admin_only": [
+      "admin_background_get",
+      "admin_background_set",
+      "admin_batch",
+      "admin_batch_cancel",
+      "admin_batch_status",
+      "admin_cap_clear",
+      "admin_cap_status",
+      "admin_deletions_list",
       "admin_jobs",
+      "admin_narration_report",
+      "admin_narration_sync",
+      "admin_pause_get",
+      "admin_pause_set",
+      "admin_plan_get",
+      "admin_plan_set",
       "admin_prepare_chapter",
-      "admin_recordings"
+      "admin_prune_internal",
+      "admin_recording_activate",
+      "admin_recording_delete_cancel",
+      "admin_recording_delete_confirm",
+      "admin_recording_delete_request",
+      "admin_recording_restore",
+      "admin_recording_versions",
+      "admin_recordings",
+      "admin_reindex",
+      "admin_restitch",
+      "admin_run_cancel",
+      "admin_run_pause",
+      "admin_run_resume",
+      "admin_run_start",
+      "admin_run_status",
+      "admin_trash_list",
+      "admin_trash_purge",
+      "admin_voice_options_get",
+      "admin_voice_options_set"
     ],
     "ops": [
       "clear_server_logs",
@@ -50,20 +82,32 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
-            "type": "string"
+            "type": "string",
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66."
           },
           "chapter": {
-            "description": "Chapter number within the book, starting at 1.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Chapter number within the book, starting at 1."
+          },
+          "voice": {
+            "type": "string",
+            "description": "Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered."
           }
         },
+        "type": "object",
         "required": [
           "book",
           "chapter"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -81,24 +125,36 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
-            "type": "string"
+            "type": "string",
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66."
           },
           "chapter": {
-            "description": "Chapter number within the book, starting at 1.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Chapter number within the book, starting at 1."
           },
           "verse": {
-            "description": "Optional verse to start at.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Optional verse to start at."
+          },
+          "voice": {
+            "type": "string",
+            "description": "Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered."
           }
         },
+        "type": "object",
         "required": [
           "book",
           "chapter"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -116,20 +172,32 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
-            "type": "string"
+            "type": "string",
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66."
           },
           "chapter": {
-            "description": "Chapter number within the book, starting at 1.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Chapter number within the book, starting at 1."
+          },
+          "voice": {
+            "type": "string",
+            "description": "Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered."
           }
         },
+        "type": "object",
         "required": [
           "book",
           "chapter"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -147,20 +215,32 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
-            "type": "string"
+            "type": "string",
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66."
           },
           "chapter": {
-            "description": "Chapter number within the book, starting at 1.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Chapter number within the book, starting at 1."
+          },
+          "voice": {
+            "type": "string",
+            "description": "Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered."
           }
         },
+        "type": "object",
         "required": [
           "book",
           "chapter"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -178,25 +258,37 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66.",
-            "type": "string"
+            "type": "string",
+            "description": "Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66."
           },
           "chapter": {
-            "description": "Chapter number within the book, starting at 1.",
-            "type": "integer"
+            "type": "integer",
+            "description": "Chapter number within the book, starting at 1."
           },
           "chapters": {
+            "type": "array",
             "description": "Several chapters for one ZIP, each 'book/chapter' such as 'john/3' (Annual plan). Use instead of book+chapter.",
             "items": {
               "type": "string"
-            },
-            "type": "array"
+            }
           },
           "expires_in_seconds": {
-            "default": 3600,
+            "type": "integer",
             "description": "Link lifetime, 60 to 86400. Default 3600.",
-            "type": "integer"
+            "default": 3600
+          },
+          "voice": {
+            "type": "string",
+            "description": "Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered."
           }
         },
         "type": "object"
@@ -233,6 +325,16 @@
         "title": "List Books"
       },
       "inputSchema": {
+        "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          }
+        },
         "type": "object"
       }
     },
@@ -251,20 +353,28 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "limit": {
-            "default": 10,
+            "type": "integer",
             "description": "Maximum suggestions.",
-            "type": "integer"
+            "default": 10
           },
           "query": {
-            "description": "What the reader typed.",
-            "type": "string"
+            "type": "string",
+            "description": "What the reader typed."
           }
         },
+        "type": "object",
         "required": [
           "query"
-        ],
-        "type": "object"
+        ]
       }
     },
     {
@@ -282,15 +392,23 @@
       },
       "inputSchema": {
         "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
           "book": {
-            "default": "genesis",
+            "type": "string",
             "description": "Book slug, e.g. 'genesis' or 'first-samuel'. Call list_books for all 66.",
-            "type": "string"
+            "default": "genesis"
           },
           "chapter": {
-            "default": 1,
+            "type": "integer",
             "description": "Chapter number within the book.",
-            "type": "integer"
+            "default": 1
           }
         },
         "type": "object"
@@ -310,6 +428,24 @@
         "title": "Coverage"
       },
       "inputSchema": {
+        "properties": {
+          "bible": {
+            "type": "string",
+            "description": "Which Bible: web, nb2026. Default web (the first offered).",
+            "enum": [
+              "web",
+              "nb2026"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "description": "disk (default): read straight off the volume. index: the Redis index's counters, one round trip; rebuilt from disk by admin_reindex.",
+            "enum": [
+              "disk",
+              "index"
+            ]
+          }
+        },
         "type": "object"
       }
     }

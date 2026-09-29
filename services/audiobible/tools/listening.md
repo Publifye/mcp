@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`get_chapter`](#get_chapter) | read | Read one chapter of the World English Bible: every verse's text, numbered, plus whether … |
-| [`listen_link`](#listen_link) | read | Links for LISTENING to a chapter (optionally starting at a verse): the public reading pa… |
-| [`prepare_chapter`](#prepare_chapter) | read | Have a chapter read aloud (recorded) if it is not already, using the same queue as the w… |
-| [`chapter_progress`](#chapter_progress) | read | How far a chapter's recording has got, without starting anything. Safe to poll every few… |
-| [`download_link`](#download_link) | read | A personal download link for recorded chapters, as an .opus file (one chapter) or a ZIP … |
-| [`my_allowance`](#my_allowance) | read | The user's standing: plan, download allowance left in the rolling 24 hours and when the … |
+| [`get_chapter`](#get_chapter) | read | Read one chapter of the World English Bible: every verse's text, numbered, plu… |
+| [`listen_link`](#listen_link) | read | Links for LISTENING to a chapter (optionally starting at a verse): the public … |
+| [`prepare_chapter`](#prepare_chapter) | read | Have a chapter read aloud (recorded) if it is not already, using the same queu… |
+| [`chapter_progress`](#chapter_progress) | read | How far a chapter's recording has got, without starting anything. Safe to poll… |
+| [`download_link`](#download_link) | read | A personal download link for recorded chapters, as an .opus file (one chapter)… |
+| [`my_allowance`](#my_allowance) | read | The user's standing: plan, download allowance left in the rolling 24 hours and… |
 
 ---
 
@@ -23,8 +23,10 @@ Read one chapter of the World English Bible: every verse's text, numbered, plus 
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | yes | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | yes | Chapter number within the book, starting at 1. |
+| `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 
 ## `listen_link`
 
@@ -34,9 +36,11 @@ Links for LISTENING to a chapter (optionally starting at a verse): the public re
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | yes | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | yes | Chapter number within the book, starting at 1. |
 | `verse` | integer | no | Optional verse to start at. |
+| `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 
 ## `prepare_chapter`
 
@@ -46,8 +50,10 @@ Have a chapter read aloud (recorded) if it is not already, using the same queue 
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | yes | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | yes | Chapter number within the book, starting at 1. |
+| `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 
 ## `chapter_progress`
 
@@ -57,8 +63,10 @@ How far a chapter's recording has got, without starting anything. Safe to poll e
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | yes | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | yes | Chapter number within the book, starting at 1. |
+| `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 
 ## `download_link`
 
@@ -68,10 +76,12 @@ A personal download link for recorded chapters, as an .opus file (one chapter) o
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
+| `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | no | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | no | Chapter number within the book, starting at 1. |
 | `chapters` | array | no | Several chapters for one ZIP, each 'book/chapter' such as 'john/3' (Annual plan). Use instead of book+chapter. |
 | `expires_in_seconds` | integer | no | Link lifetime, 60 to 86400. Default 3600. |
+| `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 
 ## `my_allowance`
 
@@ -84,4 +94,4 @@ The user's standing: plan, download allowance left in the rolling 24 hours and w
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.113. Regenerate rather than edit by hand.*
+2026-09-29, version 0.4.29, with BIBLES=web,nb2026 set. Regenerate rather than edit by hand.*

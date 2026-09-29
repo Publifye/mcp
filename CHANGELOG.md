@@ -2,6 +2,17 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-09-29
+
+- **Audio Bible now serves two Bibles** — the World English Bible and Bibelen Anno 2026 (NB2026, a
+  Norwegian Bokmål translation, at `audiobible.publifye.com/nb2026`, being recorded now). Every
+  capability tool takes an optional `bible` argument; the WEB stays the default. Tool count is
+  unchanged at 10 — the same ten tools, each with the new `bible` and, where relevant, `voice`
+  parameters — regenerated from the registry of source `9b698ff`, version 0.4.29, with
+  `BIBLES=web,nb2026` set. Excluded admin tools grew from 3 to 35 with the multi-Bible recording,
+  narration and deletion machinery; all are listed by name in `tools.json`. README, server.json and
+  the server card updated to describe both Bibles.
+
 ## 2026-09-25
 
 - **Marriage covenants** at [marriage.publifye.com](https://marriage.publifye.com) are described in

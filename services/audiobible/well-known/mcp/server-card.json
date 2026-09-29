@@ -1,7 +1,7 @@
 {
   "name": "pro.publifye/audiobible",
   "title": "Audio Bible",
-  "description": "The World English Bible read aloud for AI: verse text, listening links, recordings and downloads",
+  "description": "Two Bibles read aloud for AI — the World English Bible and NB2026: verse text, listening links, recordings and downloads",
   "version": "1.0.0",
   "websiteUrl": "https://audiobible.publifye.com",
   "remotes": [
