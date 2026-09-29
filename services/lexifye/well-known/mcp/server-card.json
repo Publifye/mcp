@@ -183,17 +183,6 @@
       }
     },
     {
-      "name": "dict_delete",
-      "description": "Delete a dict. Requires admin (owner).",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Delete"
-      }
-    },
-    {
       "name": "dict_enrich",
       "description": "Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced original-language words (Strong's codes in `strong` spans, and hebrew/greek spans carrying a code), pull their lexicon",
       "annotations": {
@@ -202,17 +191,6 @@
         "openWorldHint": false,
         "readOnlyHint": false,
         "title": "Dict Enrich"
-      }
-    },
-    {
-      "name": "dict_freeze",
-      "description": "ADMIN. Apply a CANONICAL LOCK to a dictionary — the recoverable take-down. Use this FIRST when responding to an abuse report: it stops the dictionary being changed while you investigate, and destroys ",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Freeze"
       }
     },
     {
@@ -282,17 +260,6 @@
       }
     },
     {
-      "name": "dict_restore",
-      "description": "Restore a soft-deleted dict, with every entry, definition, version history and private note exactly as they were. Works for 30 days after dict_delete. Requires admin (owner), like dict_delete. Find th",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Restore"
-      }
-    },
-    {
       "name": "dict_set_field",
       "description": "Atomically set ONE field on a dict by key.",
       "annotations": {
@@ -312,17 +279,6 @@
         "openWorldHint": false,
         "readOnlyHint": false,
         "title": "Dict Transfer"
-      }
-    },
-    {
-      "name": "dict_unfreeze",
-      "description": "ADMIN. Lift a dict_freeze. Everything returns exactly as it was — the freeze changed no content, so there is nothing to restore. Idempotent: unfreezing a dictionary that is not frozen is a no-op and s",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Unfreeze"
       }
     },
     {
@@ -734,7 +690,7 @@
     }
   ],
   "_meta": {
-    "pro.publifye/generated": "2026-09-13",
+    "pro.publifye/generated": "2026-09-29",
     "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/lexifye"
   }
 }

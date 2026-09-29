@@ -1,16 +1,16 @@
 {
   "service": "timely",
   "endpoint": "https://timely.publifye.com/mcp",
-  "captured": "2026-09-22",
-  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot (mcp.New with the log tools, then the workflow tools) — on a clean export of source commit 354ee8b, version 0.1.190. Descriptions, annotations and input schemas are exactly what tools/list serves (it leaves out the annotation title; the title here is the registry's). Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable. tools/list leaves out the annotation title; the title here is the registry's.",
   "counts": {
     "callable_by_a_customer": 33,
     "capability_tools": 31,
     "session_and_cache_plumbing": 0,
     "excluded_help_and_health": 2,
-    "excluded_admin_only": 14,
+    "excluded_admin_only": 15,
     "excluded_ops_and_logging": 10,
-    "total_on_the_wire": 57
+    "total_on_the_wire": 58
   },
   "excluded": {
     "help_and_health": [
@@ -19,6 +19,7 @@
     ],
     "admin_only": [
       "admin_activate_render",
+      "admin_durable_restore",
       "admin_force_render",
       "admin_instance_drain",
       "admin_logs",
@@ -61,23 +62,24 @@
         "title": "Timely List"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "cursor": {
-            "type": "string",
-            "description": "next_cursor from the previous page"
+            "description": "next_cursor from the previous page",
+            "type": "string"
           },
           "limit": {
-            "type": "integer",
             "description": "Page size",
+            "maximum": 30,
             "minimum": 1,
-            "maximum": 30
+            "type": "integer"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…) Staff may pass \"*\" for all customers."
+            "description": "Staff only: customer owner id or organisation id (idg…) Staff may pass \"*\" for all customers.",
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     },
     {
@@ -94,35 +96,36 @@
         "title": "Timely Get"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "include": {
-            "type": "array",
             "description": "meetings, content, changes, artifact_history",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "meetings_cursor": {
-            "type": "string",
-            "description": "meetings_next_cursor"
+            "description": "meetings_next_cursor",
+            "type": "string"
           },
           "meetings_limit": {
-            "type": "integer",
-            "description": "Default 100"
+            "description": "Default 100",
+            "type": "integer"
           },
           "revision": {
-            "type": "integer",
-            "description": "For include (default: draft, else published)"
+            "description": "For include (default: draft, else published)",
+            "type": "integer"
           }
         },
         "required": [
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -139,40 +142,41 @@
         "title": "Timely History"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "cursor": {
-            "type": "string",
-            "description": "next_cursor"
+            "description": "next_cursor",
+            "type": "string"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "include": {
-            "type": "array",
             "description": "bodies",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "kind": {
-            "type": "string",
             "description": "revisions (default) or audit",
             "enum": [
               "revisions",
               "audit"
-            ]
+            ],
+            "type": "string"
           },
           "limit": {
-            "type": "integer",
+            "maximum": 100,
             "minimum": 1,
-            "maximum": 100
+            "type": "integer"
           }
         },
         "required": [
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -189,26 +193,27 @@
         "title": "Timely Edit History"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "cursor": {
-            "type": "string",
-            "description": "next_cursor from the previous page"
+            "description": "next_cursor from the previous page",
+            "type": "string"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "limit": {
-            "type": "integer",
             "description": "Page size",
+            "maximum": 100,
             "minimum": 1,
-            "maximum": 100
+            "type": "integer"
           }
         },
         "required": [
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -225,25 +230,26 @@
         "title": "Timely Get PDF"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "pdf_hash": {
-            "type": "string",
-            "description": "Optional previous PDF hash from artifact_history"
+            "description": "Optional previous PDF hash from artifact_history",
+            "type": "string"
           },
           "revision": {
-            "type": "integer",
-            "description": "Rendered revision number"
+            "description": "Rendered revision number",
+            "type": "integer"
           }
         },
         "required": [
           "id",
           "revision"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -260,16 +266,17 @@
         "title": "Timely Get Widget"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           }
         },
         "required": [
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -286,25 +293,26 @@
         "title": "Timely Create"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "content": {
-            "type": "object",
-            "description": "Programme content: title, language, timezone, selection, grouping, events and bounded series"
+            "description": "Programme content: title, language, timezone, selection, grouping, events and bounded series",
+            "type": "object"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "slug": {
-            "type": "string",
-            "description": "Public slug"
+            "description": "Public slug",
+            "type": "string"
           }
         },
         "required": [
           "slug",
           "content"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -321,33 +329,34 @@
         "title": "Timely Edit"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "base_hash": {
-            "type": "string",
-            "description": "Expected current content hash"
+            "description": "Expected current content hash",
+            "type": "string"
           },
           "dry_run": {
-            "type": "boolean",
-            "description": "Validate and return proposed draft/diffs without storing a revision or changing state"
+            "description": "Validate and return proposed draft/diffs without storing a revision or changing state",
+            "type": "boolean"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "operations": {
-            "type": "array",
             "description": "Typed changes including shift_events, event, series, selection, grouping, style, timezone or title; call operator_guide for exact examples",
             "items": {
               "type": "object"
-            }
+            },
+            "type": "array"
           }
         },
         "required": [
           "id",
           "base_hash",
           "operations"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -364,30 +373,31 @@
         "title": "Timely Request Edit"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "message": {
-            "type": "string",
-            "description": "Requested changes"
+            "description": "Requested changes",
+            "type": "string"
           },
           "message_id": {
-            "type": "string",
-            "description": "Stable caller message id"
+            "description": "Stable caller message id",
+            "type": "string"
           },
           "previous_job": {
-            "type": "string",
-            "description": "Previous clarification job id"
+            "description": "Previous clarification job id",
+            "type": "string"
           }
         },
         "required": [
           "id",
           "message_id",
           "message"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -404,26 +414,27 @@
         "title": "Timely Set Theme"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "Expected generation from timely_get"
+            "description": "Expected generation from timely_get",
+            "type": "integer"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "theme": {
-            "type": "object",
-            "description": "mode, font, light:{background,text,accent}, dark:{background,text,accent}"
+            "description": "mode, font, light:{background,text,accent}, dark:{background,text,accent}",
+            "type": "object"
           }
         },
         "required": [
           "id",
           "generation",
           "theme"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -440,27 +451,27 @@
         "title": "Timely Set PDF Layout"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "base_hash": {
-            "type": "string",
-            "description": "Expected current content hash"
+            "description": "Expected current content hash",
+            "type": "string"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "layout": {
-            "type": "string",
-            "description": "normal or compact; normal is standard"
+            "description": "normal or compact; normal is standard",
+            "type": "string"
           },
           "message_id": {
-            "type": "string",
-            "description": "Stable request id for safe retries"
+            "description": "Stable request id for safe retries",
+            "type": "string"
           },
           "show_qr": {
-            "type": "boolean",
-            "description": "QR in the PDF (omit to keep)"
+            "description": "QR in the PDF (omit to keep)",
+            "type": "boolean"
           }
         },
         "required": [
@@ -468,7 +479,8 @@
           "base_hash",
           "message_id",
           "layout"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -485,21 +497,22 @@
         "title": "Timely Render"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "revision": {
-            "type": "integer",
-            "description": "Current draft revision number"
+            "description": "Current draft revision number",
+            "type": "integer"
           }
         },
         "required": [
           "id",
           "revision"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -516,27 +529,27 @@
         "title": "Draft Approve"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "content_hash": {
-            "type": "string",
-            "description": "Exact content hash shown for approval"
+            "description": "Exact content hash shown for approval",
+            "type": "string"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "pdf_hash": {
-            "type": "string",
-            "description": "Exact rendered PDF hash shown for approval"
+            "description": "Exact rendered PDF hash shown for approval",
+            "type": "string"
           },
           "revision": {
-            "type": "integer",
-            "description": "Exact revision confirmed by the user"
+            "description": "Exact revision confirmed by the user",
+            "type": "integer"
           },
           "user_confirmed": {
-            "type": "boolean",
-            "description": "True ONLY after explicit user confirmation for this exact revision and PDF"
+            "description": "True ONLY after explicit user confirmation for this exact revision and PDF",
+            "type": "boolean"
           }
         },
         "required": [
@@ -545,7 +558,8 @@
           "content_hash",
           "pdf_hash",
           "user_confirmed"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -562,26 +576,27 @@
         "title": "Timely Add Website"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "Expected generation"
+            "description": "Expected generation",
+            "type": "integer"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "origin": {
-            "type": "string",
-            "description": "Exact HTTPS website origin, e.g. https://www.example.org; no path or wildcard"
+            "description": "Exact HTTPS website origin, e.g. https://www.example.org; no path or wildcard",
+            "type": "string"
           }
         },
         "required": [
           "id",
           "generation",
           "origin"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -598,30 +613,30 @@
         "title": "Timely Set Widget"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "Expected generation"
+            "description": "Expected generation",
+            "type": "integer"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "language": {
-            "type": "string",
-            "description": "Default widget language"
+            "description": "Default widget language",
+            "type": "string"
           },
           "language_selector": {
-            "type": "boolean",
-            "description": "Allow visitors to choose language"
+            "description": "Allow visitors to choose language",
+            "type": "boolean"
           },
           "origins": {
-            "type": "array",
             "description": "Complete HTTPS website origin list",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           }
         },
         "required": [
@@ -630,7 +645,8 @@
           "origins",
           "language",
           "language_selector"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -647,34 +663,34 @@
         "title": "Timely Set Widget Identity"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "compact": {
-            "type": "boolean",
-            "description": "Default to minimal embedded view"
+            "description": "Default to minimal embedded view",
+            "type": "boolean"
           },
           "generation": {
-            "type": "integer",
-            "description": "Expected generation"
+            "description": "Expected generation",
+            "type": "integer"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "inherit": {
-            "type": "array",
             "description": "Switch names to reset so they follow the organisation's choice again, e.g. [\"show_place\"]",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "mode": {
-            "type": "string",
             "description": "full or programme (programme also covers next)",
             "enum": [
               "full",
               "programme"
-            ]
+            ],
+            "type": "string"
           },
           "show_addresses": {
             "type": "boolean"
@@ -708,7 +724,8 @@
           "id",
           "generation",
           "mode"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -725,38 +742,39 @@
         "title": "Timely Org Get"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "audit_cursor": {
-            "type": "string",
-            "description": "audit_next_cursor"
+            "description": "audit_next_cursor",
+            "type": "string"
           },
           "audit_limit": {
-            "type": "integer",
+            "maximum": 100,
             "minimum": 1,
-            "maximum": 100
+            "type": "integer"
           },
           "bin_history_cursor": {
-            "type": "string",
-            "description": "bin_history_next_cursor"
+            "description": "bin_history_next_cursor",
+            "type": "string"
           },
           "bin_history_limit": {
-            "type": "integer",
+            "maximum": 100,
             "minimum": 1,
-            "maximum": 100
+            "type": "integer"
           },
           "include": {
-            "type": "array",
             "description": "audit, bin_history",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     },
     {
@@ -773,28 +791,29 @@
         "title": "Timely Org Set"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "generation from timely_org_get"
+            "description": "generation from timely_org_get",
+            "type": "integer"
           },
           "organisation": {
-            "type": "object",
-            "description": "The COMPLETE record: name, tagline, what/where/when/how {text, detail}, contact {email, phone}, visit, postal, org_line, links, slug, homepage_origins, homepage_programmes ([] = automatic); limits: operator_guide topic organisation. OMITTED FIELDS ARE CLEARED. Required unless paused is sent."
+            "description": "The COMPLETE record: name, tagline, what/where/when/how {text, detail}, contact {email, phone}, visit, postal, org_line, links, slug, homepage_origins, homepage_programmes ([] = automatic); limits: operator_guide topic organisation. OMITTED FIELDS ARE CLEARED. Required unless paused is sent.",
+            "type": "object"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "paused": {
-            "type": "boolean",
-            "description": "Alone: true hides every public page, PDF and widget until false"
+            "description": "Alone: true hides every public page, PDF and widget until false",
+            "type": "boolean"
           }
         },
         "required": [
           "generation"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -811,30 +830,30 @@
         "title": "Timely Org Set Display"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "generation from timely_org_get"
+            "description": "generation from timely_org_get",
+            "type": "integer"
           },
           "inherit": {
-            "type": "array",
             "description": "Switch names to reset so they follow the mode default again, e.g. [\"show_place\"]",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array"
           },
           "mode": {
-            "type": "string",
             "description": "full or programme",
             "enum": [
               "full",
               "programme"
-            ]
+            ],
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "show_addresses": {
             "type": "boolean"
@@ -867,7 +886,8 @@
         "required": [
           "generation",
           "mode"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -884,25 +904,26 @@
         "title": "Timely Org Add Website"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "generation": {
-            "type": "integer",
-            "description": "generation from timely_org_get"
+            "description": "generation from timely_org_get",
+            "type": "integer"
           },
           "origin": {
-            "type": "string",
-            "description": "The website, e.g. https://www.example.org"
+            "description": "The website, e.g. https://www.example.org",
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
         },
         "required": [
           "generation",
           "origin"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -919,10 +940,9 @@
         "title": "Timely Org Homepage"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "lang": {
-            "type": "string",
             "description": "index.html language (default en)",
             "enum": [
               "en",
@@ -930,17 +950,19 @@
               "es",
               "zh",
               "ko"
-            ]
+            ],
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "site": {
-            "type": "string",
-            "description": "Website the file will live on"
+            "description": "Website the file will live on",
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     },
     {
@@ -957,25 +979,26 @@
         "title": "Timely Org Logo Import"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "confirm_public": {
-            "type": "boolean",
-            "description": "Confirm the logo may be hosted publicly"
+            "description": "Confirm the logo may be hosted publicly",
+            "type": "boolean"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "url": {
-            "type": "string",
-            "description": "Public HTTPS image URL"
+            "description": "Public HTTPS image URL",
+            "type": "string"
           }
         },
         "required": [
           "url",
           "confirm_public"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -992,20 +1015,21 @@
         "title": "Timely Org Logo Upload Begin"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "confirm_public": {
-            "type": "boolean",
-            "description": "Confirm the logo may be hosted publicly"
+            "description": "Confirm the logo may be hosted publicly",
+            "type": "boolean"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
         },
         "required": [
           "confirm_public"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1022,16 +1046,17 @@
         "title": "Timely Logo Status"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "job_id": {
-            "type": "string",
-            "description": "Job from timely_org_logo_import or timely_org_logo_upload_begin"
+            "description": "Job from timely_org_logo_import or timely_org_logo_upload_begin",
+            "type": "string"
           }
         },
         "required": [
           "job_id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1048,29 +1073,30 @@
         "title": "Timely Export"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "format": {
-            "type": "string",
             "description": "json, text or both (default both)",
             "enum": [
               "json",
               "text",
               "both"
-            ]
+            ],
+            "type": "string"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id"
+            "description": "Programme id",
+            "type": "string"
           },
           "inline": {
-            "type": "boolean",
-            "description": "Also return the file content (json_string / text)"
+            "description": "Also return the file content (json_string / text)",
+            "type": "boolean"
           }
         },
         "required": [
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1087,34 +1113,35 @@
         "title": "Timely Export All"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "format": {
-            "type": "string",
             "description": "json, text or both (default both)",
             "enum": [
               "json",
               "text",
               "both"
-            ]
+            ],
+            "type": "string"
           },
           "include_organisation": {
-            "type": "boolean",
-            "description": "Include organisation.json (default true)"
+            "description": "Include organisation.json (default true)",
+            "type": "boolean"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "scope": {
-            "type": "string",
             "description": "owner (default: one account) or all_customers (staff only)",
             "enum": [
               "owner",
               "all_customers"
-            ]
+            ],
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     },
     {
@@ -1131,22 +1158,23 @@
         "title": "Timely Export Schema"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "kind": {
-            "type": "string",
             "description": "programme, organisation or bundle",
             "enum": [
               "programme",
               "organisation",
               "bundle"
-            ]
+            ],
+            "type": "string"
           },
           "version": {
-            "type": "string",
-            "description": "e.g. timely-programme-export/v1"
+            "description": "e.g. timely-programme-export/v1",
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     },
     {
@@ -1163,64 +1191,65 @@
         "title": "Timely Import"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "bundle_base64": {
-            "type": "string",
-            "description": "restore: timely_export_all zip, base64 (≤48 MiB)"
+            "description": "restore: timely_export_all zip, base64 (≤48 MiB)",
+            "type": "string"
           },
           "bundle_url": {
-            "type": "string",
-            "description": "timely_export_all's download_url"
+            "description": "timely_export_all's download_url",
+            "type": "string"
           },
           "dry_run": {
-            "type": "boolean",
-            "description": "true: validate and report only, write nothing"
+            "description": "true: validate and report only, write nothing",
+            "type": "boolean"
           },
           "export": {
-            "type": "object",
-            "description": "Parsed export object; prefer json_string"
+            "description": "Parsed export object; prefer json_string",
+            "type": "object"
           },
           "json_string": {
-            "type": "string",
-            "description": "Exact export file text (with sha256)"
+            "description": "Exact export file text (with sha256)",
+            "type": "string"
           },
           "json_url": {
-            "type": "string",
-            "description": "timely_export's json_url"
+            "description": "timely_export's json_url",
+            "type": "string"
           },
           "mode": {
-            "type": "string",
             "description": "copy (default) or restore (staff)",
             "enum": [
               "copy",
               "restore"
-            ]
+            ],
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           },
           "pick_slug": {
-            "type": "string",
-            "description": "With bundle_url: which programme"
+            "description": "With bundle_url: which programme",
+            "type": "string"
           },
           "restore_token": {
-            "type": "string",
-            "description": "mode restore: the token from the dry run of this same input"
+            "description": "mode restore: the token from the dry run of this same input",
+            "type": "string"
           },
           "sha256": {
-            "type": "string",
-            "description": "json_sha256 of json_string"
+            "description": "json_sha256 of json_string",
+            "type": "string"
           },
           "slug": {
-            "type": "string",
-            "description": "Optional new address; a free one is chosen if taken"
+            "description": "Optional new address; a free one is chosen if taken",
+            "type": "string"
           }
         },
         "required": [
           "dry_run"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1237,38 +1266,39 @@
         "title": "Timely Delete"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "confirm": {
-            "type": "boolean",
-            "description": "Must be true: the user asked for this deletion"
+            "description": "Must be true: the user asked for this deletion",
+            "type": "boolean"
           },
           "generation": {
-            "type": "integer",
-            "description": "Current generation"
+            "description": "Current generation",
+            "type": "integer"
           },
           "id": {
-            "type": "string",
-            "description": "Programme id (kind programme)"
+            "description": "Programme id (kind programme)",
+            "type": "string"
           },
           "kind": {
-            "type": "string",
             "description": "programme or organisation",
             "enum": [
               "programme",
               "organisation"
-            ]
+            ],
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
         },
         "required": [
           "kind",
           "generation",
           "confirm"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1285,33 +1315,34 @@
         "title": "Timely Restore"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "from_purge_hold": {
-            "type": "boolean",
-            "description": "Staff only: bring back an item purged in the last 48 hours"
+            "description": "Staff only: bring back an item purged in the last 48 hours",
+            "type": "boolean"
           },
           "id": {
-            "type": "string",
-            "description": "Id from timely_trash_list"
+            "description": "Id from timely_trash_list",
+            "type": "string"
           },
           "kind": {
-            "type": "string",
             "description": "programme or organisation",
             "enum": [
               "programme",
               "organisation"
-            ]
+            ],
+            "type": "string"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
         },
         "required": [
           "kind",
           "id"
-        ]
+        ],
+        "type": "object"
       }
     },
     {
@@ -1328,23 +1359,24 @@
         "title": "Timely Trash List"
       },
       "inputSchema": {
-        "type": "object",
+        "additionalProperties": false,
         "properties": {
           "cursor": {
-            "type": "string",
-            "description": "next_cursor from the previous page"
+            "description": "next_cursor from the previous page",
+            "type": "string"
           },
           "limit": {
-            "type": "integer",
             "description": "Page size",
+            "maximum": 100,
             "minimum": 1,
-            "maximum": 100
+            "type": "integer"
           },
           "owner": {
-            "type": "string",
-            "description": "Staff only: customer owner id or organisation id (idg…)"
+            "description": "Staff only: customer owner id or organisation id (idg…)",
+            "type": "string"
           }
-        }
+        },
+        "type": "object"
       }
     }
   ]

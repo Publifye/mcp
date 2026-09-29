@@ -61,4 +61,5 @@ How much of the Bible has actually been generated and how much is still pending.
 ---
 
 *Generated from the service's own tool registry on the source serving production on
-2026-09-29, version 0.4.29, with BIBLES=web,nb2026 set. Regenerate rather than edit by hand.*
+2026-09-29, version 0.4.29, with BIBLES=web,nb2026 set; checked unchanged against the live
+`tools/list` of version 0.4.37 the same day. Regenerate rather than edit by hand.*

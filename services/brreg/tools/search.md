@@ -7,7 +7,7 @@ See [connect](../../../docs/connect.md) to sign in.
 | Tool | What it does |
 |---|---|
 | [`entity_search`](#entity_search) | Ranked, filtered search over current and historical names, addresses and websites |
-| [`entity_structure`](#entity_structure) | Organisational structure of one orgnr: items with relation parent (overordnet chain to the… |
+| [`entity_structure`](#entity_structure) | Organisational structure of one orgnr |
 
 ---
 
@@ -15,7 +15,15 @@ See [connect](../../../docs/connect.md) to sign in.
 
 **Entity Search** — read-only, idempotent, closed-world.
 
-Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter. Filters: kind, org_form (code_list codes), municipality (number or name), postcode, city, nace or sector prefix, status (active by default; any for all), public_body, vat_registered, parent_orgnr, employees_min/max, registered_from/to. sort: relevance, name, registered_desc. match: 1-4 RE2 filters [{field, pattern}] (fields in the schema), AND'ed with the rest; case-insensitive, you anchor them, "." = present. Anchor when you can: ^post narrows the scan to a range, an unanchored pattern reads the field's whole dictionary once (tens of ms) and is then cached. lat+lon+radius_km: registered-address points (Kartverket), nearest first without query; items add distance_km and location. Items are summaries (orgnr, kind, name, org_form, municipality, city, address, nace1, status, public_body, email, parent_orgnr, matched, score); entity_lookup gives the record. Diagnostics: mode, terms, filters_applied, empty_reason with next_action. Customer searches without a name query, radius searches and match never return personal-data records (ENK and their establishments). Follow cursor to the end: paging has no depth limit. Example: entity_search query="tilsyn" public_body=true. Next: entity_lookup orgnr=<item orgnr>. [END]
+Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter.
+TEXT: query (name text; orgnr digits also match), address (street or address line), website (domain or URL fragment).
+FILTERS: kind, org_form (code_list codes), municipality (number or name), postcode, city, nace or sector prefix, status (active by default; any for all), public_body, vat_registered, parent_orgnr, employees_min/max, registered_from/to. sort: relevance (default), name, registered_desc.
+MATCH: 1-4 RE2 filters [{field, pattern}] (fields in the schema), AND'ed with the rest; case-insensitive, you anchor them, "." = the field is present. Anchor when you can: ^post narrows the scan to a range, while an unanchored pattern's first use reads that field's whole dictionary (~114 ms) before it is cached. A rejected pattern is invalid_filter: fix it, do not retry it unchanged.
+ITEMS: summaries (orgnr, kind, name, org_form, municipality, city, address, nace1, status, public_body, email, parent_orgnr, matched, score) — entity_lookup gives the record. forced_dissolution=true inside status "dissolving" means tvangsavvikling/tvangsoppløsning, closure compelled by the state; absent, the owner is winding up voluntarily.
+REFUSALS: a customer search without a name query, and every match search, returns no personal-data records (ENK and their establishments).
+PAGING: follow cursor to the end; there is no depth limit. Diagnostics carry mode, terms, filters_applied and empty_reason with a next_action.
+NEARBY: lat+lon+radius_km still work here; entity_nearby is the front door for a coordinate search.
+Example: entity_search query="tilsyn" public_body=true. Next: entity_lookup orgnr=<item orgnr>. [END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -27,7 +35,7 @@ Ranked, filtered search over current and historical names, addresses and website
 | `employees_min` | integer | no | Minimum employees. |
 | `fields` | array | no | Item fields to return (orgnr kept). |
 | `kind` | string | no | Default all. |
-| `lat` | number | no | Radius centre latitude; needs lon and radius_km. |
+| `lat` | number | no | Radius centre latitude, decimal degrees; needs lon and radius_km. Coordinates only — for a place use municipality, city or postcode. |
 | `limit` | integer | no | Items per page (1-100, default 20). |
 | `lon` | number | no | Radius centre longitude. |
 | `match` | array | no | Regex filters, AND'ed with the rest: [{"field":"email","pattern":"^post"}]. |
@@ -54,7 +62,11 @@ Ranked, filtered search over current and historical names, addresses and website
 
 **Entity Structure** — read-only, idempotent, closed-world.
 
-Organisational structure of one orgnr: items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subunit (underenheter). section: all (default), children or subunits. A ministry lists its agencies as children; a company its establishments as subunits. Diagnostics carry the root summary. Example: entity_structure orgnr=983887457 section=children. Next: entity_lookup orgnr=<item orgnr>. [END]
+Organisational structure of one orgnr.
+ARGS: orgnr (required); section all (default), children or subunits.
+ITEMS: relation parent (the overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) or subunit (underenheter). A ministry lists its agencies as children; a company its establishments as subunits.
+NOTE: every relation comes from the weekly snapshot, whatever the entity's own record_as_of. Diagnostics carry the root summary.
+Example: entity_structure orgnr=983887457 section=children. Next: entity_lookup orgnr=<item orgnr>. [END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -69,4 +81,4 @@ Organisational structure of one orgnr: items with relation parent (overordnet ch
 
 ---
 
-*Generated from the customer-plane `tools/list` of the release serving production on 2026-09-18. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` of the release serving production (0.3.32) on 2026-09-29. Regenerate rather than edit by hand.*

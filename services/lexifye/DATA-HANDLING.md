@@ -12,20 +12,22 @@ From the [Terms](https://publifye.com/terms.html):
 
 ## Deletion is soft, and recoverable
 
-Deleting is a reversible state, not an erasure. The recovery surface, all callable by you:
+Deleting is a reversible state, not an erasure. The recovery surface callable by you:
 
 | Tool | What it does |
 |---|---|
 | `trash_list` | shows what is deleted but still recoverable |
-| `dict_restore` | brings back a deleted dictionary |
 | `entry_restore` | brings back a deleted entry |
 | `definition_restore` | brings back a deleted definition |
 | `definition_revert` | returns a definition to an earlier version |
 | `definition_history` · `definition_diff` | read and compare earlier versions |
-| `dict_freeze` · `dict_unfreeze` | make a dictionary read-only so nothing can change it |
 
 Version history is per definition, so a single sense can be rolled back without touching the entry
 around it.
+
+Deleting, restoring, freezing and unfreezing a whole dictionary (`dict_delete`, `dict_restore`,
+`dict_freeze`, `dict_unfreeze`) are currently registered as admin-only, so they are not on the
+customer surface; a deleted dictionary is still recoverable, through Publifye.
 
 ## Getting it out
 

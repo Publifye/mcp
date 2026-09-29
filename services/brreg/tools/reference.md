@@ -6,8 +6,8 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | What it does |
 |---|---|
-| [`code_list`](#code_list) | Filter values with counts from the current snapshot: list org_form, municipality, nace or… |
-| [`snapshot_status`](#snapshot_status) | Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag… |
+| [`code_list`](#code_list) | Filter values with counts, from the current snapshot |
+| [`snapshot_status`](#snapshot_status) | Snapshot readiness and provenance |
 
 ---
 
@@ -15,7 +15,10 @@ See [connect](../../../docs/connect.md) to sign in.
 
 **Code List** — read-only, idempotent, closed-world.
 
-Filter values with counts from the current snapshot: list org_form, municipality, nace or sector; query matches a code prefix or description. Use them as entity_search filters. Example: code_list list=org_form query=aksje. Next: entity_search org_form=[<code>]. [END]
+Filter values with counts, from the current snapshot.
+ARGS: list org_form, municipality, nace or sector (required); query matches a code prefix or description text.
+USE: the codes are entity_search and entity_nearby filters.
+Example: code_list list=org_form query=aksje. Next: entity_search org_form=[<code>]. [END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -32,12 +35,16 @@ Filter values with counts from the current snapshot: list org_form, municipality
 
 **Snapshot Status** — read-only, idempotent, closed-world.
 
-Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts (enheter, underenheter, enk, public_bodies, deleted), build and ranking version, suppression count, memory state, caller plane and level, licence, scope and exclusions. detail=true adds latency, cursor, suppression and watcher detail. Example: snapshot_status. Next: entity_search or entity_resolve. [END]
+Snapshot readiness and provenance. No arguments (detail=true adds latency, cursor, suppression and feed detail).
+RETURNS: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts, versions, suppression count, memory state, caller plane and level, licence, scope and exclusions.
+FRESHNESS: updated_through says how far the hourly update feed is applied past the weekly snapshot.
+Example: snapshot_status. Next: entity_search or entity_resolve. [END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `detail` | boolean | no | Add memory, latency, suppression and watcher detail. |
+| `max_bytes` | integer | no | Response byte budget (default 24576). |
 
 ---
 
-*Generated from the customer-plane `tools/list` of the release serving production on 2026-09-18. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` of the release serving production (0.3.32) on 2026-09-29. Regenerate rather than edit by hand.*

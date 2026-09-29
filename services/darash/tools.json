@@ -1,16 +1,16 @@
 {
   "service": "darash",
   "endpoint": "https://darash-api.publifye.com/mcp",
-  "captured": "2026-09-13",
-  "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29, version 0.11.146 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded research bucket — ELS and WRR tools, with the corpus and cache tools that serve them — is callable but is not part of the offering.",
   "counts": {
     "callable_by_a_customer": 42,
     "capability_tools": 34,
     "session_and_cache_plumbing": 8,
     "excluded_ops_and_logging": 13,
     "excluded_admin_only": 0,
-    "excluded_els_wrr_research": 51,
-    "total_on_the_wire": 106
+    "excluded_els_wrr_research": 52,
+    "total_on_the_wire": 107
   },
   "excluded": {
     "ops": [
@@ -61,6 +61,7 @@
       "els_proximity",
       "els_pvalue",
       "els_pvalue_surface",
+      "els_runtime",
       "els_scan",
       "els_search",
       "els_sentences",

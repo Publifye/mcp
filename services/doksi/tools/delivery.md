@@ -6,12 +6,12 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`doc_issue`](#doc_issue) | write | Typeset a document, KEEP it, and return a permanent link that opens it — no login, no ac… |
+| [`doc_issue`](#doc_issue) | write | Typeset a document, KEEP it, and return a permanent link that opens it — no login, no… |
 | [`doc_share`](#doc_share) | write | Typeset a document and hand back a TEMPORARY download link a person can open — no login,… |
 | [`doc_share_revoke`](#doc_share_revoke) | write | Kill a temporary link now, before it expires. Use it the moment a document went to the w… |
-| [`doc_link_rotate`](#doc_link_rotate) | write | Replace a document's link with a new one. The old link stops working immediately, the do… |
+| [`doc_link_rotate`](#doc_link_rotate) | write | Replace a document's link with a new one |
 | [`doc_link_revoke`](#doc_link_revoke) | write | Kill a document's link with no replacement. Anyone opening it afterwards is told the lin… |
-| [`doc_mail_to_me`](#doc_mail_to_me) | write | Email an issued document to the address you are signed in as. The document is attached a… |
+| [`doc_mail_to_me`](#doc_mail_to_me) | write | Email an issued document to the address you are signed in as |
 
 ---
 
@@ -25,10 +25,13 @@ The link is the credential, so treat it like one: it is not indexed anywhere and
 
 The stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.
 
+A COVENANT (kind covenant, any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit, with issue:true for a link), a marriage pass or a Doksi plan.
+
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `document` | object | yes | The whole document object |
 | `filename` | string | no | What the person sees when saving, e.g. oppsigelse.pdf |
+| `name` | string | no | Your private name for the kept document (1-80 characters; never printed) |
 
 ## `doc_share`
 
@@ -36,14 +39,15 @@ The stored bytes never change afterwards. A template fix or a font change does n
 
 Typeset a document and hand back a TEMPORARY download link a person can open — no login, no account, and it expires. Use this when somebody needs the document itself rather than the bytes: paste the link into a chat or an email and they click it.
 
-The link is private and short-lived by design. It is not published anywhere, it never reaches the open web, and it can be killed early with doc_share_revoke. Validation runs first: an incomplete document produces the same problem list doc_validate returns and nothing is uploaded.
+The link is private and short-lived by design. It is not published anywhere, it never reaches the open web, and it can be killed early with doc_share_revoke. Validation runs first: an incomplete document produces the same problem list doc_validate returns and nothing is uploaded. A COVENANT (kind covenant, any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit), a marriage pass or a Doksi plan. A covenant YOU paid for with doc_compose_credit(issue:true) is yours: pass its id instead of document and the issued PDF is shared at no further charge; so is its signed copy (the id signature_request_render returns). A document whose link was withdrawn (doc_link_revoke) is not shared until doc_link_rotate reinstates it.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `document` | object | yes | The whole document object |
+| `document` | object | no | The whole document object (or give id instead) |
 | `filename` | string | no | What the person sees when saving, e.g. oppsigelse.pdf |
+| `id` | string | no | Instead of document: the id of a document already issued (e.g. by doc_compose_credit with issue:true); its stored PDF is shared unchanged |
 | `title` | string | no | What the document IS, in human words |
-| `ttl_seconds` | integer | no | How long the link works. Default 3600 (one hour), minimum 60, maximum 604800 (one week). The value actually granted is returned — it is clamped, and reporting what was asked for rather than what was allowed is how a person gets told the wrong expiry. |
+| `ttl_seconds` | integer | no | How long the link works. Default 3600 (one hour), minimum 60, maximum 604800 (one week). The value actually granted is returned — it is clamped, and reporting … |
 
 ## `doc_share_revoke`
 
@@ -60,6 +64,8 @@ Kill a temporary link now, before it expires. Use it the moment a document went 
 **Doc Link Rotate** — writes, closed-world · access: `write`.
 
 Replace a document's link with a new one. The old link stops working immediately, the document is untouched, and you get a fresh link to send. Use this when a link was forwarded further than intended.
+
+On a document whose link was withdrawn with doc_link_revoke, rotating REINSTATES it: the new link is public again (anyone holding it can open the document), and doc_share, doc_mail_to_me and signature_request_create accept the document by id again.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -85,11 +91,13 @@ IT GOES ONLY TO YOU. doksi does not email documents to anyone else, and there is
 
 Reports the document as QUEUED, never as delivered: pubmail accepts it for sending and reports failures separately, so 'sent' would be a claim this service cannot make.
 
+A COVENANT (any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit), a marriage pass or a Doksi plan. A covenant you paid for with doc_compose_credit(issue:true) is yours to mail by its id, at no further charge.
+
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | The document id from doc_issue |
 
 ---
 
-*Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` of the release serving production (0.1.85) on 2026-09-29.
+Regenerate rather than edit by hand.*

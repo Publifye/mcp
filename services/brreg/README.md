@@ -2,8 +2,9 @@
 
 **Brreg gives an AI assistant Brønnøysundregistrene's Enhetsregisteret as structured data: look an
 organisation up by organisasjonsnummer, turn a name into candidates without a silent pick, search
-with filters, regular expressions or a point and a radius, and see how organisations belong
-together — with key financials from Regnskapsregisteret when you ask for them. It runs as a hosted
+with filters, regular expressions or a point and a radius, find who is registered near a place and
+how far apart two are, and see how organisations belong together — with key financials from
+Regnskapsregisteret, and an industry benchmark from Statistics Norway, when you ask for them. It runs as a hosted
 MCP server over HTTPS.**
 
 | | |
@@ -14,7 +15,7 @@ MCP server over HTTPS.**
 | Registry | [`pro.publifye/brreg`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://brreg.publifye.com> |
 | What it solves | <https://publifye.com/brreg> |
-| Capability tools | **6** ([full schemas](tools.json)) |
+| Capability tools | **9** ([full schemas](tools.json)) |
 
 ## Connect
 
@@ -31,14 +32,14 @@ for the other servers: **[../../docs/connect.md](../../docs/connect.md)**.
 
 ## The register
 
-The edition the live service was serving on **2026-09-15**, acquired that morning from
+The edition the live service was serving on **2026-09-29**, acquired that morning from
 Brønnøysundregistrene's bulk files:
 
 | | |
 |---|---|
-| Main units (enheter) | 1,174,268 |
-| Sub-units (underenheter) | 863,374 |
-| Sole proprietorships (ENK), among the main units | 462,855 |
+| Main units (enheter) | 1,175,793 |
+| Sub-units (underenheter) | 866,095 |
+| Sole proprietorships (ENK), among the main units | 463,827 |
 
 The register is rebuilt from the full files every week. An entry Brønnøysundregistrene removes from
 open data is dropped within 24 hours. `snapshot_status` returns the age and counts of whichever
@@ -60,19 +61,21 @@ attribution and names the edition it came from, so an answer can be traced back 
 ## What the tools do
 
 Every tool is documented with its exact description, annotations and input schema —
-6 in all, generated from the service's own `tools/list`, never written by hand.
+9 in all, generated from the service's own `tools/list`, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
 | **[Lookup and name resolution](tools/lookup.md)** | You have a number or a name — which organisation is it? | 2 |
 | **[Search and structure](tools/search.md)** | Which organisations match, and how do they belong together? | 2 |
+| **[Place and distance](tools/place.md)** | Who is registered near here, and how far apart are they? | 2 |
+| **[Key financials](tools/financials.md)** | What has it filed, and what do the figures say? | 1 |
 | **[Codes and freshness](tools/reference.md)** | Which filter values exist, and which edition of the register is this? | 2 |
 
-Machine-readable: **[tools.json](tools.json)** carries all 6 callable tools (6 capability, 0 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
+Machine-readable: **[tools.json](tools.json)** carries all 9 callable tools (9 capability, 0 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
 
-All six are read-only. `entity_lookup` is the one marked open-world: with `live=true` it checks the
-entry against data.brreg.no, and when `fields` includes `financials` or `filings` it goes to
-Regnskapsregisteret.
+All nine are read-only. Two are marked open-world: `entity_lookup`, which with `live=true` checks
+the entry against data.brreg.no, and `entity_financials`, which goes to Regnskapsregisteret for
+figures the service does not yet hold.
 
 ### Four ways to narrow a search
 
@@ -114,9 +117,34 @@ register get no point and never appear in a radius search.
 **Cursor.** Paging has no depth limit: follow the cursor to the end of the result set. `offset` is a
 first-call convenience only, capped at 10,000.
 
+### Near a place, and how far
+
+`entity_nearby` lists the organisations registered within a radius of a point, nearest first. The
+centre is either `lat` and `lon` or an `orgnr` — that organisation's own registered address, so
+"who is near this company" is one call; the anchor itself is left out of its results. The same caps
+apply as for a radius search: 10 km on its own, 50 km with another filter.
+
+`entity_distance` measures from one place to up to 50 others and answers nearest first. A place is
+an `orgnr` or a `lat`/`lon` pair. The number is the **straight-line** distance between two
+registered address points — not a driving or walking distance and not a travel time; across a fjord
+the road can be many times longer. A place with no usable point is still answered, with
+`located: false` and the reason, never silently dropped.
+
+### Money: `entity_financials`
+
+`entity_financials` is the tool for figures. `include` chooses `key_figures` (the default),
+`filings` — the years actually filed, which also answers for banks and insurers, whose key figures
+Regnskapsregisteret does not serve — and `sector_benchmark`, which sets the figures against
+Statistics Norway's statistics for the industry and size band. The benchmark is per industry, never
+per company, and names the level that answered. Figures are fetched from Regnskapsregisteret only
+when this tool asks, then stored; a year already held is not fetched again. `document_year` hands
+over that year's filed accounts as an expiring link (see below).
+
 ### What a lookup can add
 
-`entity_lookup` returns the register entry. Ask for more in `fields`:
+`entity_lookup` returns the register entry. Ask for more in `fields` — `financials` and `filings`
+are still accepted here, fetched only when asked for, though `entity_financials` is the front door
+for them:
 
 | `fields` value | What you get |
 |---|---|
@@ -180,6 +208,9 @@ The same regulation's third paragraph forbids using information from grunnboken 
 advertising or marketing without the consent of the party it concerns. That applies to you as a
 caller, not only to us.
 
+**Industry benchmarks** come from Statistics Norway (SSB) tables 12910 and 12936 under CC BY 4.0. A
+result that carries a benchmark carries SSB's attribution block beside the NLOD one.
+
 ## Your questions
 
 See **[DATA-HANDLING.md](DATA-HANDLING.md)** for what is logged about a call — never its arguments —
@@ -204,7 +235,7 @@ Access needs a Brreg plan on a Publifye account. The current plans:
 |---|---|---|
 | Personal | NOK 49/month or NOK 490/year, incl. VAT | up to 200 |
 | Business | NOK 480/month or NOK 4,800/year, excl. VAT (NOK 600 / NOK 6,000 incl. 25% VAT) | up to 2,500 |
-| Self-hosted | in development, by quote — [request one](https://brreg.publifye.com/en/store) | no daily quota |
+| Self-hosted | in development, by agreement — NOK 9,890/year excl. VAT; [request a quote](https://brreg.publifye.com/en/store) | no daily quota |
 
 Payment is by card at checkout, through Stripe. Plans and prices can change; **the current ones are
 always on <https://brreg.publifye.com>**, and where this page and the site differ, the site is right.

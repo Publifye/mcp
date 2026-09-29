@@ -28,13 +28,15 @@ Only an organisation number, and only when you ask for something that needs Brø
 
 | When | What is sent | To |
 |---|---|---|
+| `entity_financials` (key figures, filings) for a year not yet held | the organisasjonsnummer | Regnskapsregisteret's open API at data.brreg.no |
+| `entity_financials` with `document_year` | the organisasjonsnummer and the year | Regnskapsregisteret's open API at data.brreg.no |
 | `entity_lookup` with `fields` including `financials` | the organisasjonsnummer | Regnskapsregisteret's open API at data.brreg.no |
 | `entity_lookup` with `fields` including `filings` | the organisasjonsnummer | Regnskapsregisteret's open API at data.brreg.no |
 | `entity_lookup` with `document_year` | the organisasjonsnummer and the year | Regnskapsregisteret's open API at data.brreg.no |
 | `entity_lookup` with `live=true` | the organisasjonsnummer | Enhetsregisteret's open API at data.brreg.no |
 
-Nothing else reaches the network. Search, name resolution, structure, codes, map points, parcels and
-buildings are all answered from the weekly edition held on disk, so a radius search sends nothing
+Nothing else reaches the network. Search, name resolution, structure, codes, map points, distances, industry benchmarks,
+parcels and buildings are all answered from the weekly edition held on disk, so a radius search sends nothing
 anywhere — least of all to a map provider.
 
 Key figures fetched this way are stored against the organisation number and served to later calls;

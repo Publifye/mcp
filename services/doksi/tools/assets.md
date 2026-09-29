@@ -6,7 +6,7 @@ See [connect](../../../docs/connect.md) to sign in.
 
 | Tool | Access | What it does |
 |---|---|---|
-| [`asset_upload_begin`](#asset_upload_begin) | write | Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the … |
+| [`asset_upload_begin`](#asset_upload_begin) | write | Reserve an id for a mark — a signature, a logo, a seal, a letterhead, or corner artwork —… |
 | [`asset_status`](#asset_status) | read | Where a mark is: awaiting_upload, processing, ready, or failed with the reason.
 
 A docum… |
@@ -17,13 +17,13 @@ A docum… |
 
 **Asset Upload Begin** — writes, closed-world · access: `write`.
 
-Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the URL to POST the image to. THE ID COMES FIRST and the bytes follow: this call moves no image data.
+Reserve an id for a mark — a signature, a logo, a seal, a letterhead, or corner artwork — and get back the URL to POST the image to. THE ID COMES FIRST and the bytes follow: this call moves no image data.
 
 FORMATS: send PNG or JPEG. It is stored as PNG with transparency whatever you send. SVG is refused — export it to PNG first; at 300 dpi a vector mark loses nothing at print size.
 
 Ask for several at once with `slots`: a letterhead and a signature is ONE call, not two conversational turns.
 
-THE SLOT DECLARES THE SIZE — signature (62×12 mm), logo (50×14 mm), seal (28×28 mm), letterhead (80×18 mm). A larger upload buys a better-resolution mark in the same box, never a bigger one, so adding a signature never reflows a page.
+THE SLOT DECLARES THE SIZE — signature (62×12 mm), logo (50×14 mm), seal (28×28 mm), letterhead (80×18 mm), artwork (85×75 mm). A larger upload buys a better-resolution mark in the same box, never a bigger one, so adding a signature never reflows a page. EXCEPTION: slot artwork stores for an 85x75 mm maximum; covenant content.corner_images sets the printed dimensions and reserves text space. Artwork retains pale colours and existing transparency; upload a transparent PNG for an isolated flower or butterfly.
 
 Near-white is keyed out to transparent on intake and the mark is trimmed to its ink, because a scan on white paper is an opaque rectangle that would cover the ruled line it sits on. Pass keep_background for a crest designed on a coloured field, which keying would destroy.
 
@@ -32,7 +32,7 @@ Then POST the bytes; HTTP 202 means stored and processing asynchronously. Poll a
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `keep_background` | boolean | no | Do not key out the background. For a mark designed on a coloured field. |
-| `slot` | string | no | One of: signature, logo, seal, letterhead |
+| `slot` | string | no | One of: signature, logo, seal, letterhead, artwork |
 | `slots` | array | no | Several slots in one call, instead of `slot`. |
 
 ## `asset_status`
@@ -49,5 +49,5 @@ A document may reference a mark that is not ready yet — that is a normal trans
 
 ---
 
-*Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` of the release serving production (0.1.85) on 2026-09-29.
+Regenerate rather than edit by hand.*

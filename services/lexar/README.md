@@ -52,7 +52,18 @@ richer capability goes into typed inputs and results, not into more tools.
 | **[Context and coverage](tools/context.md)** | What does it connect to, what do its terms mean, and how much can you rely on? | 3 |
 
 Machine-readable: **[tools.json](tools.json)** carries all 7 with full JSON Schema, plus the
-excluded buckets listed by name so the count is auditable.
+excluded buckets listed by name so the count is auditable. One more tool is callable:
+`operator_guide`, a method guide to read once first — which tool for which question, and what
+Lexar does not hold. It is help, not research, and is listed in `tools.json` under
+`help_and_health`.
+
+**Preparatory works.** Lexar holds 29,627 *forarbeider* documents under NLOD 2.0: 23,965 from
+Stortinget (`ST/`) and 5,662 from Nasjonalbiblioteket (`NB/`) — innstillinger, Ot.prp., lovvedtak,
+referater and more. Reading a provision shows pointers to the preparatory works that discuss it;
+`connections` with `kind=forarbeider` lists them, and `read` and `outline` open a document by its
+id. A pointer is offered by default only where its kind of link was hand-checked at 85% precision
+or better; the rest are held and reachable with `include_low_confidence=true`. Prop. and Ot.prp.
+after 2005 are mostly held as designations only, not as text.
 
 **`resolve` never picks silently.** A law name or an ambiguous citation returns candidates, because
 guessing which statute someone meant is the one failure a legal research tool must not have.
@@ -62,8 +73,9 @@ guessing which statute someone meant is the one failure a legal research tool mu
 **[PROVENANCE.md](PROVENANCE.md)** records the source, the licence, the measured corpus and the
 gaps. The short version, because it decides whether Lexar can answer your question at all:
 
-Not in the corpus: **court decisions**, **preparatory works** (*forarbeider*), **local
-regulations**, **English translations**, and **historical consolidated versions**. So *no hit does
+Not in the corpus: **court decisions**, **local regulations**, **English translations**,
+**historical consolidated versions**, and most **Prop. and Ot.prp. after 2005** (held as
+designations, not text). So *no hit does
 not mean no law* — it may mean the answer lives somewhere Lexar does not hold.
 
 And a document being present is not proof that every provision in it is in force. Publication,

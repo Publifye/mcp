@@ -14,6 +14,7 @@ runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://audiobible.publifye.com> · NB2026 at <https://audiobible.publifye.com/nb2026> |
+| YouTube | [Ruth — Audio Bible (World English Bible)](https://www.youtube.com/playlist?list=PLafP-kvSDbS8) on the [Publifye channel](https://www.youtube.com/@publifyeofficial) |
 | Capability tools | **10** ([full schemas](tools.json)) |
 
 ## Connect
@@ -50,10 +51,18 @@ is public domain; the chapter pages are plain server-rendered HTML that anyone c
   as a ZIP on the annual plan. `my_allowance` states what is left in the rolling 24 hours before an
   assistant promises a download it cannot deliver.
 
+## Watch it read aloud on YouTube
+
+The book of Ruth, all four chapters from the World English Bible, is on YouTube as a playlist:
+**[Ruth — Audio Bible (World English Bible)](https://www.youtube.com/playlist?list=PLafP-kvSDbS8)**,
+on Publifye's channel, **[@publifyeofficial](https://www.youtube.com/@publifyeofficial)**. Each
+video is one chapter, read aloud with the text on screen — for example
+[Ruth 3](https://www.youtube.com/watch?v=Zq91hS--vDE).
+
 ## What the tools do
 
 Every tool is documented with its exact description, annotations and input schema — 10 in all,
-generated from the service's own registry, never written by hand.
+generated from the service's own `tools/list`, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
@@ -61,8 +70,8 @@ generated from the service's own registry, never written by hand.
 | **[What is recorded](tools/catalogue.md)** | Which books exist, and how much has been read aloud? | 4 |
 
 Machine-readable: **[tools.json](tools.json)** carries all 10 with full JSON Schema, plus every
-excluded bucket listed by name so the count is auditable. 35 staff-only admin tools (recording
-runs, voice options, deletion and restore, batch narration) are excluded from the customer surface.
+excluded bucket listed by name so the count is auditable. 37 staff-only admin tools (recording
+runs, voice options, deletion and restore, batch narration, search-engine notification) are excluded from the customer surface.
 
 ## What it does not do
 

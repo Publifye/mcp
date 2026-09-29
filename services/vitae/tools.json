@@ -1,16 +1,16 @@
 {
   "service": "vitae",
   "endpoint": "https://vitae.publifye.com/mcp",
-  "captured": "2026-09-24",
-  "how_this_was_made": "Marshalled from the service's own amcp registry on a clean checkout of the source serving production on 2026-09-24, version 0.2.63. Registration is guarded on the store and the document writer, so the dump passes non-nil ones — with nils it silently yields only the status and admin tools. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29, version 0.2.69 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable.",
   "counts": {
     "callable_by_a_customer": 44,
     "capability_tools": 42,
     "session_and_cache_plumbing": 0,
     "excluded_help_and_health": 2,
-    "excluded_admin_only": 7,
+    "excluded_admin_only": 9,
     "excluded_ops_and_logging": 10,
-    "total_on_the_wire": 61
+    "total_on_the_wire": 63
   },
   "excluded": {
     "help_and_health": [
@@ -24,7 +24,9 @@
       "admin_identity_unlink",
       "admin_slug_release",
       "admin_system_status",
-      "cv_delete"
+      "cv_delete",
+      "indexnow_run",
+      "indexnow_status"
     ],
     "ops": [
       "clear_server_logs",
@@ -54,6 +56,7 @@
         "title": "CV Create"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -97,6 +100,7 @@
         "title": "CV List"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {},
         "type": "object"
       }
@@ -115,6 +119,7 @@
         "title": "CV Get"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "description": "the document id",
@@ -146,6 +151,7 @@
         "title": "CV Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -179,6 +185,7 @@
         "title": "CV Validate"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
             "description": "the JSON Resume document to check",
@@ -205,6 +212,7 @@
         "title": "CV Import"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -247,6 +255,7 @@
         "title": "Import Stage"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -281,6 +290,7 @@
         "title": "Import Confirm"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -314,6 +324,7 @@
         "title": "CV Export"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "allow_partial": {
             "description": "return the editions that ARE readable, with an explicit problems list, instead of refusing. Default false: a partial export must never be mistaken for a whole one.",
@@ -347,6 +358,7 @@
         "title": "Basics Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "basics": {
             "description": "snake_case. name, label, email, phone, url, location{city, region, country_code, address, postal_code}. Only the keys present are changed; \"\" clears a field.",
@@ -381,6 +393,7 @@
         "title": "Section Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -431,6 +444,7 @@
         "title": "Entry Add"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -494,6 +508,7 @@
         "title": "Entry Update"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -539,6 +554,7 @@
         "title": "Entry Delete"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -579,6 +595,7 @@
         "title": "Entry Move"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -616,6 +633,7 @@
         "title": "Entry Add Pair"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -659,6 +677,7 @@
         "title": "Entry Update Pair"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -708,6 +727,7 @@
         "title": "Entry Delete Pair"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -746,6 +766,7 @@
         "title": "Education Add"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -779,6 +800,7 @@
         "title": "Education Update"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -819,6 +841,7 @@
         "title": "Education Delete"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -854,6 +877,7 @@
         "title": "Parity Check"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -887,6 +911,7 @@
         "title": "Versions Get"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -912,6 +937,7 @@
         "title": "Versions Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "confirm_destroy": {
             "description": "required when LOWERING: the exact number of versions this will destroy",
@@ -947,6 +973,7 @@
         "title": "CV History"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -976,6 +1003,7 @@
         "title": "CV Changelog"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1009,6 +1037,7 @@
         "title": "CV Diff"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1058,6 +1087,7 @@
         "title": "CV Revert"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1092,6 +1122,7 @@
         "title": "CV Restore"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "at": {
             "description": "RFC3339 timestamp, e.g. 2026-08-11T09:00:00Z. Times come from cv_history.",
@@ -1122,6 +1153,7 @@
         "title": "CV Cherry Pick"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1172,6 +1204,7 @@
         "title": "Visibility Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1214,6 +1247,7 @@
         "title": "Link Rotate"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1239,6 +1273,7 @@
         "title": "PDF Uuid Rotate"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1264,6 +1299,7 @@
         "title": "Relay Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1294,6 +1330,7 @@
         "title": "Contact Sync"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "contact": {
             "properties": {
@@ -1347,6 +1384,7 @@
         "title": "CV Render"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "audience": {
             "description": "omit for BOTH variants",
@@ -1388,6 +1426,7 @@
         "title": "CV PDF Link"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1417,6 +1456,7 @@
         "title": "Render Status"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1446,6 +1486,7 @@
         "title": "Photo Get"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1475,6 +1516,7 @@
         "title": "Photo Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "content_type": {
             "description": "optional. \"image/jpeg\" or \"image/png\". If supplied it must MATCH what the bytes decode as.",
@@ -1509,6 +1551,7 @@
         "title": "Photo Clear"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"
@@ -1534,6 +1577,7 @@
         "title": "Photo Visibility Set"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "cv_id": {
             "type": "string"

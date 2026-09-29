@@ -1,25 +1,21 @@
 # Dictionaries
 
-**Create a dictionary, set its fields, freeze it, recover it.** 14 Lexifye MCP tools, listed below with the exact
+**Create a dictionary, set its fields, share and transfer it.** 10 Lexifye MCP tools, listed below with the exact
 description and input schema the server itself returns. Endpoint: `https://lexifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
 | [`dict_create`](#dict_create) | Create a new dictionary |
-| [`dict_delete`](#dict_delete) | Delete a dict |
 | [`dict_enrich`](#dict_enrich) | Run Darash Strong's enrichment on a dict NOW: scan its definitions for referenced… |
-| [`dict_freeze`](#dict_freeze) | ADMIN |
 | [`dict_get`](#dict_get) | Fetch a dict by id with a PAGE of its entries and their definitions inlined |
 | [`dict_group_add`](#dict_group_add) | Attach a GROUP to a dict so every member of the group becomes a content editor of it (resolved… |
 | [`dict_group_remove`](#dict_group_remove) | Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any… |
 | [`dict_list`](#dict_list) | List the dictionaries you OWN, newest first |
 | [`dict_list_for_user`](#dict_list_for_user) | SERVICE/ADMIN ONLY |
 | [`dict_replace`](#dict_replace) | Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring… |
-| [`dict_restore`](#dict_restore) | Restore a soft-deleted dict, with every entry, definition, version history and private note… |
 | [`dict_set_field`](#dict_set_field) | Atomically set ONE field on a dict by key |
 | [`dict_transfer`](#dict_transfer) | Hand ownership of YOUR dictionary to another user |
-| [`dict_unfreeze`](#dict_unfreeze) | ADMIN |
 
 ---
 
@@ -43,26 +39,6 @@ Create a new dictionary. Author is stamped from the caller's pubcontacts Contact
 | `owner_id` | string | no | SERVICE/ADMIN ONLY: the pubhub 'idu…' id to own the new dict (on-behalf create). Omit as a user — the owner is your own identity. |
 | `title` | string | yes |  |
 
-## `dict_delete`
-
-**Dict Delete** — writes, closed-world.
-
-Delete a dict. Requires admin (owner).
-
---- SOFT BY DEFAULT ---
-  The dict moves to the trash: it leaves every listing but keeps every entry, definition, version history and private note, and dict_restore brings it back whole for 30 days. List what is in there with dict_list(include_deleted=true) — you do not need to have kept the id.
-  The plan slot is freed immediately.
-
---- purge=true ---
-  IRREVERSIBLE. Hard-purges the dict, every entry and definition, all indexes, the collab rosters, the audit stream, the rendered artifacts and the <uuid>.json export, right now. Use it only when the content genuinely must not remain — never as a tidier version of the default.
-  It also records a durable PURGE TOMBSTONE, so the dictionary does not come back from the disaster-recovery mirror the way it used to. The mirror is add-only, so the stored copy is SUPPRESSED rather than deleted; ask an operator for admin_purge_tombstone(action:"redact") if the content must actually leave it. The purge is refused outright if the tombstone cannot be recorded — nothing is destroyed in that case.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `dict_id` | string | yes | The 'idy...' id of the dict. |
-| `id` | string | no | DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead. |
-| `purge` | boolean | no | IRREVERSIBLE hard delete. Omit for the recoverable default. |
-
 ## `dict_enrich`
 
 **Dict Enrich** — writes, closed-world.
@@ -82,22 +58,6 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 |---|---|---|---|
 | `depth` | integer | no |  |
 | `dict_id` | string | yes |  |
-
-## `dict_freeze`
-
-**Dict Freeze** — writes, closed-world.
-
-ADMIN. Apply a CANONICAL LOCK to a dictionary — the recoverable take-down. Use this FIRST when responding to an abuse report: it stops the dictionary being changed while you investigate, and destroys nothing.
-  WHILE FROZEN, NOBODY may write to it — not a guest editor, not a group member, and NOT ITS OWNER. Content edits, guest and group management, transfer, delete AND restore are all refused, with a distinct 'frozen' reason so an author is not sent hunting for a permissions problem that does not exist.
-  READING IS UNAFFECTED. dict_get, entry_list and every artifact route keep working for the people already entitled to them. A freeze takes a dictionary out of PLAY, it does not hide it — hiding it is what dict_delete does, and destroying it is admin_dict_delete.
-  Locking the OWNER out of delete/transfer as well is a deliberate divergence from junifye's book_freeze (which locks writes only): a hold the subject of an investigation can dissolve by deleting the evidence, or by handing the dictionary to a second account, is not a hold.
-  An operator keeps every intervention — admin_dict_transfer, admin_guest_remove, admin_dict_delete and dict_unfreeze all still work on a frozen dictionary.
-  Reversible with dict_unfreeze, which puts everything back exactly as it was. Idempotent: re-freezing with the same reason writes no second audit row.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `dict_id` | string | yes | The 'idy...' id of the dict to freeze (NOT the uuid). Find one with admin_dict_list. |
-| `reason` | string | no | Why the hold exists — a ticket reference and one line (max 200 chars). Strongly recommended: it is shown to the owner in the refusal they will receive, and an … |
 
 ## `dict_get`
 
@@ -205,18 +165,6 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 | `replace` | string | yes | Replacement text. May be empty to delete the word. |
 | `whole_word` | boolean | no | Match whole words only (DEFAULT true — the safe rename). false = raw substring replace. |
 
-## `dict_restore`
-
-**Dict Restore** — writes, closed-world.
-
-Restore a soft-deleted dict, with every entry, definition, version history and private note exactly as they were. Works for 30 days after dict_delete. Requires admin (owner), like dict_delete. Find the id with dict_list(include_deleted=true) — the trash bin of your account.
-  The PLAN CAP applies: a restore occupies a concurrent-dict slot exactly as a create does, so restoring while you are already at your limit is refused, naming what to delete or purge first. (It is refused, never partial — the dictionary stays in the trash for the rest of its 30 days.)
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `dict_id` | string | yes | The 'idy...' id of the soft-deleted dict, from dict_list(include_deleted=true). |
-| `id` | string | no | DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead. |
-
 ## `dict_set_field`
 
 **Dict Set Field** — writes, closed-world.
@@ -274,17 +222,6 @@ Hand ownership of YOUR dictionary to another user. Owner only — the mirror of 
 | `new_owner_id` | string | no | DEPRECATED ALIAS for to_owner. Still accepted; pass to_owner instead. |
 | `to_owner` | string | yes | The recipient's lexifye user id (pubhub 'idu...') from guest_list or guest_find_user. NOT an email. (admin_dict_transfer's to_owner also resolves a username; t… |
 
-## `dict_unfreeze`
-
-**Dict Unfreeze** — writes, closed-world.
-
-ADMIN. Lift a dict_freeze. Everything returns exactly as it was — the freeze changed no content, so there is nothing to restore. Idempotent: unfreezing a dictionary that is not frozen is a no-op and says so.
-  ADMIN-ONLY, with no owner-reopenable case. junifye's book_unfreeze is write-level because junifye ALSO auto-locks a book after 30 days of inactivity and an owner must be able to reopen their own soft lock. lexifye has no auto-lock: the only thing that ever freezes a dictionary here is an operator, so the only thing that lifts one is an operator. A write-level unfreeze would hand the subject of an investigation the key to their own hold.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `dict_id` | string | yes | The 'idy...' id of the frozen dict. List open holds with admin_dict_list(frozen:true). |
-
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` (0.5.23) on 2026-09-29. Regenerate rather than edit by hand.*

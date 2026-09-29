@@ -403,17 +403,6 @@
       }
     },
     {
-      "name": "book_freeze",
-      "description": "ADMIN. Place a book under an OPERATOR HOLD — for abuse review, a legal dispute, or an investigation. The hold locks ALL content edits (owner and group alike, overriding listed/publicly_editable) AND b",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Book Freeze"
-      }
-    },
-    {
       "name": "book_get",
       "description": "Get book metadata + artifact URLs: url (the PRIMARY link to share — the short permalink that 301s to the reader; the explicit UUID forms are returned alongside, never instead), uuid_url (the full <uui",
       "annotations": {
@@ -1162,39 +1151,6 @@
       }
     },
     {
-      "name": "indexnow_run",
-      "description": "ADMIN. Trigger an IndexNow submission now. full=true clears the stored content digests and resubmits EVERY URL (the one-time bootstrap); otherwise only content changed since the last run is submitted.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": true,
-        "readOnlyHint": false,
-        "title": "Indexnow Run"
-      }
-    },
-    {
-      "name": "indexnow_status",
-      "description": "ADMIN. Last IndexNow run for this site (public books + sellables): added/changed/removed URL counts, how many were submitted, and whether it was a baseline/skip. Read-only.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": true,
-        "readOnlyHint": false,
-        "title": "Indexnow Status"
-      }
-    },
-    {
-      "name": "isbn_record_acceptance",
-      "description": "ADMIN. Record that a book's OWNER has accepted the ISBN publisher terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "ISBN Record Acceptance"
-      }
-    },
-    {
       "name": "isbn_status",
       "description": "Read your ISBN standing — the fast way to see whether book_isbn_assign will work for you. There is NO separate ISBN allowance to be granted: your paid plan includes one ISBN per book, so what this rep",
       "annotations": {
@@ -1415,17 +1371,6 @@
       }
     },
     {
-      "name": "retail_record_acceptance",
-      "description": "ADMIN. Record that a book's OWNER has accepted the retail terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This e",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Retail Record Acceptance"
-      }
-    },
-    {
       "name": "retail_status",
       "description": "Whether an author is approved to sell books on a live retail shelf, and what the remaining gates are. Answers 'can this author put a book on sale?' without needing an admin. Omit owner_id for yourself",
       "annotations": {
@@ -1445,17 +1390,6 @@
         "openWorldHint": false,
         "readOnlyHint": true,
         "title": "Retail Terms"
-      }
-    },
-    {
-      "name": "rotate_share_links",
-      "description": "ADMIN. Rotate a book's PUBLIC links so previously shared ones stop working — the enforcement teeth behind an unpublish/takedown. The short code ALWAYS rotates (old /<code> 404s). rotate_uuid (default ",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Rotate Share Links"
       }
     },
     {
@@ -1657,28 +1591,6 @@
       }
     },
     {
-      "name": "vet_decide",
-      "description": "ADMIN. Vet a pending publication request (see vet_list). decision=approve makes the book PUBLIC (sets listed=true, mints its share aliases, adds it to the public library + search) — this is irreversib",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Vet Decide"
-      }
-    },
-    {
-      "name": "vet_list",
-      "description": "ADMIN. List the books currently awaiting a publication-review decision — the queue fed by publish_request. It covers BOTH vet_state='pending' (queued, awaiting a decision) AND vet_state='stalled' (a P",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Vet List"
-      }
-    },
-    {
       "name": "vet_status",
       "description": "Check whether a book has been approved for public listing, and — if it was rejected — WHY. Returns {book_id, vet_state, vet_reason, listed} — plus reviewed_by while the book is queued (see below). vet",
       "annotations": {
@@ -1702,7 +1614,7 @@
     }
   ],
   "_meta": {
-    "pro.publifye/generated": "2026-09-13",
+    "pro.publifye/generated": "2026-09-29",
     "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/junifye"
   }
 }

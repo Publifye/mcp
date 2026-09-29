@@ -46,12 +46,12 @@ you pay for anything.
 | Server | What it does | Endpoint | Tools | Registry | Reference |
 |---|---|---|---|---|---|
 | **Darash** | Bible research | `https://darash-api.publifye.com/mcp` | 34 | [`pro.publifye/darash`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/darash](services/darash) |
-| **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 151 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
-| **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 63 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
-| **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 6 | [`pro.publifye/brreg`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/brreg](services/brreg) |
+| **Junifye** | Book & study authoring | `https://junifye.publifye.com/mcp` | 143 | [`pro.publifye/junifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/junifye](services/junifye) |
+| **Lexifye** | Dictionary building | `https://lexifye.publifye.com/mcp` | 59 | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexifye](services/lexifye) |
+| **Brreg** | Norwegian company register | `https://brreg.publifye.com/mcp` | 9 | [`pro.publifye/brreg`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/brreg](services/brreg) |
 | **Lexar** | Norwegian law | `https://lexar-api.publifye.com/mcp` | 7 | [`pro.publifye/lexar`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/lexar](services/lexar) |
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
-| **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 22 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
+| **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 30 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
 | **Audio Bible** | Two Bibles, read aloud — WEB and NB2026 | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
 | **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
@@ -113,9 +113,10 @@ recoverable.
 
 ## Brreg — Norwegian organisations, by number or by name
 
-Lookup by organisasjonsnummer, filtered search, and organisational structure over
-Brønnøysundregistrene's Enhetsregisteret, with key financials from Regnskapsregisteret fetched only
-when a call asks for them. A name returns candidates, never a silent pick. Open data under NLOD 2.0,
+Lookup by organisasjonsnummer, filtered search, who is registered near a place and how far apart two
+are, and organisational structure over Brønnøysundregistrene's Enhetsregisteret, with key financials
+from Regnskapsregisteret — and an industry benchmark from Statistics Norway — fetched only when a
+call asks for them. A name returns candidates, never a silent pick. Open data under NLOD 2.0,
 attributed in every successful result; not the authoritative register, no roles or persons, no bulk export.
 
 → **[services/brreg](services/brreg)** · [tool schemas](services/brreg/tools.json) ·
@@ -125,12 +126,14 @@ attributed in every successful result; not the authoritative register, no roles 
 
 6,859 documents from Lovdata: 759 consolidated statutes, 5,112 central regulations and the current
 year's Norsk Lovtidend announcements, with the citation and source URL attached to every passage.
-Seven tools, and the number is fixed by specification rather than by what got built — richer
-capability goes into typed results, not more tools. `resolve` returns candidates and never picks a
-statute silently.
+Preparatory works (*forarbeider*) are held too — 29,627 documents from Stortinget and
+Nasjonalbiblioteket, reachable from the provisions they discuss — though Prop. and Ot.prp. after
+2005 are mostly held as designations only. Seven research tools, and the number is fixed by
+specification rather than by what got built — richer capability goes into typed results, not more
+tools. `resolve` returns candidates and never picks a statute silently.
 
-It is equally explicit about what it does not hold: no court decisions, no preparatory works, no
-local regulations, no historical consolidated versions. **A search returning nothing does not mean
+It is equally explicit about what it does not hold: no court decisions, no local regulations, no
+historical consolidated versions. **A search returning nothing does not mean
 there is no law.** Open data under NLOD 2.0. Source text and navigation, not legal advice.
 
 → **[services/lexar](services/lexar)** · [tool schemas](services/lexar/tools.json) ·
@@ -160,16 +163,17 @@ list, which is exactly what the cap exists to prevent.
 ## Doksi — ask what a kind requires, then write it
 
 Letters, notices, agreements, ceremonial covenants, checklists, meeting agendas and schedules, each
-rendered to a professional PDF. Four of its twenty-two tools exist only so an agent can find out what
+rendered to a professional PDF. Four of its thirty tools exist only so an agent can find out what
 is expected **before** it composes anything — which kinds exist, which blocks a body may hold, and
 what one specific kind demands. An agent that can ask produces far fewer refusals than one that
 learns by being refused.
 
 Signing is a request with a lifecycle, not a flag on a document: create, describe, replace, revoke,
-render, mail. A signer gets an individual link or a QR code, and a revoked link stops working.
+render, mail. A signer gets an individual link or a QR code, and a revoked link stops working. What you issue is
+kept on your account, where you can list, rename, delete and restore it.
 
 **Marriage covenants.** [marriage.publifye.com](https://marriage.publifye.com) uses Doksi to make a
-marriage covenant: the couple's own vows, a Bible verse, their witnesses and one of nine painted or
+marriage covenant: the couple's own vows, a Bible verse, their witnesses and one of twelve painted or
 drawn designs, typeset as a one-page PDF to sign and frame. It is a keepsake, not a civil
 certificate. The assistant connects to the same Doksi server; there is nothing extra to install.
 [More in services/doksi](services/doksi#marriage-covenants-marriagepublifyecom).
@@ -258,9 +262,9 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
 | Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
 | Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
-| Doksi | [doksi.publifye.com](https://doksi.publifye.com) · marriage covenants: [marriage.publifye.com](https://marriage.publifye.com) | — |
-| Timely | [timely.publifye.com](https://timely.publifye.com) | — |
-| Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) | — |
+| Doksi | [doksi.publifye.com](https://doksi.publifye.com) · marriage covenants: [marriage.publifye.com](https://marriage.publifye.com) | [publifye.com/doksi](https://publifye.com/doksi) |
+| Timely | [timely.publifye.com](https://timely.publifye.com) | [publifye.com/timely](https://publifye.com/timely) |
+| Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) · on YouTube: [Ruth, read aloud](https://www.youtube.com/playlist?list=PLafP-kvSDbS8) | — |
 | Vitae | [vitae.publifye.com](https://vitae.publifye.com) | — |
 
 The left column sells the product and gates access. The right column is one
@@ -276,6 +280,7 @@ Norwegian publishing house, Oslo. Organisation number **826774622**
 ([Enhetsregisteret](https://data.brreg.no/enhetsregisteret/api/enheter/826774622) ·
 [Wikidata Q141436507](https://www.wikidata.org/wiki/Q141436507)).
 Company site **[publifye.com](https://publifye.com)** ·
+[YouTube](https://www.youtube.com/@publifyeofficial) ·
 [Privacy](https://publifye.com/privacy.html) · [Terms](https://publifye.com/terms.html)
 
 Licence for this repository: **[CC BY 4.0](LICENSE)**. It covers the documentation and metadata

@@ -11,7 +11,8 @@ by individual link or QR code. It runs as a hosted MCP server over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://doksi.publifye.com> |
-| Capability tools | **22** ([full schemas](tools.json)) |
+| What it solves | <https://publifye.com/doksi> |
+| Capability tools | **30** ([full schemas](tools.json)) |
 
 ## Connect
 
@@ -26,7 +27,7 @@ sign in. The discovery chain is the same as for the other servers:
 ## Ask what a kind requires before writing it
 
 Most document tools accept a blob and fail at render. Doksi is built the other way round, and four of
-its twenty-two tools exist only so an agent can find out what is expected **before** it composes
+its thirty tools exist only so an agent can find out what is expected **before** it composes
 anything: `kind_list` names the document kinds, `purpose_list` the purposes, `block_types` the blocks
 a body may contain, and `doc_requirements` states what one specific kind demands.
 
@@ -42,17 +43,32 @@ while it is still cheap.
 Seven tools cover signing, and the shape is a **request** with its own lifecycle rather than a
 boolean on a document: create it, describe it, fetch it, replace it, revoke it, render it, and mail
 it. A signer receives an individual link or a QR code; a revoked link stops working; rotating a link
-does not invalidate the document it points at.
+does not invalidate the document it points at. A signing request can be made over a document you
+have already kept, by its `id`, and can be given an expiry.
+
+## What you have kept
+
+An issued document is kept on your account. `doc_list` lists what you have kept, newest first, and
+`doc_rename` gives one a private name that is never printed on it or shown to anyone else.
+`doc_delete` stops its link, every temporary share link and every open signing request over it at
+once, and moves it to the trash; `doc_trash` lists what can still be restored and `doc_restore`
+brings it back within 7 days, with a new link. After that it is purged, and the purge is announced
+in advance.
+
+Besides a plan or the daily allowance, a document can be paid for with a purchased credit:
+`doc_credit_balance` shows what is left and when each pack expires, and `doc_compose_credit`
+compiles one PDF against one credit. A refused document is never charged. `doc_access_status` says
+before you compose whether a covenant will come out print-ready or as a watermarked preview.
 
 ## Marriage covenants: marriage.publifye.com
 
 **<https://marriage.publifye.com>** is Doksi's website for marriage covenants. A couple, or their
 pastor or officiant, tells their own AI assistant what the covenant should say: both names, the date
-and place, each person's vow, a Bible verse and the witnesses. They choose one of nine designs and
+and place, each person's vow, a Bible verse and the witnesses. They choose one of twelve designs and
 get back a typeset one-page PDF in A4, or A3 for framing, to sign and hang on the wall.
 
-- **Nine designs.** Four painted in watercolour (Champagne Butterfly, Something Blue, Blush
-  Petunias, Bridal Lilies), four drawn (Together in Bloom, Butterfly Garden, Hearts Entwined, Olive &
+- **Twelve designs.** Seven painted in watercolour (Champagne Butterfly, Something Blue, Blush
+  Petunias, Bridal Lilies, Garden Roses, Blue Iris, Ivory Magnolia), four drawn (Together in Bloom, Butterfly Garden, Hearts Entwined, Olive &
   Promise), and Star & Blossom, with a Star of David, made for a Jewish marriage.
 - **The couple's own words.** Each person writes their own vow. The 1662 Book of Common Prayer vows
   are there as an example of wording. The Bible verse is Ecclesiastes 4:12 unless the couple chooses
@@ -71,8 +87,8 @@ plan; current prices are on <https://marriage.publifye.com/store>.
 
 ## What the tools do
 
-Every tool is documented with its exact description, annotations and input schema — 22 in all,
-generated from the service's own registry, never written by hand.
+Every tool is documented with its exact description, annotations and input schema — 30 in all,
+generated from the service's own `tools/list`, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
@@ -81,8 +97,10 @@ generated from the service's own registry, never written by hand.
 | **[Issue, share and deliver](tools/delivery.md)** | How does someone else get at it, and how do I take it back? | 6 |
 | **[Signatures](tools/signatures.md)** | Who still has to sign, and by which link? | 7 |
 | **[Assets](tools/assets.md)** | How do I get a logo or a mark into a document? | 2 |
+| **[Your documents](tools/kept.md)** | What have I kept, and how do I tidy or recover it? | 5 |
+| **[Access and credits](tools/credits.md)** | Will it print clean, and what does it cost? | 3 |
 
-Machine-readable: **[tools.json](tools.json)** carries all 22 with full JSON Schema, plus every
+Machine-readable: **[tools.json](tools.json)** carries all 30 with full JSON Schema, plus every
 excluded bucket listed by name so the count is auditable.
 
 ## What it does not do

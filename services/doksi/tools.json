@@ -1,16 +1,16 @@
 {
   "service": "doksi",
   "endpoint": "https://doksi.publifye.com/mcp",
-  "captured": "2026-09-22",
-  "how_this_was_made": "Marshalled from the service's own amcp registry — the same registration production runs at boot — on a clean checkout of the source serving production on 2026-09-22, version 0.1.67. Not a capture over the wire: the endpoint requires a signed-in Publifye account. Nothing is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29, version 0.1.85 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable.",
   "counts": {
-    "callable_by_a_customer": 24,
-    "capability_tools": 22,
+    "callable_by_a_customer": 32,
+    "capability_tools": 30,
     "session_and_cache_plumbing": 0,
     "excluded_help_and_health": 2,
     "excluded_admin_only": 0,
     "excluded_ops_and_logging": 10,
-    "total_on_the_wire": 34
+    "total_on_the_wire": 42
   },
   "excluded": {
     "help_and_health": [
@@ -46,6 +46,7 @@
         "title": "Kind List"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "type": "object"
       }
     },
@@ -63,6 +64,7 @@
         "title": "Purpose List"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "type": "object"
       }
     },
@@ -80,6 +82,7 @@
         "title": "Block Types"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "kind": {
             "description": "Restrict to the blocks this kind accepts",
@@ -104,7 +107,7 @@
       "title": "Doc Requirements",
       "kind": "capability",
       "access": "read",
-      "description": "Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Meetings and schedules support qr_url and qr_placement (bottom_center default, top_right, hidden); supplied owner names are printed. Read this before composing. For an application letter pass kind:letter_official and purpose:application. Ask for missing required facts; never invent addresses, qualifications or reference numbers.",
+      "description": "Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Meetings and schedules support qr_url and qr_placement (bottom_center default, top_right, hidden); supplied owner names are printed. Read this before composing. For an application letter pass kind:letter_official and purpose:application. For a letter in the author's exact words — no doksi wording at all, every postal and signing detail required — pass kind:letter_official and verbatim:true. Ask for missing required facts; never invent addresses, qualifications or reference numbers. For kind covenant (EVERY occasion): the print-ready PDF needs one credit (doc_compose_credit), a marriage pass or a Doksi plan; a free account can browse the designs, validate, and compose a watermarked preview (see pricing in the answer).",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -113,6 +116,7 @@
         "title": "Doc Requirements"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "kind": {
             "description": "Document kind",
@@ -131,6 +135,10 @@
           "purpose": {
             "description": "Optional purpose id, for letter_official only",
             "type": "string"
+          },
+          "verbatim": {
+            "description": "letter_official only: the requirements of verbatim mode (content.verbatim:true), where doksi prints only the author's words. Not combinable with purpose.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -144,7 +152,7 @@
       "title": "Doc Validate",
       "kind": "capability",
       "access": "read",
-      "description": "Check a document against its kind's requirements and report EVERY problem at once, never just the first — you cannot see the page, so one problem per call would be a dozen round trips. Each problem carries the exact JSON path to fix, why the field exists, and whether it is missing (you have not filled it in) or malformed (it is filled in wrongly). Does not render a PDF; customer API call limits still apply.",
+      "description": "Check a document against its kind's requirements and report EVERY problem at once, never just the first — you cannot see the page, so one problem per call would be a dozen round trips. Each problem carries the exact JSON path to fix, why the field exists, and whether it is missing (you have not filled it in) or malformed (it is filled in wrongly). Returns no PDF; customer API call limits still apply. A watercolor covenant is typeset once to report in notices any painting a long title or name leaves no room for (it would be left out). For such a covenant notices_checked says whether that typeset COMPLETED: false (with notices_reason) means the artwork was NOT checked — an absent notices list then means unknown, not all clear. If the typeset finds the covenant does not fit its one page, doc_compose would refuse it, so the answer is valid:false with a does_not_fit problem and warning naming what to shorten. notices_checked is absent when no typeset applies (other kinds, and designs without paintings).",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -153,6 +161,7 @@
         "title": "Doc Validate"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
             "description": "The whole document object, as doc_requirements describes it",
@@ -170,7 +179,7 @@
       "title": "Doc Compose",
       "kind": "capability",
       "access": "write",
-      "description": "Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. For formal application letters, including job applications, use kind letter_official with content.purpose.id application; doc_requirements(kind:letter_official, purpose:application) describes the required fields. This creates a PDF; it does not submit an application. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry.",
+      "description": "Compose a document and typeset it in ONE call: validate, render, and return the PDF. This is the tool to use when you have the content. Get a complete JSON example and schema from doc_requirements first. For formal application letters, including job applications, use kind letter_official with content.purpose.id application; doc_requirements(kind:letter_official, purpose:application) describes the required fields. This creates a PDF; it does not submit an application. On a validation failure nothing is rendered and you get the same problem list doc_validate returns, so a refusal is a result to act on rather than an error to retry. notices lists any painting of the design that was left out because a long title or name left it no room, with what to shorten. COVENANTS (kind covenant, EVERY occasion) need one credit, a marriage pass or a Doksi plan: on a free account this returns a watermarked PREVIEW: a 120 dpi picture of the page with PREVIEW or FORHÅNDSVISNING burned in (preview:true, access:free_preview; no text layer) and issue:true is refused. The print-ready covenant uses one credit (doc_compose_credit), a Doksi plan or a marriage pass; tell the user before composing so the preview is no surprise. Every other kind is unchanged on the free tier. preview:true (covenants) asks for that watermarked preview on ANY account, paid or not: nothing is kept or charged, and it cannot be combined with issue. include:[\"image\"] (covenants) adds page 1 as a 120 dpi JPEG for screens that cannot show a PDF: clean for a caller entitled to the clean covenant, the same watermarked picture on a preview (image.watermarked says which).",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -179,13 +188,14 @@
         "title": "Doc Compose"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
             "description": "The whole document object",
             "type": "object"
           },
           "include": {
-            "description": "Which representations to return: pdf (base64 bytes), json (canonical document). Defaults to pdf. Use issue:true with include:[json] for a shareable PDF URL.",
+            "description": "Which representations to return: pdf (base64 bytes), json (canonical document), image (covenants: page 1 as a JPEG, image.bytes_b64). Defaults to pdf. Use issue:true with include:[json] for a shareable PDF URL.",
             "items": {
               "type": "string"
             },
@@ -193,6 +203,14 @@
           },
           "issue": {
             "description": "Also ISSUE the document: keep it and mint a capability link you can hand to somebody. Off by default — composing is cheap and repeatable, issuing keeps a copy.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "With issue:true: your private name for the kept document (1-80 characters; never printed, never in the link). Default for a customer: the names and date",
+            "type": "string"
+          },
+          "preview": {
+            "description": "Covenants only: return the watermarked preview whatever the account holds. Never kept, never charged; refused with issue:true.",
             "type": "boolean"
           }
         },
@@ -216,6 +234,7 @@
         "title": "Doc Get"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "The private document id returned at issuance; not its public PDF token or URL",
@@ -233,7 +252,7 @@
       "title": "Doc Issue",
       "kind": "capability",
       "access": "write",
-      "description": "Typeset a document, KEEP it, and return a permanent link that opens it — no login, no account, no expiry. This is the normal way to deliver a document: give the person the link.\n\nThe link is the credential, so treat it like one: it is not indexed anywhere and it is not guessable, but anyone holding it can open the document. If it reaches the wrong person, doc_link_rotate replaces it and doc_link_revoke kills it — which is exactly what an emailed attachment can never do.\n\nThe stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.",
+      "description": "Typeset a document, KEEP it, and return a permanent link that opens it — no login, no account, no expiry. This is the normal way to deliver a document: give the person the link.\n\nThe link is the credential, so treat it like one: it is not indexed anywhere and it is not guessable, but anyone holding it can open the document. If it reaches the wrong person, doc_link_rotate replaces it and doc_link_revoke kills it — which is exactly what an emailed attachment can never do.\n\nThe stored bytes never change afterwards. A template fix or a font change does not alter a document somebody already received.\n\nA COVENANT (kind covenant, any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit, with issue:true for a link), a marriage pass or a Doksi plan.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -242,6 +261,7 @@
         "title": "Doc Issue"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
             "description": "The whole document object",
@@ -249,6 +269,10 @@
           },
           "filename": {
             "description": "What the person sees when saving, e.g. oppsigelse.pdf",
+            "type": "string"
+          },
+          "name": {
+            "description": "Your private name for the kept document (1-80 characters; never printed)",
             "type": "string"
           }
         },
@@ -263,7 +287,7 @@
       "title": "Doc Share",
       "kind": "capability",
       "access": "write",
-      "description": "Typeset a document and hand back a TEMPORARY download link a person can open — no login, no account, and it expires. Use this when somebody needs the document itself rather than the bytes: paste the link into a chat or an email and they click it.\n\nThe link is private and short-lived by design. It is not published anywhere, it never reaches the open web, and it can be killed early with doc_share_revoke. Validation runs first: an incomplete document produces the same problem list doc_validate returns and nothing is uploaded.",
+      "description": "Typeset a document and hand back a TEMPORARY download link a person can open — no login, no account, and it expires. Use this when somebody needs the document itself rather than the bytes: paste the link into a chat or an email and they click it.\n\nThe link is private and short-lived by design. It is not published anywhere, it never reaches the open web, and it can be killed early with doc_share_revoke. Validation runs first: an incomplete document produces the same problem list doc_validate returns and nothing is uploaded. A COVENANT (kind covenant, any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit), a marriage pass or a Doksi plan. A covenant YOU paid for with doc_compose_credit(issue:true) is yours: pass its id instead of document and the issued PDF is shared at no further charge; so is its signed copy (the id signature_request_render returns). A document whose link was withdrawn (doc_link_revoke) is not shared until doc_link_rotate reinstates it.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -272,13 +296,18 @@
         "title": "Doc Share"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
-            "description": "The whole document object",
+            "description": "The whole document object (or give id instead)",
             "type": "object"
           },
           "filename": {
             "description": "What the person sees when saving, e.g. oppsigelse.pdf",
+            "type": "string"
+          },
+          "id": {
+            "description": "Instead of document: the id of a document already issued (e.g. by doc_compose_credit with issue:true); its stored PDF is shared unchanged",
             "type": "string"
           },
           "title": {
@@ -290,9 +319,6 @@
             "type": "integer"
           }
         },
-        "required": [
-          "document"
-        ],
         "type": "object"
       }
     },
@@ -310,6 +336,7 @@
         "title": "Doc Share Revoke"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "file_id": {
             "description": "The id returned by doc_share",
@@ -327,7 +354,7 @@
       "title": "Doc Link Rotate",
       "kind": "capability",
       "access": "write",
-      "description": "Replace a document's link with a new one. The old link stops working immediately, the document is untouched, and you get a fresh link to send. Use this when a link was forwarded further than intended.",
+      "description": "Replace a document's link with a new one. The old link stops working immediately, the document is untouched, and you get a fresh link to send. Use this when a link was forwarded further than intended.\n\nOn a document whose link was withdrawn with doc_link_revoke, rotating REINSTATES it: the new link is public again (anyone holding it can open the document), and doc_share, doc_mail_to_me and signature_request_create accept the document by id again.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -336,6 +363,7 @@
         "title": "Doc Link Rotate"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "The document id from doc_issue",
@@ -362,6 +390,7 @@
         "title": "Doc Link Revoke"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "The document id from doc_issue",
@@ -379,7 +408,7 @@
       "title": "Doc Mail To Me",
       "kind": "capability",
       "access": "write",
-      "description": "Email an issued document to the address you are signed in as. The document is attached and the link is in the body.\n\nIT GOES ONLY TO YOU. doksi does not email documents to anyone else, and there is no argument that changes that: sending a person's correspondence onward would put our sending reputation behind somebody else's letter. To reach a recipient, send them the document's link yourself — from your own address, under your own name.\n\nReports the document as QUEUED, never as delivered: pubmail accepts it for sending and reports failures separately, so 'sent' would be a claim this service cannot make.",
+      "description": "Email an issued document to the address you are signed in as. The document is attached and the link is in the body.\n\nIT GOES ONLY TO YOU. doksi does not email documents to anyone else, and there is no argument that changes that: sending a person's correspondence onward would put our sending reputation behind somebody else's letter. To reach a recipient, send them the document's link yourself — from your own address, under your own name.\n\nReports the document as QUEUED, never as delivered: pubmail accepts it for sending and reports failures separately, so 'sent' would be a claim this service cannot make.\n\nA COVENANT (any occasion) is refused here on a free account: the print-ready covenant uses one credit (doc_compose_credit), a marriage pass or a Doksi plan. A covenant you paid for with doc_compose_credit(issue:true) is yours to mail by its id, at no further charge.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -388,6 +417,7 @@
         "title": "Doc Mail To Me"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "The document id from doc_issue",
@@ -414,6 +444,7 @@
         "title": "Signature Describe"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
             "description": "Complete Doksi document",
@@ -431,7 +462,7 @@
       "title": "Signature Request Create",
       "kind": "capability",
       "access": "write",
-      "description": "Freeze a complete document revision and create optional signing requests for selected named signature slots. Returns a private overview_url with every selected signer, individual copy links and QRs. Each signer gets a unique single-use UUID, signing_url and qr_page_url (same request, two views). Links expire after 25 minutes; captured ink is private for at most 45 minutes after submission. No email is sent. Creator can show the QR page on a phone; signer may scan it or choose Sign on this phone. Existing signature assets are refused so previews never expose another person's signature. Call signature_request_get for status; replace one slot with signature_request_replace. No signature image download is provided.",
+      "description": "Freeze a complete document revision and create optional signing requests for selected named signature slots. Returns a private overview_url with every selected signer, individual copy links and QRs. Each signer gets a unique single-use UUID, signing_url and qr_page_url (same request, two views). Links expire after expires_in_minutes (default 25, min 5, max 1440; anything else is refused); each request's expires_at is in the response. Captured ink is private until the later of the link deadline and 45 minutes after submission, unless finalized, replaced or revoked earlier. Each submitted request reports retain_until. After drawing, the signer sees the FINAL document with their signature placed exactly as it will be issued and chooses Approve or Sign again (Sign again discards the ink). When every selected slot is approved, doksi issues the signed PDF itself (as signature_request_render with finalize:true), deletes the ink and records issued_document_id/issued_document_url on the collection; the signer gets a link to the final PDF and the link is closed for good. The signing page is Norwegian when the document lang is nb, English otherwise. No email is sent. Creator can show the QR page on a phone; signer may scan it or choose Sign on this phone. Existing signature assets are refused so previews never expose another person's signature. A COVENANT (any occasion) is refused on a free account (it needs one credit, a marriage pass or a Doksi plan); a covenant you paid for with doc_compose_credit(issue:true) is yours: pass its id instead of document. Call signature_request_get for status; replace one slot with signature_request_replace. No signature image download is provided.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -440,10 +471,21 @@
         "title": "Signature Request Create"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "document": {
-            "description": "Complete document with named, unfilled signature slots",
+            "description": "Complete document with named, unfilled signature slots (or give id instead)",
             "type": "object"
+          },
+          "expires_in_minutes": {
+            "description": "Signing link lifetime in minutes (default 25, min 5, max 1440)",
+            "maximum": 1440,
+            "minimum": 5,
+            "type": "integer"
+          },
+          "id": {
+            "description": "Instead of document: the id of an issued document whose source was retained (e.g. from doc_compose_credit with issue:true)",
+            "type": "string"
           },
           "slot_ids": {
             "description": "Exactly the signature slot IDs to request; other slots remain untouched",
@@ -454,7 +496,6 @@
           }
         },
         "required": [
-          "document",
           "slot_ids"
         ],
         "type": "object"
@@ -465,7 +506,7 @@
       "title": "Signature Request Get",
       "kind": "capability",
       "access": "read",
-      "description": "Get owner-only status for a signing collection: document revision, requester, each signer/slot, status, deadlines and pending signing/QR URLs. No signature image, reusable asset reference or signed preview is returned. REST status endpoints are available per UUID for webpages.",
+      "description": "Get owner-only status for a signing collection: document revision, requester, each signer/slot, status (pending, processing, completed = drawn and awaiting the signer's approval, approved, finalized, expired, revoked, failed), link lifetime (expires_in_minutes) and each link's expires_at, pending signing/QR URLs, and issued_document_id/issued_document_url once the signers' approval issued the final PDF (issue_error if that failed; render manually then). No signature image, reusable asset reference or signed preview is returned. REST status endpoints are available per UUID for webpages.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -474,6 +515,7 @@
         "title": "Signature Request Get"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "Signing collection ID",
@@ -491,7 +533,7 @@
       "title": "Signature Request Replace",
       "kind": "capability",
       "access": "write",
-      "description": "Request a new signature for ONE person/slot on the same frozen document. Always creates a new UUID and 25-minute deadline, revokes the old request and deletes its captured ink. Other signers are unchanged. No email is sent automatically.",
+      "description": "Request a new signature for ONE person/slot on the same frozen document. Always creates a new UUID with its own lifetime (expires_in_minutes, default 25, min 5, max 1440), revokes the old request and deletes its captured ink. Other signers are unchanged. Refused once the collection has been issued by approval. No email is sent automatically.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -500,7 +542,14 @@
         "title": "Signature Request Replace"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
+          "expires_in_minutes": {
+            "description": "Lifetime of the new link in minutes (default 25, min 5, max 1440)",
+            "maximum": 1440,
+            "minimum": 5,
+            "type": "integer"
+          },
           "id": {
             "description": "Signing collection ID",
             "type": "string"
@@ -531,6 +580,7 @@
         "title": "Signature Request Revoke"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "Signing collection ID",
@@ -552,7 +602,7 @@
       "title": "Signature Request Render",
       "kind": "capability",
       "access": "write",
-      "description": "Explicitly render and issue the completed document after ALL selected signing slots are completed and their ink is unexpired. Returns a document URL, never raw signature downloads. This keeps an issued PDF containing the signatures; temporary signature capture still expires after 45 minutes. May re-render during retention. Does not send email. finalize:true deletes captured ink immediately after successful issue, preventing subsequent re-rendering.",
+      "description": "Explicitly render and issue the completed document after ALL selected signing slots are completed (or approved) and their ink is unexpired. Usually unnecessary: when every signer approves their preview, doksi issues the document itself and signature_request_get shows issued_document_url. Returns a document URL, never raw signature downloads. This keeps an issued PDF containing the signatures; temporary signature capture expires at each request's retain_until (the later of the link deadline and 45 minutes after submission). Manual rendering is refused while approval is issuing the document. May re-render during retention. Refused while the stored document a collection was created from by id has its link withdrawn (doc_link_revoke): call doc_link_rotate on that document first. Does not send email. finalize:true deletes captured ink immediately after successful issue, preventing subsequent re-rendering.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -561,6 +611,7 @@
         "title": "Signature Request Render"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "finalize": {
             "description": "Delete temporary signature ink after successful issue",
@@ -591,6 +642,7 @@
         "title": "Signature Request Email"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "Signing collection ID",
@@ -618,7 +670,7 @@
       "title": "Asset Upload Begin",
       "kind": "capability",
       "access": "write",
-      "description": "Reserve an id for a mark — a signature, a logo, a seal, a letterhead — and get back the URL to POST the image to. THE ID COMES FIRST and the bytes follow: this call moves no image data.\n\nFORMATS: send PNG or JPEG. It is stored as PNG with transparency whatever you send. SVG is refused — export it to PNG first; at 300 dpi a vector mark loses nothing at print size.\n\nAsk for several at once with `slots`: a letterhead and a signature is ONE call, not two conversational turns.\n\nTHE SLOT DECLARES THE SIZE — signature (62×12 mm), logo (50×14 mm), seal (28×28 mm), letterhead (80×18 mm). A larger upload buys a better-resolution mark in the same box, never a bigger one, so adding a signature never reflows a page.\n\nNear-white is keyed out to transparent on intake and the mark is trimmed to its ink, because a scan on white paper is an opaque rectangle that would cover the ruled line it sits on. Pass keep_background for a crest designed on a coloured field, which keying would destroy.\n\nThen POST the bytes; HTTP 202 means stored and processing asynchronously. Poll asset_status until ready or failed before rendering. HTTP 503 with Retry-After means capacity is busy; retry the same upload ticket. A ticket is single-use and expires in 30 minutes; a failed upload SPENDS it, so a retry needs a fresh begin.",
+      "description": "Reserve an id for a mark — a signature, a logo, a seal, a letterhead, or corner artwork — and get back the URL to POST the image to. THE ID COMES FIRST and the bytes follow: this call moves no image data.\n\nFORMATS: send PNG or JPEG. It is stored as PNG with transparency whatever you send. SVG is refused — export it to PNG first; at 300 dpi a vector mark loses nothing at print size.\n\nAsk for several at once with `slots`: a letterhead and a signature is ONE call, not two conversational turns.\n\nTHE SLOT DECLARES THE SIZE — signature (62×12 mm), logo (50×14 mm), seal (28×28 mm), letterhead (80×18 mm), artwork (85×75 mm). A larger upload buys a better-resolution mark in the same box, never a bigger one, so adding a signature never reflows a page. EXCEPTION: slot artwork stores for an 85x75 mm maximum; covenant content.corner_images sets the printed dimensions and reserves text space. Artwork retains pale colours and existing transparency; upload a transparent PNG for an isolated flower or butterfly.\n\nNear-white is keyed out to transparent on intake and the mark is trimmed to its ink, because a scan on white paper is an opaque rectangle that would cover the ruled line it sits on. Pass keep_background for a crest designed on a coloured field, which keying would destroy.\n\nThen POST the bytes; HTTP 202 means stored and processing asynchronously. Poll asset_status until ready or failed before rendering. HTTP 503 with Retry-After means capacity is busy; retry the same upload ticket. A ticket is single-use and expires in 30 minutes; a failed upload SPENDS it, so a retry needs a fresh begin.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -627,13 +679,14 @@
         "title": "Asset Upload Begin"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "keep_background": {
             "description": "Do not key out the background. For a mark designed on a coloured field.",
             "type": "boolean"
           },
           "slot": {
-            "description": "One of: signature, logo, seal, letterhead",
+            "description": "One of: signature, logo, seal, letterhead, artwork",
             "type": "string"
           },
           "slots": {
@@ -661,6 +714,7 @@
         "title": "Asset Status"
       },
       "inputSchema": {
+        "additionalProperties": false,
         "properties": {
           "id": {
             "description": "The asset id from asset_upload_begin",
@@ -670,6 +724,231 @@
         "required": [
           "id"
         ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_access_status",
+      "title": "Doc Access Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "What YOUR account gets for a covenant right now: print_ready true (a Doksi plan, a live marriage pass) or false (watermarked previews; one credit per print-ready covenant with doc_compose_credit), and where to buy. Read it before composing so the answer is no surprise. Requires a customer login.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Access Status"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_compose_credit",
+      "title": "Doc Compose Credit",
+      "kind": "capability",
+      "access": "write",
+      "description": "Compile one PDF using ONE purchased credit. Optional alternative to the allowance/subscription: doc_compose is unchanged. Validate first with doc_validate (no credit). Requires a customer login and a stable request_id: after a network error reuse exactly the same request_id and arguments; the retry returns the saved result without a second charge. A refused document is never charged and a failed compilation returns its reserved credit. Packs expire independently; read doc_credit_balance before spending. RECOMMENDED FOR A COVENANT: issue:true. One credit then gives the clean PDF AND an id and link, and that covenant is the buyer's: doc_mail_to_me(id), doc_share(id) and signature_request_create(id) serve it at no further charge, to the paying account only. Without issue:true you get the PDF bytes and nothing is kept. This is how a free account gets a print-ready COVENANT (any occasion): one credit, a clean PDF with no watermark (doc_compose on the free tier returns only a watermarked preview of one; a marriage pass or a Doksi plan composes it clean with doc_compose).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Compose Credit"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "document": {
+            "description": "Complete document object",
+            "type": "object"
+          },
+          "include": {
+            "description": "pdf and/or json; defaults to pdf",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "issue": {
+            "description": "Also keep the PDF and create a shareable URL",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "With issue:true: your private name for the kept document (1-80 characters; never printed). Default: the names and date",
+            "type": "string"
+          },
+          "request_id": {
+            "description": "Unique id for this compilation (1..128 letters, digits, dots, hyphens, underscores); reuse on retries",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "document"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_credit_balance",
+      "title": "Doc Credit Balance",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read your remaining compilation credits, reserved credits, and each pack's expiry. Only your authenticated customer account can be read.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Credit Balance"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_delete",
+      "title": "Doc Delete",
+      "kind": "capability",
+      "access": "write",
+      "description": "Delete one of YOUR kept documents. At once its link, every temporary share link and every open signing request over it stop working. It moves to your trash (doc_trash) and can be restored with doc_restore for 7 days; after that it is purged for good (the purge is announced in advance, never silent).",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Delete"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "The document id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_list",
+      "title": "Doc List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the documents YOUR customer account has kept (issued), newest first: id, your private name, kind, title, issue date and the link. Only your own documents; deleted ones are in doc_trash. Requires a customer login.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc List"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "description": "Only documents of this kind, e.g. covenant",
+            "type": "string"
+          },
+          "occasion": {
+            "description": "Only covenants of this occasion, e.g. marriage",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_rename",
+      "title": "Doc Rename",
+      "kind": "capability",
+      "access": "write",
+      "description": "Give one of YOUR kept documents a private name (1-80 characters), e.g. \"Anna & Erik — church copy\". The name is only for your list: it is never printed on the document, never in its link, never in any mail to anyone else.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Rename"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "The document id",
+            "type": "string"
+          },
+          "name": {
+            "description": "The new name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_restore",
+      "title": "Doc Restore",
+      "kind": "capability",
+      "access": "write",
+      "description": "Restore one of YOUR deleted documents from the trash, within its restore window. It gets a NEW link; the link it had before stays dead.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Doc Restore"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "The document id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "doc_trash",
+      "title": "Doc Trash",
+      "kind": "capability",
+      "access": "read",
+      "description": "List YOUR deleted documents that can still be restored, with the moment each is purged for good.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Doc Trash"
+      },
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "description": "Only documents of this kind, e.g. covenant",
+            "type": "string"
+          },
+          "occasion": {
+            "description": "Only covenants of this occasion, e.g. marriage",
+            "type": "string"
+          }
+        },
         "type": "object"
       }
     }

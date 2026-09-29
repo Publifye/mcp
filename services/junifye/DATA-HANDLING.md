@@ -22,7 +22,9 @@ Deleting is a reversible state, not an erasure. The recovery surface, all callab
 | `chapter_version_get` · `chapter_history` | read any earlier version |
 | `chapter_diff` | word-level diff between versions |
 | `book_cover_restore` · `book_cover_versions` | the same for covers |
-| `book_freeze` · `book_unfreeze` | make a book read-only so nothing can change it |
+| `book_unfreeze` | reopens a publicly editable book that locked itself after 30 idle days |
+
+Placing a book under a hold (`book_freeze`) is an operator action, not a customer one.
 
 `chapter_diff` is worth knowing about for a different reason: when you and an assistant are both
 editing, it tells you what actually changed rather than what either of you believes changed.

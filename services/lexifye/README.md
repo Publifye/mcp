@@ -12,7 +12,7 @@ book. It runs as a hosted MCP server over HTTPS.**
 | Registry | [`pro.publifye/lexifye`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://lexifye.publifye.com> |
 | What it solves | <https://publifye.com/lexifye> |
-| Capability tools | **63** ([full schemas](tools.json)) |
+| Capability tools | **59** ([full schemas](tools.json)) |
 
 ## Connect
 
@@ -47,16 +47,16 @@ reader URL, by design.
 ## What the tools do
 
 Every tool is documented with its exact description, annotations and input schema —
-63 in all, generated from the service's own `tools/list`, never written by hand.
+59 in all, generated from the service's own `tools/list`, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
-| **[Dictionaries](tools/dictionaries.md)** | Create a dictionary, set its fields, freeze it, recover it. | 14 |
+| **[Dictionaries](tools/dictionaries.md)** | Create a dictionary, set its fields, share and transfer it. | 10 |
 | **[Entries and definitions](tools/entries.md)** | The lemma and sense tree, with per-definition history, diff and revert. | 20 |
 | **[Groups, guests and notes](tools/collaboration.md)** | Share a dictionary, invite an editor, keep private notes. | 26 |
 | **[Markup and recovery](tools/authoring.md)** | The round-trippable source grammar, house style, and the trash. | 3 |
 
-Machine-readable: **[tools.json](tools.json)** carries all 63 callable tools (63 capability, 0 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
+Machine-readable: **[tools.json](tools.json)** carries all 59 callable tools (59 capability, 0 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
 
 ## Your work
 

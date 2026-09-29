@@ -9,7 +9,7 @@ See [connect](../../../docs/connect.md) to sign in.
 | [`kind_list`](#kind_list) | read | List the eight document kinds doksi makes, with what each one is for. Read this before d… |
 | [`purpose_list`](#purpose_list) | read | List the curated purposes an official letter can have, with the EXTRA fields each one re… |
 | [`block_types`](#block_types) | read | List the building blocks a document body is made of, and which kinds accept each one. Th… |
-| [`doc_requirements`](#doc_requirements) | read | Return the exact field requirements for one kind, optionally composed with one purpose. … |
+| [`doc_requirements`](#doc_requirements) | read | Return the exact field requirements for one kind, optionally composed with one purpose |
 
 ---
 
@@ -43,14 +43,15 @@ List the building blocks a document body is made of, and which kinds accept each
 
 **Doc Requirements** — read-only, idempotent, closed-world · access: `read`.
 
-Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Meetings and schedules support qr_url and qr_placement (bottom_center default, top_right, hidden); supplied owner names are printed. Read this before composing. For an application letter pass kind:letter_official and purpose:application. Ask for missing required facts; never invent addresses, qualifications or reference numbers.
+Return the exact field requirements for one kind, optionally composed with one purpose. Each field is required, optional or forbidden, and a forbidden field is refused by name — reference numbers on a personal letter, for instance. Includes a complete JSON Schema, nested field shapes and a valid document example. Meetings and schedules support qr_url and qr_placement (bottom_center default, top_right, hidden); supplied owner names are printed. Read this before composing. For an application letter pass kind:letter_official and purpose:application. For a letter in the author's exact words — no doksi wording at all, every postal and signing detail required — pass kind:letter_official and verbatim:true. Ask for missing required facts; never invent addresses, qualifications or reference numbers. For kind covenant (EVERY occasion): the print-ready PDF needs one credit (doc_compose_credit), a marriage pass or a Doksi plan; a free account can browse the designs, validate, and compose a watermarked preview (see pricing in the answer).
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `kind` | string | yes | Document kind |
 | `purpose` | string | no | Optional purpose id, for letter_official only |
+| `verbatim` | boolean | no | letter_official only: the requirements of verbatim mode (content.verbatim:true), where doksi prints only the author's words. Not combinable with purpose. |
 
 ---
 
-*Generated from the service's own tool registry on the source serving production on
-2026-09-22, version 0.1.67. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` of the release serving production (0.1.85) on 2026-09-29.
+Regenerate rather than edit by hand.*

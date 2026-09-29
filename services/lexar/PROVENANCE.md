@@ -60,7 +60,11 @@ no law** — it may mean the answer lives where Lexar does not look.
 
 - **Court decisions.** Excluded deliberately, on a legal assessment of their status, not for want
   of effort.
-- **Preparatory works** (*forarbeider*) — often exactly what settles how a provision is read.
+- **Most recent propositions.** Preparatory works (*forarbeider*) are held — 29,627 documents,
+  23,965 from Stortinget and 5,662 from Nasjonalbiblioteket, under NLOD 2.0 — but Prop. and Ot.prp.
+  after 2005 are mostly present as designations only, not as text. A pointer from a provision to a
+  preparatory work is offered by default only where that kind of link was hand-checked at 85%
+  precision or better; the rest are reachable with `include_low_confidence=true`.
 - **Local regulations.** Central regulations only.
 - **English translations.** Norwegian source wording only.
 - **Historical consolidated versions.** The current consolidation, not the law as it stood on a

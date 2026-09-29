@@ -1,33 +1,20 @@
 # Print, ISBN and store
 
-**Press-ready output, real ISBN-13 assignment, and retail publishing.** 9 Junifye MCP tools, listed below with the exact
+**Press-ready output, real ISBN-13 assignment, and retail publishing.** 7 Junifye MCP tools, listed below with the exact
 description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
 | Tool | What it does |
 |---|---|
-| [`isbn_record_acceptance`](#isbn_record_acceptance) | ADMIN |
 | [`isbn_status`](#isbn_status) | Read your ISBN standing — the fast way to see whether book_isbn_assign will work for you |
 | [`print_get`](#print_get) | Read a book's PHYSICAL-PRINT status — does NOT change anything or render |
 | [`print_set`](#print_set) | Configure a book for PHYSICAL PRINT (print-on-demand) and render a press-ready interior PDF |
 | [`publish_request`](#publish_request) | Request that a book be PUBLISHED (made publicly listed) |
-| [`retail_record_acceptance`](#retail_record_acceptance) | ADMIN |
 | [`retail_status`](#retail_status) | Whether an author is approved to sell books on a live retail shelf, and what the remaining… |
 | [`retail_terms`](#retail_terms) | The retail terms an AUTHOR accepts before a book goes on sale, plus the version string the… |
 | [`store_readiness`](#store_readiness) | Everything standing between this book and a live retail shelf, in one call: the deterministic… |
 
 ---
-
-## `isbn_record_acceptance`
-
-**ISBN Record Acceptance** — writes, closed-world.
-
-ADMIN. Record that a book's OWNER has accepted the ISBN publisher terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This exists because the acceptance can only ever be the author's own: no tool lets an AI or an operator DECIDE it, and this one does not either. It writes down a 'yes' that was actually given, and it is labelled as operator-recorded (channel=operator, with your identity and your note of where the consent came from) so nobody can later mistake it for the author clicking. USE IT ONLY with the author's actual words in front of you, for the CURRENT terms version, and quote where they came from in `evidence`. The consent is attributed to the book's owner, never to you. Returns {book_id, by, channel, terms_version}.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `book_id` | string | yes | The 'idb...' id of the book whose OWNER gave the acceptance. |
-| `evidence` | string | yes | Where the acceptance came from, in enough detail to find it again: e.g. "email from anna@example.com, 2026-08-09, subject 'ISBN terms — yes'". Required: an ope… |
 
 ## `isbn_status`
 
@@ -117,23 +104,6 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
 
-## `retail_record_acceptance`
-
-**Retail Record Acceptance** — writes, closed-world.
-
-ADMIN. Record that a book's OWNER has accepted the retail terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This exists because the acceptance can only ever be the author's own: no tool lets an AI or an operator DECIDE it, and this one does not either. It writes down a 'yes' that was actually given, and it is labelled as operator-recorded (channel=operator, with your identity and your note of where the consent came from) so nobody can later mistake it for the author clicking.
-
-USE IT ONLY with the author's actual words in front of you, for the CURRENT terms version, and quote where they came from in `evidence`. The consent is attributed to the book's owner, never to you.
-
-The acceptance covers the book's CONTENT VERSION AS IT IS NOW. If the book is edited afterwards the acceptance stops counting and the author must be asked again — that is the point of it, not a defect.
-
-Returns {book_id, by, channel, terms_version, book_version}.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `book_id` | string | yes | The 'idb...' id of the book whose OWNER gave the acceptance. |
-| `evidence` | string | yes | Where the acceptance came from, in enough detail to find it again: e.g. "email from anna@example.com, 2026-08-29, subject 'yes, put it on sale'". Required: an … |
-
 ## `retail_status`
 
 **Retail Status** — read-only, idempotent, closed-world.
@@ -172,4 +142,4 @@ NOTE the acceptance is not something you can supply — see retail_terms. Return
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` on 2026-09-29. Regenerate rather than edit by hand.*

@@ -1,16 +1,17 @@
 {
   "service": "junifye",
   "endpoint": "https://junifye.publifye.com/mcp",
-  "captured": "2026-09-13",
-  "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable. widget_project is registered at read level but refuses every caller except Publifye's widget service, so it is listed under fleet_service.",
   "counts": {
-    "callable_by_a_customer": 151,
-    "capability_tools": 151,
+    "callable_by_a_customer": 143,
+    "capability_tools": 143,
     "session_and_cache_plumbing": 0,
     "excluded_ops_and_logging": 12,
-    "excluded_admin_only": 15,
+    "excluded_admin_only": 23,
     "excluded_els_wrr_research": 0,
-    "total_on_the_wire": 178
+    "total_on_the_wire": 179,
+    "excluded_fleet_service_only": 1
   },
   "excluded": {
     "ops": [
@@ -42,7 +43,18 @@
       "admin_s3_status",
       "admin_s3_sync",
       "admin_s3_verify",
-      "admin_system_status"
+      "admin_system_status",
+      "book_freeze",
+      "indexnow_run",
+      "indexnow_status",
+      "isbn_record_acceptance",
+      "retail_record_acceptance",
+      "rotate_share_links",
+      "vet_decide",
+      "vet_list"
+    ],
+    "fleet_service": [
+      "widget_project"
     ]
   },
   "tools": [
@@ -177,7 +189,7 @@
       "name": "block_add_figure",
       "title": "Block Add Figure",
       "kind": "capability",
-      "description": "Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH the HTML reader and the EPUB, and as a crisp high-DPI raster in the PDF (one artifact → three faithful outputs). For book-native line-art (grids, axes, geometric figures, diagrams). figure_id is the content-addressed id returned by figure_upload_begin (e.g. \"a1b2…e9.svg\") — upload the SVG FIRST via figure_upload_begin, this only references it. SUPPORTED so it renders IDENTICALLY across all three outputs: paths, basic shapes, strokes, dashes, solid fills, opacity. NOT supported (rejected on upload, because the pure-Go print rasterizer can't reproduce them and they'd diverge web-vs-print): live <text> (convert type to outlines), gradients, filters, masks, patterns. caption is optional (shown under the figure + used as the accessible label). width is the display fraction of the text column (0.1–1.0, default 0.85). Use :image (block_add_image) for photos/raster art; use :figure for vector diagrams.",
+      "description": "Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH the HTML reader and the EPUB, and as a crisp high-DPI raster in the PDF (one artifact → three faithful outputs). For book-native line-art (grids, axes, geometric figures, diagrams). figure_id is the content-addressed id returned by figure_upload_begin (e.g. \"a1b2…e9.svg\") — upload the SVG FIRST via figure_upload_begin, this only references it. SUPPORTED so it renders IDENTICALLY across all three outputs — an ALLOWLIST of static line art: <path>, <rect>, <circle>, <ellipse>, <line>, <polyline>, <polygon>, <g>, <defs>, <clipPath> (clip-path=\"url(#id)\" only), <title>, <desc>; strokes, dashes, solid fills, opacity, transforms. Any other element is REJECTED on upload with a message naming it: live <text> (convert type to outlines), gradients, filters, masks, patterns, <use>/<symbol>, <image>, <a>, markers, HTML elements. Script, style, metadata, animation and editor (Inkscape/Illustrator) namespaces are stripped. caption is optional (shown under the figure + used as the accessible label). width is the display fraction of the text column (0.1–1.0, default 0.85). Use :image (block_add_image) for photos/raster art; use :figure for vector diagrams.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -1430,37 +1442,6 @@
         "properties": {
           "book_id": {
             "description": "The 'idb...' id from book_create.id (NOT the public uuid).",
-            "type": "string"
-          }
-        },
-        "required": [
-          "book_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "book_freeze",
-      "title": "Book Freeze",
-      "kind": "capability",
-      "description": "ADMIN. Place a book under an OPERATOR HOLD — for abuse review, a legal dispute, or an investigation. The hold locks ALL content edits (owner and group alike, overriding listed/publicly_editable) AND blocks the book's removal: while it stands, book_delete is refused for the owner and an admin alike, and the automatic reapers (inactivity TTL, the trash sweep) skip the book so it cannot expire out from under the hold. The hold travels with the book across admin_book_transfer, and survives a delete/restore round trip and a rebuild from export. Read access is never affected. Lifted by an admin with book_unfreeze. The ONE way to remove a held book is the deliberate, loudly-audited admin_book_delete (hard purge, for a legal erasure that must proceed despite the hold). Pass `reason` — it is quoted back verbatim in every refusal, so it answers the owner's support question instead of generating one.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Book Freeze"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book_id": {
-            "description": "The 'idb...' id of the book to freeze.",
-            "type": "string"
-          },
-          "reason": {
-            "description": "Free-text reason for the hold, shown verbatim to anyone whose edit or delete it refuses (e.g. \"pending abuse review\", \"DMCA claim #1183\"). Max 200 chars. Strongly recommended — without it refusals say \"no reason recorded\".",
-            "maxLength": 200,
             "type": "string"
           }
         },
@@ -3175,7 +3156,7 @@
       "name": "figure_upload_begin",
       "title": "Figure Upload Begin",
       "kind": "capability",
-      "description": "Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter. Like image_upload_begin but for an SVG diagram/line-art that renders as live inline vector in the HTML reader + EPUB and a crisp raster in the PDF. Returns a one-time {reqid, url}: a PERSON OPENs the url (browser upload page) or an AI POSTs the bytes — `curl -X POST <url> -F file=@figure.svg` (or `--data-binary @figure.svg`). The server SANITIZES the SVG (strips <script>, event handlers, external references, DOCTYPE) and REJECTS — never silently — anything the pure-Go print rasterizer can't reproduce faithfully: live <text> (convert type to outlines first), gradients, filters, masks, patterns. Keep to paths, shapes, strokes, dashes, solid fills, opacity so it renders IDENTICALLY in all three outputs. On success it stores the figure, auto-appends a :figure block to the chapter, and returns the figure_id + a reader link. NOTHING is added unless the upload succeeds. Single-use, expires in 30 min; bytes stream over REST, never through MCP.\n\n--- IDENTIFIERS ---\nA book has TWO distinct identifiers, NEVER interchange them:\n  • id   = 'idb...' string. Use for EVERY MCP call (chapter_create, book_set_*, etc.).\n  • uuid = standard 8-4-4-4-12 UUID. ONLY appears in the public PDF URL (https://junifye.publifye.com/<uuid>-light.pdf).\nChapter id is 'idc...', block id is 'blk...', dict entry is its term string. Always pass the type-matching id.\n\n--- RENDERING ---\nThere is no explicit render tool. Every mutation auto-bumps book.version; the next fetch of\nhttps://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders if drifted.\n",
+      "description": "Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter. Like image_upload_begin but for an SVG diagram/line-art that renders as live inline vector in the HTML reader + EPUB and a crisp raster in the PDF. Returns a one-time {reqid, url}: a PERSON OPENs the url (browser upload page) or an AI POSTs the bytes — `curl -X POST <url> -F file=@figure.svg` (or `--data-binary @figure.svg`). The server SANITIZES the SVG against an ALLOWLIST (strips <script>, <style>, metadata, animation, editor namespaces, event handlers, external references, DOCTYPE) and REJECTS — never silently — every element outside it: live <text> (convert type to outlines first), gradients, filters, masks, patterns, <use>/<symbol>, <image>, <a>, markers, HTML elements. Allowed: <path> <rect> <circle> <ellipse> <line> <polyline> <polygon> <g> <defs> <clipPath> <title> <desc>, with strokes, dashes, solid fills, opacity and transforms, so it renders IDENTICALLY in all three outputs. On success it stores the figure, auto-appends a :figure block to the chapter, and returns the figure_id + a reader link. NOTHING is added unless the upload succeeds. Single-use, expires in 30 min; bytes stream over REST, never through MCP.\n\n--- IDENTIFIERS ---\nA book has TWO distinct identifiers, NEVER interchange them:\n  • id   = 'idb...' string. Use for EVERY MCP call (chapter_create, book_set_*, etc.).\n  • uuid = standard 8-4-4-4-12 UUID. ONLY appears in the public PDF URL (https://junifye.publifye.com/<uuid>-light.pdf).\nChapter id is 'idc...', block id is 'blk...', dict entry is its term string. Always pass the type-matching id.\n\n--- RENDERING ---\nThere is no explicit render tool. Every mutation auto-bumps book.version; the next fetch of\nhttps://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders if drifted.\n",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": false,
@@ -3790,78 +3771,6 @@
         "required": [
           "book_id",
           "chapter_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "indexnow_run",
-      "title": "Indexnow Run",
-      "kind": "capability",
-      "description": "ADMIN. Trigger an IndexNow submission now. full=true clears the stored content digests and resubmits EVERY URL (the one-time bootstrap); otherwise only content changed since the last run is submitted.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": true,
-        "readOnlyHint": false,
-        "title": "Indexnow Run"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "full": {
-            "description": "Resubmit all URLs (bootstrap), not just changes.",
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      }
-    },
-    {
-      "name": "indexnow_status",
-      "title": "Indexnow Status",
-      "kind": "capability",
-      "description": "ADMIN. Last IndexNow run for this site (public books + sellables): added/changed/removed URL counts, how many were submitted, and whether it was a baseline/skip. Read-only.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": true,
-        "readOnlyHint": false,
-        "title": "Indexnow Status"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {},
-        "type": "object"
-      }
-    },
-    {
-      "name": "isbn_record_acceptance",
-      "title": "ISBN Record Acceptance",
-      "kind": "capability",
-      "description": "ADMIN. Record that a book's OWNER has accepted the ISBN publisher terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This exists because the acceptance can only ever be the author's own: no tool lets an AI or an operator DECIDE it, and this one does not either. It writes down a 'yes' that was actually given, and it is labelled as operator-recorded (channel=operator, with your identity and your note of where the consent came from) so nobody can later mistake it for the author clicking. USE IT ONLY with the author's actual words in front of you, for the CURRENT terms version, and quote where they came from in `evidence`. The consent is attributed to the book's owner, never to you. Returns {book_id, by, channel, terms_version}.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "ISBN Record Acceptance"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book_id": {
-            "description": "The 'idb...' id of the book whose OWNER gave the acceptance.",
-            "type": "string"
-          },
-          "evidence": {
-            "description": "Where the acceptance came from, in enough detail to find it again: e.g. \"email from anna@example.com, 2026-08-09, subject 'ISBN terms — yes'\". Required: an operator-recorded consent with no trace of the consent is not evidence.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "book_id",
-          "evidence"
         ],
         "type": "object"
       }
@@ -4645,37 +4554,6 @@
       }
     },
     {
-      "name": "retail_record_acceptance",
-      "title": "Retail Record Acceptance",
-      "kind": "capability",
-      "description": "ADMIN. Record that a book's OWNER has accepted the retail terms, where they gave that acceptance OUT OF BAND — by email, or a signed message — rather than by ticking the box on their book page. This exists because the acceptance can only ever be the author's own: no tool lets an AI or an operator DECIDE it, and this one does not either. It writes down a 'yes' that was actually given, and it is labelled as operator-recorded (channel=operator, with your identity and your note of where the consent came from) so nobody can later mistake it for the author clicking.\n\nUSE IT ONLY with the author's actual words in front of you, for the CURRENT terms version, and quote where they came from in `evidence`. The consent is attributed to the book's owner, never to you.\n\nThe acceptance covers the book's CONTENT VERSION AS IT IS NOW. If the book is edited afterwards the acceptance stops counting and the author must be asked again — that is the point of it, not a defect.\n\nReturns {book_id, by, channel, terms_version, book_version}.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Retail Record Acceptance"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book_id": {
-            "description": "The 'idb...' id of the book whose OWNER gave the acceptance.",
-            "type": "string"
-          },
-          "evidence": {
-            "description": "Where the acceptance came from, in enough detail to find it again: e.g. \"email from anna@example.com, 2026-08-29, subject 'yes, put it on sale'\". Required: an operator-recorded consent with no trace of the consent is not evidence.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "book_id",
-          "evidence"
-        ],
-        "type": "object"
-      }
-    },
-    {
       "name": "retail_status",
       "title": "Retail Status",
       "kind": "capability",
@@ -4713,40 +4591,6 @@
       "inputSchema": {
         "additionalProperties": false,
         "properties": {},
-        "type": "object"
-      }
-    },
-    {
-      "name": "rotate_share_links",
-      "title": "Rotate Share Links",
-      "kind": "capability",
-      "description": "ADMIN. Rotate a book's PUBLIC links so previously shared ones stop working — the enforcement teeth behind an unpublish/takedown. The short code ALWAYS rotates (old /<code> 404s). rotate_uuid (default true) also re-mints the content UUID so EVERY previously shared reader + PDF URL 404s, purges the old on-disk artifacts, and re-renders under the new UUID. rotate_print (default false) does the same for the obscured print PDF. Returns the NEW url/short_url/html_url/light_url/dark_url plus the old→new ids. NOTE: copies already DOWNLOADED cannot be recalled. Typical flow: book_set listed=false (unpublish) → rotate_share_links.",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Rotate Share Links"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book_id": {
-            "description": "The 'idb...' id of the book whose links to rotate.",
-            "type": "string"
-          },
-          "rotate_print": {
-            "description": "Also rotate the obscured print UUID (default false).",
-            "type": "boolean"
-          },
-          "rotate_uuid": {
-            "description": "Re-mint the content UUID too (default true) — 404s all shared reader+PDF URLs. Set false to rotate only the short code.",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "book_id"
-        ],
         "type": "object"
       }
     },
@@ -5475,82 +5319,6 @@
           "key",
           "value"
         ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "vet_decide",
-      "title": "Vet Decide",
-      "kind": "capability",
-      "description": "ADMIN. Vet a pending publication request (see vet_list). decision=approve makes the book PUBLIC (sets listed=true, mints its share aliases, adds it to the public library + search) — this is irreversible, like the manual publish flip. decision=reject keeps the book private and records reason, which the owner sees via vet_status (so they can fix it and call publish_request again). reason is REQUIRED when rejecting, optional when approving. Returns {book_id, vet_state, listed, reason}. Valid for a book in vet_state=pending OR vet_state=stalled (one a past automated vetting round gave up on — it is waiting for exactly this human decision); any other state is refused.",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Vet Decide"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "book_id": {
-            "description": "The 'idb...' id of the pending book (from vet_list).",
-            "type": "string"
-          },
-          "decision": {
-            "description": "approve = make it public (listed); reject = keep it private with a reason.",
-            "enum": [
-              "approve",
-              "reject"
-            ],
-            "type": "string"
-          },
-          "reason": {
-            "description": "Plain-text reason. REQUIRED for reject (the owner reads it via vet_status); optional for approve.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "book_id",
-          "decision"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "vet_list",
-      "title": "Vet List",
-      "kind": "capability",
-      "description": "ADMIN. List the books currently awaiting a publication-review decision — the queue fed by publish_request. It covers BOTH vet_state='pending' (queued, awaiting a decision) AND vet_state='stalled' (a PAST automated vetting round failed vet_attempts times and gave up; nothing automated will ever move those again). Each entry: {book_id, uuid, title, author, owner_id, language, vet_state, vet_attempts, vet_reason}. The response also carries {count, stalled, reviewed_by} — how many of the returned entries are stalled, and who decides this queue: reviewed_by='human' means automated vetting is switched OFF, so EVERY book listed here is waiting on you and vet_decide is the only thing that will move it; 'agent' means pending books also get an automated pass. This queue holds NON-ADMIN submissions only: an admin's own publish_request publishes immediately and is recorded as a self-approval, so it never appears here — a non-empty queue means outside authors are waiting. Decide each with vet_decide(approve|reject), which is valid for pending AND stalled. Read-only.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "Vet List"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "limit": {
-            "description": "Optional cap on how many queued books to return, 1..500. Omitted means 500, not unlimited — the queue is a work list, not an export.",
-            "maximum": 500,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "offset": {
-            "description": "0-based offset into the queue, for walking past the first page. A NEGATIVE offset is rejected.",
-            "type": "integer"
-          },
-          "state": {
-            "description": "Optional filter. 'pending' = live automated rounds only; 'stalled' = only books whose automated vetting gave up and need a human. Omit for the whole queue.",
-            "enum": [
-              "pending",
-              "stalled"
-            ],
-            "type": "string"
-          }
-        },
         "type": "object"
       }
     },

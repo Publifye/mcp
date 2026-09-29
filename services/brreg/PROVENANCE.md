@@ -16,21 +16,22 @@ is deliberately left out.**
 | Kartverket — Matrikkelen – Adresse | the address point of each registered address | national bulk file from Geonorge | refreshed weekly with the register |
 | Kartverket — Matrikkelen – Bygningspunkt | the existing buildings at that address | national bulk file from Geonorge | refreshed weekly with the register |
 | Kartverket — Matrikkelen – Adresse Leilighetsnivå | the section number, when the address has exactly one | national bulk file from Geonorge | refreshed weekly with the register |
+| Statistics Norway (SSB) — tables 12910 and 12936 | industry-and-size statistics that `entity_financials` sets key figures against, per industry, never per company | fetched from data.ssb.no, with SSB's KLASS industry classification, when an edition is built, and carried in it | with each edition; `snapshot_status` names each table's last update at SSB |
 | Codes | organisation forms, municipalities, industry codes (NACE) and institutional sectors, with counts | derived from the current edition | with each edition |
 
 A lookup with `live=true` also checks that one entry against data.brreg.no at the moment of the call.
 
 ## The edition this page describes
 
-The edition the live service was serving on 2026-09-15:
+The edition the live service was serving on 2026-09-29:
 
 | | |
 |---|---|
-| Main units (enheter) | 1,174,268 |
-| Sub-units (underenheter) | 863,374 |
-| Sole proprietorships (ENK), among the main units | 462,855 |
+| Main units (enheter) | 1,175,793 |
+| Sub-units (underenheter) | 866,095 |
+| Sole proprietorships (ENK), among the main units | 463,827 |
 | Public bodies | 4,220 |
-| Main units with annual accounts on file | 449,313 |
+| Main units with annual accounts on file | 448,711 |
 
 Call `snapshot_status` for the edition that is current when you read this. It returns when it was
 acquired, its age, the source ETag and Last-Modified of each bulk file, the record counts, and the
@@ -97,6 +98,12 @@ paragraph requires of a private register:
 Both blocks are carried in English as well. The same regulation's third paragraph forbids using
 information from grunnboken and matrikkelen for advertising or marketing without the consent of the
 party it concerns; that obligation runs to whoever uses the data, including you.
+
+### Statistics Norway — CC BY 4.0
+
+The industry benchmark in `entity_financials` is computed from Statistics Norway's tables 12910
+and 12936 under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). A
+result that carries a benchmark carries its own SSB attribution block beside the NLOD one.
 
 ### Not the authoritative register
 

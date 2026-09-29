@@ -1,6 +1,6 @@
 # Covers, images and figures
 
-**Covers, logos, figures and uploads.** 22 Junifye MCP tools, listed below with the exact
+**Covers, logos, figures and uploads.** 19 Junifye MCP tools, listed below with the exact
 description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
@@ -19,10 +19,7 @@ See [connect](../../../docs/connect.md) to get a key.
 | [`figure_upload_begin`](#figure_upload_begin) | Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter |
 | [`house_style`](#house_style) | THE one-stop authoring guide — read this ONCE before writing or vetting a book and you have… |
 | [`image_upload_begin`](#image_upload_begin) | Begin an image upload that will be placed in a specific chapter |
-| [`indexnow_run`](#indexnow_run) | ADMIN |
-| [`indexnow_status`](#indexnow_status) | ADMIN |
 | [`owner_logo_upload_begin`](#owner_logo_upload_begin) | Begin uploading YOUR brand logo — the image shown on the social share card (og:image) of every… |
-| [`rotate_share_links`](#rotate_share_links) | ADMIN |
 | [`source_syntax`](#source_syntax) | Return the grammar of the round-trippable block source used by block_get_source /… |
 | [`sync_resolve`](#sync_resolve) | Mark a chapter (or the whole book) reconciled across all language editions — i.e |
 | [`sync_status`](#sync_status) | Cross-edition drift report for a TRANSLATED book: which chapters were edited in one language… |
@@ -185,7 +182,7 @@ Replace a Dictionary entry's body. body is markdown; paragraphs are blank-line s
 
 **Figure Upload Begin** — writes, closed-world.
 
-Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter. Like image_upload_begin but for an SVG diagram/line-art that renders as live inline vector in the HTML reader + EPUB and a crisp raster in the PDF. Returns a one-time {reqid, url}: a PERSON OPENs the url (browser upload page) or an AI POSTs the bytes — `curl -X POST <url> -F file=@figure.svg` (or `--data-binary @figure.svg`). The server SANITIZES the SVG (strips <script>, event handlers, external references, DOCTYPE) and REJECTS — never silently — anything the pure-Go print rasterizer can't reproduce faithfully: live <text> (convert type to outlines first), gradients, filters, masks, patterns. Keep to paths, shapes, strokes, dashes, solid fills, opacity so it renders IDENTICALLY in all three outputs. On success it stores the figure, auto-appends a :figure block to the chapter, and returns the figure_id + a reader link. NOTHING is added unless the upload succeeds. Single-use, expires in 30 min; bytes stream over REST, never through MCP.
+Begin a VECTOR FIGURE (SVG) upload placed in a specific chapter. Like image_upload_begin but for an SVG diagram/line-art that renders as live inline vector in the HTML reader + EPUB and a crisp raster in the PDF. Returns a one-time {reqid, url}: a PERSON OPENs the url (browser upload page) or an AI POSTs the bytes — `curl -X POST <url> -F file=@figure.svg` (or `--data-binary @figure.svg`). The server SANITIZES the SVG against an ALLOWLIST (strips <script>, <style>, metadata, animation, editor namespaces, event handlers, external references, DOCTYPE) and REJECTS — never silently — every element outside it: live <text> (convert type to outlines first), gradients, filters, masks, patterns, <use>/<symbol>, <image>, <a>, markers, HTML elements. Allowed: <path> <rect> <circle> <ellipse> <line> <polyline> <polygon> <g> <defs> <clipPath> <title> <desc>, with strokes, dashes, solid fills, opacity and transforms, so it renders IDENTICALLY in all three outputs. On success it stores the figure, auto-appends a :figure block to the chapter, and returns the figure_id + a reader link. NOTHING is added unless the upload succeeds. Single-use, expires in 30 min; bytes stream over REST, never through MCP.
 
 --- IDENTIFIERS ---
 A book has TWO distinct identifiers, NEVER interchange them:
@@ -229,22 +226,6 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 | `book_id` | string | yes | The 'idb...' id of the book. |
 | `chapter_id` | string | yes | The 'idc...' chapter the image will be appended to on a successful upload. |
 
-## `indexnow_run`
-
-**Indexnow Run** — writes.
-
-ADMIN. Trigger an IndexNow submission now. full=true clears the stored content digests and resubmits EVERY URL (the one-time bootstrap); otherwise only content changed since the last run is submitted.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `full` | boolean | no | Resubmit all URLs (bootstrap), not just changes. |
-
-## `indexnow_status`
-
-**Indexnow Status** — writes.
-
-ADMIN. Last IndexNow run for this site (public books + sellables): added/changed/removed URL counts, how many were submitted, and whether it was a baseline/skip. Read-only.
-
 ## `owner_logo_upload_begin`
 
 **Owner Logo Upload Begin** — writes, closed-world.
@@ -260,18 +241,6 @@ Chapter id is 'idc...', block id is 'blk...', dict entry is its term string. Alw
 --- RENDERING ---
 There is no explicit render tool. Every mutation auto-bumps book.version; the next fetch of
 https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders if drifted.
-
-## `rotate_share_links`
-
-**Rotate Share Links** — writes, closed-world.
-
-ADMIN. Rotate a book's PUBLIC links so previously shared ones stop working — the enforcement teeth behind an unpublish/takedown. The short code ALWAYS rotates (old /<code> 404s). rotate_uuid (default true) also re-mints the content UUID so EVERY previously shared reader + PDF URL 404s, purges the old on-disk artifacts, and re-renders under the new UUID. rotate_print (default false) does the same for the obscured print PDF. Returns the NEW url/short_url/html_url/light_url/dark_url plus the old→new ids. NOTE: copies already DOWNLOADED cannot be recalled. Typical flow: book_set listed=false (unpublish) → rotate_share_links.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `book_id` | string | yes | The 'idb...' id of the book whose links to rotate. |
-| `rotate_print` | boolean | no | Also rotate the obscured print UUID (default false). |
-| `rotate_uuid` | boolean | no | Re-mint the content UUID too (default true) — 404s all shared reader+PDF URLs. Set false to rotate only the short code. |
 
 ## `source_syntax`
 
@@ -319,4 +288,4 @@ Update ONE field on the CALLER's own contact (name, phone, address, website, bio
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` on 2026-09-29. Regenerate rather than edit by hand.*

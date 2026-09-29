@@ -1,6 +1,6 @@
 # Groups, guests and notes
 
-**Share a book, invite an editor, keep private working notes.** 38 Junifye MCP tools, listed below with the exact
+**Share a book, invite an editor, keep private working notes.** 36 Junifye MCP tools, listed below with the exact
 description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
@@ -40,8 +40,6 @@ See [connect](../../../docs/connect.md) to get a key.
 | [`question_list`](#question_list) | Browse questions newest-first, paginated |
 | [`question_set`](#question_set) | Edit a question's text/tags/lang |
 | [`question_unlink`](#question_unlink) | Detach one answer edge (book_id, optionally chapter_id) from a question |
-| [`vet_decide`](#vet_decide) | ADMIN |
-| [`vet_list`](#vet_list) | ADMIN |
 | [`vet_status`](#vet_status) | Check whether a book has been approved for public listing, and — if it was rejected — WHY |
 | [`vet_submit_result`](#vet_submit_result) | Report the verdict of an agentic publication-vetting session for a book |
 
@@ -669,30 +667,6 @@ Detach one answer edge (book_id, optionally chapter_id) from a question. Removin
 | `chapter_id` | string | no | Optional 'idc...' chapter id; omit to detach the whole-book edge. |
 | `id` | string | yes | The 'idq...' question id. |
 
-## `vet_decide`
-
-**Vet Decide** — writes, closed-world.
-
-ADMIN. Vet a pending publication request (see vet_list). decision=approve makes the book PUBLIC (sets listed=true, mints its share aliases, adds it to the public library + search) — this is irreversible, like the manual publish flip. decision=reject keeps the book private and records reason, which the owner sees via vet_status (so they can fix it and call publish_request again). reason is REQUIRED when rejecting, optional when approving. Returns {book_id, vet_state, listed, reason}. Valid for a book in vet_state=pending OR vet_state=stalled (one a past automated vetting round gave up on — it is waiting for exactly this human decision); any other state is refused.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `book_id` | string | yes | The 'idb...' id of the pending book (from vet_list). |
-| `decision` | string | yes | approve = make it public (listed); reject = keep it private with a reason. |
-| `reason` | string | no | Plain-text reason. REQUIRED for reject (the owner reads it via vet_status); optional for approve. |
-
-## `vet_list`
-
-**Vet List** — read-only, idempotent, closed-world.
-
-ADMIN. List the books currently awaiting a publication-review decision — the queue fed by publish_request. It covers BOTH vet_state='pending' (queued, awaiting a decision) AND vet_state='stalled' (a PAST automated vetting round failed vet_attempts times and gave up; nothing automated will ever move those again). Each entry: {book_id, uuid, title, author, owner_id, language, vet_state, vet_attempts, vet_reason}. The response also carries {count, stalled, reviewed_by} — how many of the returned entries are stalled, and who decides this queue: reviewed_by='human' means automated vetting is switched OFF, so EVERY book listed here is waiting on you and vet_decide is the only thing that will move it; 'agent' means pending books also get an automated pass. This queue holds NON-ADMIN submissions only: an admin's own publish_request publishes immediately and is recorded as a self-approval, so it never appears here — a non-empty queue means outside authors are waiting. Decide each with vet_decide(approve|reject), which is valid for pending AND stalled. Read-only.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `limit` | integer | no | Optional cap on how many queued books to return, 1..500. Omitted means 500, not unlimited — the queue is a work list, not an export. |
-| `offset` | integer | no | 0-based offset into the queue, for walking past the first page. A NEGATIVE offset is rejected. |
-| `state` | string | no | Optional filter. 'pending' = live automated rounds only; 'stalled' = only books whose automated vetting gave up and need a human. Omit for the whole queue. |
-
 ## `vet_status`
 
 **Vet Status** — read-only, idempotent, closed-world.
@@ -719,4 +693,4 @@ Report the verdict of an agentic publication-vetting session for a book. GATED B
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` on 2026-09-29. Regenerate rather than edit by hand.*

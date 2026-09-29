@@ -1,6 +1,6 @@
 # Books and editions
 
-**Create a book, read it back, publish it, link its translations.** 34 Junifye MCP tools, listed below with the exact
+**Create a book, read it back, publish it, link its translations.** 33 Junifye MCP tools, listed below with the exact
 description and input schema the server itself returns. Endpoint: `https://junifye.publifye.com/mcp`.
 See [connect](../../../docs/connect.md) to get a key.
 
@@ -17,7 +17,6 @@ See [connect](../../../docs/connect.md) to get a key.
 | [`book_epub_check`](#book_epub_check) | Inspect the metadata of a book's ACTUAL BUILT EPUB — the file a store would receive — and… |
 | [`book_export_begin`](#book_export_begin) | Begin a book export |
 | [`book_files`](#book_files) | List EVERY file this book can hand over — one call, with metadata and staleness |
-| [`book_freeze`](#book_freeze) | ADMIN |
 | [`book_get`](#book_get) | Get book metadata + artifact URLs: url (the PRIMARY link to share — the short permalink that… |
 | [`book_get_source`](#book_get_source) | Read MANY chapters' round-trippable source in ONE call — the whole book by default, or a subset |
 | [`book_grep`](#book_grep) | Find WHERE a string occurs in a book, one result per occurrence, each attributed to its BLOCK… |
@@ -240,17 +239,6 @@ READ-ONLY and cheap: it NEVER renders. It reports what exists; it does not creat
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the public uuid). |
-
-## `book_freeze`
-
-**Book Freeze** — writes, closed-world.
-
-ADMIN. Place a book under an OPERATOR HOLD — for abuse review, a legal dispute, or an investigation. The hold locks ALL content edits (owner and group alike, overriding listed/publicly_editable) AND blocks the book's removal: while it stands, book_delete is refused for the owner and an admin alike, and the automatic reapers (inactivity TTL, the trash sweep) skip the book so it cannot expire out from under the hold. The hold travels with the book across admin_book_transfer, and survives a delete/restore round trip and a rebuild from export. Read access is never affected. Lifted by an admin with book_unfreeze. The ONE way to remove a held book is the deliberate, loudly-audited admin_book_delete (hard purge, for a legal erasure that must proceed despite the hold). Pass `reason` — it is quoted back verbatim in every refusal, so it answers the owner's support question instead of generating one.
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `book_id` | string | yes | The 'idb...' id of the book to freeze. |
-| `reason` | string | no | Free-text reason for the hold, shown verbatim to anyone whose edit or delete it refuses (e.g. "pending abuse review", "DMCA claim #1183"). Max 200 chars. Stron… |
 
 ## `book_get`
 
@@ -719,4 +707,4 @@ Lift a book freeze. An auto-lock (a public group-editable book idle past 30 days
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` on 2026-09-29. Regenerate rather than edit by hand.*

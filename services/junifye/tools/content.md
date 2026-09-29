@@ -7,7 +7,7 @@ See [connect](../../../docs/connect.md) to get a key.
 | Tool | What it does |
 |---|---|
 | [`block_add_bible_quote`](#block_add_bible_quote) | Add a scripture block quote |
-| [`block_add_figure`](#block_add_figure) | Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH… |
+| [`block_add_figure`](#block_add_figure) | Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in… |
 | [`block_add_general_quote`](#block_add_general_quote) | Add a non-scripture block quote (Church Father, theologian, hymn writer, web source) |
 | [`block_add_heading`](#block_add_heading) | Add a heading block — this is how you make SUB-CHAPTERS inside a chapter |
 | [`block_add_image`](#block_add_image) | Add an image/figure block that renders in BOTH the PDF and the HTML reader |
@@ -63,7 +63,7 @@ Add a scripture block quote. ref shape: '[1-3 ]Book Chap[:Verse[-Verse]]' — Bo
 
 **Block Add Figure** — writes, closed-world.
 
-Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH the HTML reader and the EPUB, and as a crisp high-DPI raster in the PDF (one artifact → three faithful outputs). For book-native line-art (grids, axes, geometric figures, diagrams). figure_id is the content-addressed id returned by figure_upload_begin (e.g. "a1b2…e9.svg") — upload the SVG FIRST via figure_upload_begin, this only references it. SUPPORTED so it renders IDENTICALLY across all three outputs: paths, basic shapes, strokes, dashes, solid fills, opacity. NOT supported (rejected on upload, because the pure-Go print rasterizer can't reproduce them and they'd diverge web-vs-print): live <text> (convert type to outlines), gradients, filters, masks, patterns. caption is optional (shown under the figure + used as the accessible label). width is the display fraction of the text column (0.1–1.0, default 0.85). Use :image (block_add_image) for photos/raster art; use :figure for vector diagrams.
+Add a VECTOR figure block — one author-supplied SVG that renders as live inline vector in BOTH the HTML reader and the EPUB, and as a crisp high-DPI raster in the PDF (one artifact → three faithful outputs). For book-native line-art (grids, axes, geometric figures, diagrams). figure_id is the content-addressed id returned by figure_upload_begin (e.g. "a1b2…e9.svg") — upload the SVG FIRST via figure_upload_begin, this only references it. SUPPORTED so it renders IDENTICALLY across all three outputs — an ALLOWLIST of static line art: <path>, <rect>, <circle>, <ellipse>, <line>, <polyline>, <polygon>, <g>, <defs>, <clipPath> (clip-path="url(#id)" only), <title>, <desc>; strokes, dashes, solid fills, opacity, transforms. Any other element is REJECTED on upload with a message naming it: live <text> (convert type to outlines), gradients, filters, masks, patterns, <use>/<symbol>, <image>, <a>, markers, HTML elements. Script, style, metadata, animation and editor (Inkscape/Illustrator) namespaces are stripped. caption is optional (shown under the figure + used as the accessible label). width is the display fraction of the text column (0.1–1.0, default 0.85). Use :image (block_add_image) for photos/raster art; use :figure for vector diagrams.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -529,4 +529,4 @@ Append a ring to an existing stat block. percent 0–100; label is the bold text
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-13. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` on 2026-09-29. Regenerate rather than edit by hand.*

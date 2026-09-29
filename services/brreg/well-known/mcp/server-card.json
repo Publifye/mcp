@@ -27,7 +27,7 @@
   "tools": [
     {
       "name": "code_list",
-      "description": "Filter values with counts from the current snapshot: list org_form, municipality, nace or sector; query matches a code prefix or description. Use them as entity_search filters. Example: code_list list",
+      "description": "Filter values with counts, from the current snapshot.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -37,8 +37,30 @@
       }
     },
     {
+      "name": "entity_distance",
+      "description": "How far apart two organisations are, and which of several is closest — e.g. which supplier is nearest our office.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entity Distance"
+      }
+    },
+    {
+      "name": "entity_financials",
+      "description": "Money for an organisation: key figures, the years actually filed, the industry benchmark and the filed document. The one tool that reaches upstream for figures.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true,
+        "title": "Entity Financials"
+      }
+    },
+    {
       "name": "entity_lookup",
-      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy. orgnr (one) or orgnrs (several, in input order); spaces and dots tolerated. Items are {orgnr, found, record?, reason?}, reason inv",
+      "description": "Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -48,8 +70,19 @@
       }
     },
     {
+      "name": "entity_nearby",
+      "description": "Entities registered near a place: the same snapshot as entity_search, ordered nearest first.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Entity Nearby"
+      }
+    },
+    {
       "name": "entity_resolve",
-      "description": "Name to organisation candidates, never an implicit pick. One documented key: NFC, lowercase, fold æ→ae ø→o å→a (oe and aa also match), & → og, punctuation stripped, trailing legal forms (AS, ASA, ENK,",
+      "description": "Name to organisation candidates, never an implicit pick.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -60,7 +93,7 @@
     },
     {
       "name": "entity_search",
-      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter. Filters: kind, org_form (code_list codes), municipal",
+      "description": "Ranked, filtered search over current and historical names, addresses and websites. Give at least one of query, address, website, match or a filter.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -71,7 +104,7 @@
     },
     {
       "name": "entity_structure",
-      "description": "Organisational structure of one orgnr: items with relation parent (overordnet chain to the root, depth 1 = direct parent, at most 20), child (enheter whose parent is this orgnr) and subunit (underenhe",
+      "description": "Organisational structure of one orgnr.",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -82,7 +115,7 @@
     },
     {
       "name": "snapshot_status",
-      "description": "Snapshot readiness and provenance: snapshot_id, acquired_at, age and stale flag, source ETag and Last-Modified per dataset, record counts (enheter, underenheter, enk, public_bodies, deleted), build an",
+      "description": "Snapshot readiness and provenance. No arguments (detail=true adds latency, cursor, suppression and feed detail).",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -93,7 +126,7 @@
     }
   ],
   "_meta": {
-    "pro.publifye/generated": "2026-09-18",
+    "pro.publifye/generated": "2026-09-29",
     "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/brreg"
   }
 }

@@ -12,6 +12,7 @@ over HTTPS.**
 | Auth | OAuth 2.1 + PKCE (S256), DCR open |
 | Registry | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) ([server.json](server.json)) |
 | Product site | <https://timely.publifye.com> |
+| What it solves | <https://publifye.com/timely> |
 | Capability tools | **31** ([full schemas](tools.json)) |
 | Surface described | generated from source `354ee8b`; the same tool surface is live in production as version 0.1.198 (`9ce28e3`, released 2026-09-23) |
 
@@ -70,7 +71,7 @@ generated from the service's own registry, never written by hand.
 | **[Export, import and the bin](tools/lifecycle.md)** | How is a programme backed up, restored, or taken down? | 7 |
 
 Machine-readable: **[tools.json](tools.json)** carries all 31 with full JSON Schema, plus every
-excluded bucket listed by name so the count is auditable. Fourteen staff-only `admin_*` tools, ten
+excluded bucket listed by name so the count is auditable. Fifteen staff-only `admin_*` tools, ten
 log and operations tools, and the `operator_guide`/`instance_status` pair are excluded from the
 customer surface.
 

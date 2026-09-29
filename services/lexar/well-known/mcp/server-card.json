@@ -27,7 +27,7 @@
   "tools": [
     {
       "name": "connections",
-      "description": "Read outgoing source-provided cross-references, including unresolved and ambiguous targets. A source link does not by itself establish a legal interpretation. Example: connections id=NL/lov/2005-06-17",
+      "description": "After read: exceptions, definitions elsewhere. Read outgoing source-provided cross-references, including unresolved and ambiguous targets. A provision or chapter id gives ITS OWN edges; scope=document",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -38,7 +38,7 @@
     },
     {
       "name": "outline",
-      "description": "List the complete source document tree, including appendices, tables and documents without numbered provisions. Each node carries its source citation and Lovdata anchor; anchors are positional HTML id",
+      "description": "For structure, not answers. The table of contents under id (a document or any unit read takes): parts, chapters, provisions and appendices, the id's own unit first, each with citation (read and outlin",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -49,7 +49,7 @@
     },
     {
       "name": "read",
-      "description": "Read exact legal source wording, published metadata or retained evidence. view=text (default) returns exact spans of the node's decoded text with start_byte/end_byte (half-open UTF-8 offsets into that",
+      "description": "Read the chosen hit before answering; quote only this. Read exact legal wording or metadata. id: a citation, a hit's citation, or a reference resolve answers uniquely (aml § 15-7, aml 15-7; \"aml § 15-",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -60,7 +60,7 @@
     },
     {
       "name": "resolve",
-      "description": "Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml) bokmål/nynorsk law-name form (arbeidsmiljølova) or printed chapter citation (NL/lov/2005-06-17-62/kap10; Lo",
+      "description": "For a law name or loose reference; a citation goes straight to read. Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml) bokmål/nynorsk law-name form (arbeidsm",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -71,7 +71,7 @@
     },
     {
       "name": "search",
-      "description": "Search legal source provisions and blocks with Norwegian lexical ranking, or kind=keyword for accepted labels with evidence handles (exact, whole-word, then 4+ letter parts: ferie finds feriepenger; t",
+      "description": "Plain-language questions start here. Search source provisions and blocks in Norwegian; kind=keyword searches accepted labels with evidence handles (type= narrows). Inflections fold both ways. queries=",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -82,7 +82,7 @@
     },
     {
       "name": "status",
-      "description": "Read the published snapshot: per-capability readiness with concrete causes (body search, resolution, keyword search, published metadata, revisions, annotations, publication), corpus composition, langu",
+      "description": "Not needed per question. Read the published snapshot: per-capability readiness and causes, the forarbeider store (loaded or not_loaded with its cause, documents by type, build id, tier policy, ranking",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -93,7 +93,7 @@
     },
     {
       "name": "terms",
-      "description": "Browse source wordforms by prefix (without a prefix, forms containing numerals are skipped; any prefix lists them); min_blocks hides forms indexed in fewer units (such as one-off codes), and stopword=",
+      "description": "Find the statutory form of a not_in_corpus word. Browse source wordforms by prefix (without a prefix, forms containing numerals are skipped; any prefix lists them); min_blocks hides forms indexed in f",
       "annotations": {
         "destructiveHint": false,
         "idempotentHint": true,
@@ -104,7 +104,7 @@
     }
   ],
   "_meta": {
-    "pro.publifye/generated": "2026-09-16",
+    "pro.publifye/generated": "2026-09-29",
     "pro.publifye/reference": "https://github.com/Publifye/mcp/tree/main/services/lexar"
   }
 }

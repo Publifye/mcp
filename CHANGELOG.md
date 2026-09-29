@@ -4,6 +4,36 @@ Dates are the date the change was made, not the date it was written up.
 
 ## 2026-09-29
 
+- **Every server checked against its live `tools/list`.** All ten were captured from the running
+  servers and reduced to the customer surface: tools registered in PubHub as admin-only are
+  excluded, as are the help, operator and research buckets each `tools.json` lists by name. Input schemas now carry `additionalProperties: false`, as the servers serve them.
+- **Brreg: 6 → 9 tools.** New: `entity_nearby` (who is registered near a place or a company),
+  `entity_distance` (straight-line distance, nearest first — not travel distance) and
+  `entity_financials` (key figures, filed years, the filed document, and an industry benchmark from
+  Statistics Norway under CC BY 4.0). Two new tool pages; the register figures are today's edition;
+  PROVENANCE names SSB, DATA-HANDLING lists the new tool, and the self-hosted price is stated.
+- **Doksi: 22 → 30 tools.** New: `doc_list`, `doc_rename`, `doc_trash`, `doc_delete`,
+  `doc_restore` (the documents you have kept, with a 7-day restore) and `doc_access_status`,
+  `doc_credit_balance`, `doc_compose_credit` (purchased credits). Signing requests can be made over a
+  kept document by `id` and given an expiry. Marriage covenants now come in twelve designs, not nine.
+- **Junifye: 151 → 143, Lexifye: 63 → 59.** Eight Junifye tools (`book_freeze`, `indexnow_run`,
+  `indexnow_status`, `isbn_record_acceptance`, `retail_record_acceptance`, `rotate_share_links`,
+  `vet_decide`, `vet_list`) and four Lexifye tools (`dict_delete`, `dict_freeze`, `dict_restore`,
+  `dict_unfreeze`) are admin-only and were listed as customer tools by mistake. `widget_project`,
+  callable only by Publifye's widget service, is excluded on both. The two DATA-HANDLING pages no
+  longer list the admin-only freeze and dictionary-restore tools as callable by you.
+- **Lexar holds preparatory works.** 29,627 *forarbeider* documents from Stortinget and
+  Nasjonalbiblioteket, reachable from the provisions they discuss; Prop. and Ot.prp. after 2005 are
+  mostly designations only. The index, the Lexar page and PROVENANCE said none were held. Tool
+  descriptions and parameters regenerated; `operator_guide` is callable and listed as help.
+- **Unchanged surfaces, re-verified:** Audio Bible (10, live 0.4.37 — only two admin IndexNow
+  tools added), Currency (7), Darash (34), Timely (31), Vitae (42).
+- **Audio Bible on YouTube:** the book of Ruth, read aloud from the World English Bible, as a
+  [playlist](https://www.youtube.com/playlist?list=PLafP-kvSDbS8) on the
+  [Publifye channel](https://www.youtube.com/@publifyeofficial), linked from the Audio Bible page,
+  the products table and the company links.
+- **publifye.com/doksi and publifye.com/timely exist now** and are linked from the products table
+  and the two service pages.
 - **Audio Bible now serves two Bibles** — the World English Bible and Bibelen Anno 2026 (NB2026, a
   Norwegian Bokmål translation, at `audiobible.publifye.com/nb2026`, being recorded now). Every
   capability tool takes an optional `bible` argument; the WEB stays the default. Tool count is

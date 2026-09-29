@@ -1,16 +1,17 @@
 {
   "service": "lexifye",
   "endpoint": "https://lexifye.publifye.com/mcp",
-  "captured": "2026-09-13",
-  "how_this_was_made": "Captured from the live service's own tools/list response, then bucketed by name. Nothing here is hand-written. 'capability' is what the product does; 'plumbing' is callable but is session, cache or health management; the excluded buckets are not part of the offering.",
+  "captured": "2026-09-29",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-09-29, version 0.5.23 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable. widget_project is registered at read level but refuses every caller except Publifye's widget service, so it is listed under fleet_service.",
   "counts": {
-    "callable_by_a_customer": 63,
-    "capability_tools": 63,
+    "callable_by_a_customer": 59,
+    "capability_tools": 59,
     "session_and_cache_plumbing": 0,
     "excluded_ops_and_logging": 13,
-    "excluded_admin_only": 13,
+    "excluded_admin_only": 19,
     "excluded_els_wrr_research": 0,
-    "total_on_the_wire": 89
+    "total_on_the_wire": 92,
+    "excluded_fleet_service_only": 1
   },
   "excluded": {
     "ops": [
@@ -41,7 +42,16 @@
       "admin_s3_status",
       "admin_s3_sync",
       "admin_s3_verify",
-      "admin_system_status"
+      "admin_system_status",
+      "admin_widget_mark",
+      "admin_widget_unmark",
+      "dict_delete",
+      "dict_freeze",
+      "dict_restore",
+      "dict_unfreeze"
+    ],
+    "fleet_service": [
+      "widget_project"
     ]
   },
   "tools": [
@@ -791,41 +801,6 @@
       }
     },
     {
-      "name": "dict_delete",
-      "title": "Dict Delete",
-      "kind": "capability",
-      "description": "Delete a dict. Requires admin (owner).\n\n--- SOFT BY DEFAULT ---\n  The dict moves to the trash: it leaves every listing but keeps every entry, definition, version history and private note, and dict_restore brings it back whole for 30 days. List what is in there with dict_list(include_deleted=true) — you do not need to have kept the id.\n  The plan slot is freed immediately.\n\n--- purge=true ---\n  IRREVERSIBLE. Hard-purges the dict, every entry and definition, all indexes, the collab rosters, the audit stream, the rendered artifacts and the <uuid>.json export, right now. Use it only when the content genuinely must not remain — never as a tidier version of the default.\n  It also records a durable PURGE TOMBSTONE, so the dictionary does not come back from the disaster-recovery mirror the way it used to. The mirror is add-only, so the stored copy is SUPPRESSED rather than deleted; ask an operator for admin_purge_tombstone(action:\"redact\") if the content must actually leave it. The purge is refused outright if the tombstone cannot be recorded — nothing is destroyed in that case.",
-      "annotations": {
-        "destructiveHint": true,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Delete"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "dict_id": {
-            "description": "The 'idy...' id of the dict.",
-            "type": "string"
-          },
-          "id": {
-            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
-            "type": "string"
-          },
-          "purge": {
-            "default": false,
-            "description": "IRREVERSIBLE hard delete. Omit for the recoverable default.",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "dict_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
       "name": "dict_enrich",
       "title": "Dict Enrich",
       "kind": "capability",
@@ -846,36 +821,6 @@
             "type": "integer"
           },
           "dict_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "dict_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "dict_freeze",
-      "title": "Dict Freeze",
-      "kind": "capability",
-      "description": "ADMIN. Apply a CANONICAL LOCK to a dictionary — the recoverable take-down. Use this FIRST when responding to an abuse report: it stops the dictionary being changed while you investigate, and destroys nothing.\n  WHILE FROZEN, NOBODY may write to it — not a guest editor, not a group member, and NOT ITS OWNER. Content edits, guest and group management, transfer, delete AND restore are all refused, with a distinct 'frozen' reason so an author is not sent hunting for a permissions problem that does not exist.\n  READING IS UNAFFECTED. dict_get, entry_list and every artifact route keep working for the people already entitled to them. A freeze takes a dictionary out of PLAY, it does not hide it — hiding it is what dict_delete does, and destroying it is admin_dict_delete.\n  Locking the OWNER out of delete/transfer as well is a deliberate divergence from junifye's book_freeze (which locks writes only): a hold the subject of an investigation can dissolve by deleting the evidence, or by handing the dictionary to a second account, is not a hold.\n  An operator keeps every intervention — admin_dict_transfer, admin_guest_remove, admin_dict_delete and dict_unfreeze all still work on a frozen dictionary.\n  Reversible with dict_unfreeze, which puts everything back exactly as it was. Idempotent: re-freezing with the same reason writes no second audit row.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Freeze"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "dict_id": {
-            "description": "The 'idy...' id of the dict to freeze (NOT the uuid). Find one with admin_dict_list.",
-            "type": "string"
-          },
-          "reason": {
-            "description": "Why the hold exists — a ticket reference and one line (max 200 chars). Strongly recommended: it is shown to the owner in the refusal they will receive, and an unexplained lock generates a support ticket of its own.",
             "type": "string"
           }
         },
@@ -1113,36 +1058,6 @@
       }
     },
     {
-      "name": "dict_restore",
-      "title": "Dict Restore",
-      "kind": "capability",
-      "description": "Restore a soft-deleted dict, with every entry, definition, version history and private note exactly as they were. Works for 30 days after dict_delete. Requires admin (owner), like dict_delete. Find the id with dict_list(include_deleted=true) — the trash bin of your account.\n  The PLAN CAP applies: a restore occupies a concurrent-dict slot exactly as a create does, so restoring while you are already at your limit is refused, naming what to delete or purge first. (It is refused, never partial — the dictionary stays in the trash for the rest of its 30 days.)",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Restore"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "dict_id": {
-            "description": "The 'idy...' id of the soft-deleted dict, from dict_list(include_deleted=true).",
-            "type": "string"
-          },
-          "id": {
-            "description": "DEPRECATED ALIAS for dict_id. Still accepted; pass dict_id instead.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "dict_id"
-        ],
-        "type": "object"
-      }
-    },
-    {
       "name": "dict_set_field",
       "title": "Dict Set Field",
       "kind": "capability",
@@ -1221,32 +1136,6 @@
         "required": [
           "dict_id",
           "to_owner"
-        ],
-        "type": "object"
-      }
-    },
-    {
-      "name": "dict_unfreeze",
-      "title": "Dict Unfreeze",
-      "kind": "capability",
-      "description": "ADMIN. Lift a dict_freeze. Everything returns exactly as it was — the freeze changed no content, so there is nothing to restore. Idempotent: unfreezing a dictionary that is not frozen is a no-op and says so.\n  ADMIN-ONLY, with no owner-reopenable case. junifye's book_unfreeze is write-level because junifye ALSO auto-locks a book after 30 days of inactivity and an owner must be able to reopen their own soft lock. lexifye has no auto-lock: the only thing that ever freezes a dictionary here is an operator, so the only thing that lifts one is an operator. A write-level unfreeze would hand the subject of an investigation the key to their own hold.",
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "Dict Unfreeze"
-      },
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "dict_id": {
-            "description": "The 'idy...' id of the frozen dict. List open holds with admin_dict_list(frozen:true).",
-            "type": "string"
-          }
-        },
-        "required": [
-          "dict_id"
         ],
         "type": "object"
       }

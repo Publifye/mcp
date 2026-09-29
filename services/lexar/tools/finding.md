@@ -6,8 +6,8 @@ See [connect](../../../docs/connect.md) to get access.
 
 | Tool | What it does |
 |---|---|
-| [`resolve`](#resolve) | Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml)… |
-| [`search`](#search) | Search legal source provisions and blocks with Norwegian lexical ranking, or kind=keyword for… |
+| [`resolve`](#resolve) | Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation… |
+| [`search`](#search) | Search source provisions and blocks in Norwegian; kind=keyword searches accepted labels… |
 
 ---
 
@@ -15,7 +15,7 @@ See [connect](../../../docs/connect.md) to get access.
 
 **Resolve** — read-only, idempotent, closed-world.
 
-Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml) bokmål/nynorsk law-name form (arbeidsmiljølova) or printed chapter citation (NL/lov/2005-06-17-62/kap10; Lovdata's positional KAPITTEL_N addresses carry printed_chapter). Each candidate carries match_kind, confidence and resolution=unique|ambiguous|unresolved; near misses are suggestions only. Multiple matches are candidates; no implicit choice is made. Ambiguous candidates, here and in search's exact tier, list current consolidated text before announcements, then by dataset, document and source node (candidate_order); this order is not a statement of legal effect. Example: resolve id=ferieloven. Next: read id=<candidate citation or document_id>; outline id=<document_id>.
+For a law name or loose reference; a citation goes straight to read. Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbreviation (aml) bokmål/nynorsk law-name form (arbeidsmiljølova) or printed chapter citation (NL/lov/2005-06-17-62/kap10; positional KAPITTEL_N addresses carry printed_chapter). Each candidate carries match_kind, confidence and resolution=unique|ambiguous|unresolved; near misses are suggestions only and no implicit choice is made. Ambiguous candidates (here and in search's exact tier) list current consolidated text before announcements, then by dataset, document and source node (candidate_order); that order states no legal effect. Every candidate carries in_force (true|false|unknown) with in_force_basis, and candidates in force are listed first. Example: resolve id=ferieloven; resolve id="aml § 15-7 annet ledd" — a written reference in either order (or aml 15-7, § 15-7 (2)) resolves to the provision; ledd/bokstav/nr are reported as scope, and read of the same text reads just the ledd; several §§ return one result each. Next: read id={candidate citation}; outline id={document_id}.[END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -28,15 +28,17 @@ Resolve a document ID, Lovdata citation, title, short title (ferieloven), abbrev
 
 **Search** — read-only, idempotent, closed-world.
 
-Search legal source provisions and blocks with Norwegian lexical ranking, or kind=keyword for accepted labels with evidence handles (exact, whole-word, then 4+ letter parts: ferie finds feriepenger; type=<annotation type> narrows). Plain queries match any substantive term and rank by BM25F relevance (title, heading, body) × query-term coverage × document tier; every hit shows these factors in ranking. Exact citations and legacy IDs, law names from the resolve alias table (ferieloven, aml, arbeidsmiljølova), "name § number" and "name kapittel number" (the chapter the law prints, match_kind=printed_chapter) rank first. An unknown role, kind or language returns invalid_filter naming the valid values. Every page, empty too, carries diagnostics: searched, matched and dropped terms and empty_reason. Default role is body; role=amendment_note or role=amendment_text (Lovdata change blocks; instruction parts of acts declared amending by title and changesToDocuments, not their commencement text) searches those, and role_excluded counts what body search left out; roles are structural, not legal effect. Each excerpt is an exact prefix of the hit node's decoded text, inline citation wording included, ending at a word boundary (excerpt_end_byte; excerpt_truncated=true when read has more). Returns attribution and a bounded continuation cursor. Example: search query="rett til ferie". Next: read id=<address.citation or document_id> (node_id for a block) for exact wording; connections id=<same> for its links.
+Plain-language questions start here. Search source provisions and blocks in Norwegian; kind=keyword searches accepted labels with evidence handles (type= narrows). Inflections fold both ways. queries=[..] (max 8) fuses phrasings into ONE list (matched_queries). Exact citations, legacy IDs, aliases (ferieloven, aml) and "name § number" rank first. id= keeps the search inside one act: a document ID, citation, or a name or reference only one act carries (id_scope says which; a shared name is refused). Compact hits: rank, citation (pass straight to read: it reads exactly the hit), title, short_title, heading_path, kind (lov/forskrift/EU-rettsakt/Lovtidend), excerpt (exact node-text prefix), score, in_force, matched, forarbeider_total (+forarbeider_hidden). matched says which terms hit WHERE (title/heading/body/compound/forarbeider_context/lay_vocabulary). in_force true|false|unknown from Lovdata's commencement header (in_force_basis, in_force_from); false never ranks above a same-named act in force. detail=full adds address, ranking, role, source_url, offsets, unit_kind. Every page, empty too, carries diagnostics: searched/matched/dropped/expanded/rescued terms, empty_reason, not_in_force_warning; filters_excluded_all_matches adds excluded_by and a next_action without that filter. Default role=body; amendment_note|amendment_text search change blocks. Unknown role/kind/language/detail: invalid_filter. Example: search query="rett til ferie". Next: read id={citation}; connections id={same}.[END]
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `cursor` | string | no |  |
+| `detail` | string | no |  |
 | `id` | string | no |  |
 | `kind` | string | no |  |
 | `language` | string | no |  |
 | `max_bytes` | integer | no |  |
+| `queries` | array | no |  |
 | `query` | string | no |  |
 | `role` | string | no |  |
 | `snapshot_id` | string | no |  |
@@ -44,4 +46,4 @@ Search legal source provisions and blocks with Norwegian lexical ranking, or kin
 
 ---
 
-*Generated from the live `tools/list` on 2026-09-16. Regenerate rather than edit by hand.*
+*Generated from the live `tools/list` (0.1.96) on 2026-09-29. Regenerate rather than edit by hand.*
