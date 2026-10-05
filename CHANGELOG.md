@@ -2,6 +2,11 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-10-06
+
+- **`LAUNCHGUIDE.md` added per server** (all ten) for import into MCP Marketplace. Each follows the
+  marketplace template and is built only from that server's `server.json`, README and `tools.json`.
+
 ## 2026-09-29
 
 - **Every server checked against its live `tools/list`.** All ten were captured from the running
