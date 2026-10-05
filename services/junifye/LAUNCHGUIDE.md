@@ -21,7 +21,7 @@ Writing a book with AI, Bible study guides, commentaries, EPUB publishing, print
 
 ## Features
 - Structured authoring through block and span tools: paragraphs, headings, quotations, lists, tables, stat blocks, figures and inline markup
-- Scripture quotation blocks verified against Darash, with wrong quotes and Strong's numbers rejected at write time
+- Scripture quotation blocks that can pull the verse text straight from Darash
 - One source, many outputs: reader PDFs in light and dark, a press-ready print interior, a full wrap cover, EPUB 3, TXT, TeX, an HTML reader and a JSON bundle
 - Print setup with printer presets, spine formula, gutter ladder, bleed, PDF/X and a low-DPI press report
 - Real ISBN-13 assignment from an allocated registrant pool, not a placeholder
@@ -29,7 +29,7 @@ Writing a book with AI, Bible study guides, commentaries, EPUB publishing, print
 - Chapter versioning with word-level diff and revert
 - Linked language editions of the same book
 - Round-trippable plain-text source: read a chapter out, edit it and write it back
-- Book and chapter outline tools that plan a read before pulling any content
+- A book outline tool that plans a read before pulling any content
 - Covers, logos, figures and image uploads
 - Groups, guests and private working notes for sharing a book with an editor
 - Book export as an editable bundle
@@ -46,7 +46,7 @@ Writing a book with AI, Bible study guides, commentaries, EPUB publishing, print
 - Tool: source_syntax — the plain-text block grammar used to read and write chapters
 - Tool: book_create — create a new book and get its id
 - Tool: chapter_create — add a chapter to a book
-- Tool: block_add_bible_quote — add a verified scripture quotation block
+- Tool: block_add_bible_quote — add a scripture quotation block, with the text fetched from Darash
 - Tool: print_set — configure a book for print-on-demand and render a press-ready interior PDF
 
 ## Tags

@@ -22,7 +22,7 @@ Norwegian legal research, quoting statutes exactly, finding the right law by nam
 ## Features
 - Current consolidated law from Lovdata: 759 statutes and 5,112 central regulations (measured 2026-09-16)
 - 988 Norsk Lovtidend avd. I announcements for 2026
-- Preparatory works (forarbeider): 23,965 from Stortinget and 5,662 from Nasjonalbiblioteket, under NLOD 2.0
+- Preparatory works (forarbeider): 23,965 from Stortinget and 5,662 from Nasjonalbiblioteket, under NLOD 2.0 (Prop. and Ot.prp. after 2005 are mostly held as designations only, not text)
 - Source text with citation and source URL on every passage
 - `resolve` returns candidates for a law name, short title or abbreviation instead of guessing
 - In-force status on hits, reported as true, false or unknown with its basis

@@ -48,7 +48,7 @@ Listening to Bible chapters, reading a chapter verse by verse, audio Bible downl
 - Tool: my_allowance — plan, download allowance left and chapter preparations left today
 
 ## Tags
-bible, audio-bible, audiobook, scripture, listening, world-english-bible, nb2026, norwegian, text-to-speech, bible-reading, download, opus, christian, media, english
+bible, audio-bible, audiobook, scripture, listening, world-english-bible, nb2026, norwegian, bible-reading, download, opus, christian, media, english
 
 ## Documentation URL
 https://github.com/Publifye/mcp/tree/main/services/audiobible

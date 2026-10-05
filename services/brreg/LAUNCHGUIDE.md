@@ -48,8 +48,9 @@ Company lookup by organisasjonsnummer, name resolution, supplier research, sales
 - Tool: entity_nearby — organisations registered near a place or a company, nearest first
 - Tool: entity_distance — straight-line distance between registered addresses
 - Tool: entity_financials — key figures, filed years, industry benchmark and the filed document
+
 ## Tags
-norway, company-register, enhetsregisteret, brreg, business-data, organisation-number, financials, due-diligence, geospatial, open-data, nlod, kyc, sales, lookup, search
+norway, company-register, enhetsregisteret, brreg, business-data, organisation-number, financials, due-diligence, geospatial, open-data, nlod, supplier-check, sales, lookup, search
 
 ## Documentation URL
 https://github.com/Publifye/mcp/tree/main/services/brreg

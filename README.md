@@ -35,7 +35,7 @@ Take only the lines you want — each server stands alone.
 - **Claude Code** — `claude mcp add --transport http darash https://darash-api.publifye.com/mcp`
 - **Cursor / VS Code** — the same `mcpServers` block in the client's MCP settings file.
 
-Prefer a key to a browser flow? Every endpoint also takes `X-API-Key`. Both routes, and the full
+Prefer a key to a browser flow? Darash, Junifye and Lexifye also take a personal `X-API-Key`. Both routes, and the full
 OAuth discovery chain, are in **[docs/connect.md](docs/connect.md)**.
 
 This repository is the canonical public reference for those servers: their endpoints, their complete
@@ -57,7 +57,7 @@ you pay for anything.
 | **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
-Client Registration, or a personal API key — except Brreg, which is OAuth only. See
+Client Registration; Darash, Junifye and Lexifye also take a personal API key. See
 **[docs/connect.md](docs/connect.md)**.
 
 ---

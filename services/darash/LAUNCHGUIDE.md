@@ -6,7 +6,7 @@ Bible research: 59 translations, Hebrew/Greek Strong's, morphology, cross-refs, 
 ## Description
 Darash gives an AI assistant the Hebrew and Greek text of Scripture as structured data: which stem a verb is in, which Strong's numbers actually occur in a verse, what a named 19th-century lexicon says about a lemma, and which printed edition that lexicon came from.
 
-It is a hosted server with a Streamable HTTP endpoint at https://darash-api.publifye.com/mcp, so there is nothing to install. Sign in once in the browser and your MCP client can call the tools directly. A translation alone can mislead: a Greek active verb is often rendered in the passive in English. Darash returns the voice, person and stem the text actually carries, and proves a lemma is in a verse rather than merely near it in a concordance.
+It is a hosted server with a Streamable HTTP endpoint at https://darash-api.publifye.com/mcp, so there is nothing to install. Sign in once in the browser and your MCP client can call the tools directly. A translation alone can mislead: a Greek active verb can be rendered in the passive in English. Darash returns the voice, person and stem the text actually carries, and proves a lemma is in a verse rather than merely near it in a concordance.
 
 It is for Bible students, pastors, translators and writers who want an assistant that quotes and parses the text instead of recalling it from memory. Every dictionary carries a provenance record that states what is verified and what is only conventional.
 

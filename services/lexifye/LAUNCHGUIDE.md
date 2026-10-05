@@ -30,12 +30,12 @@ Building a dictionary, translation glossaries, Bible word lists, lexicography, t
 - Entry search by text fragment within a dictionary
 - Guest editors with instant revoke
 - Groups for sharing a dictionary, plus private working notes
-- Trash list and restore for deleted entries and dictionaries
+- Trash list and restore for deleted entries and definitions
 - Dictionary artifacts are credentialled: there is no public shareable reader URL, by design
 
 ## Getting Started
 - "Create a Hebrew-English glossary called 'Covenant Terms' and add an entry for hesed"
-- "Add a definition to the entry 'ark' and cite Strong's [H2617]"
+- "Add a definition to the entry 'hesed' and cite Strong's [H2617]"
 - "Find entries in my dictionary that contain 'kiste'"
 - "Show what changed in the definition of 'logos' and revert to version 2"
 - "Enrich my dictionary with Strong's data from Darash"
@@ -45,6 +45,7 @@ Building a dictionary, translation glossaries, Bible word lists, lexicography, t
 - Tool: dict_enrich — run Darash Strong's enrichment over a dictionary's definitions
 - Tool: definition_diff — compare two versions of a definition
 - Tool: definition_revert — restore a definition to a past version, recorded as a new version
+
 ## Tags
 dictionary, glossary, lexicography, terminology, translation, bible, strongs, epub, pdf, hebrew, greek, publishing, rtl, versioning, vocabulary
 

@@ -47,6 +47,7 @@ Writing a CV with AI, keeping CVs in several languages, importing an existing CV
 - Tool: cv_diff — compare any two points in a CV's history
 - Tool: visibility_set — publish or unpublish a CV
 - Tool: cv_render — render a CV version to a typeset PDF
+
 ## Tags
 cv, resume, curriculum-vitae, json-resume, pdf, multilingual, career, job-search, versioning, document, typesetting, profile, productivity, editing, norwegian
 

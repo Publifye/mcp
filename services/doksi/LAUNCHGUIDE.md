@@ -47,6 +47,7 @@ Formal letters, agreements, meeting agendas, checklists, notices, marriage coven
 - Tool: doc_compose — validate, typeset and return the PDF in one call
 - Tool: signature_request_create — freeze a revision and create signing requests with links and QR codes
 - Tool: doc_mail_to_me — e-mail an issued document to the signed-in account only
+
 ## Tags
 pdf, documents, letters, agreements, signatures, qr-code, agenda, checklist, covenant, typesetting, e-signature, forms, templates, productivity, document-generation
 
