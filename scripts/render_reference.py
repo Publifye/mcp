@@ -143,7 +143,7 @@ def build(head, tools, old_cells, with_access, footer):
 
 
 def set_count(head, n):
-    return re.sub(r'\b\d+( \w+ MCP tools)', lambda m: f'{n}{m.group(1)}', head, count=1)
+    return re.sub(r'\b\d+( [\w ]+? MCP tools)', lambda m: f'{n}{m.group(1)}', head, count=1)
 
 
 def load(service_dir):

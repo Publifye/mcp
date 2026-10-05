@@ -11,7 +11,7 @@ again. Each service's `tools.json` is the source of truth, and the tool pages un
    normal authenticated `tools/list` call. Keep raw captures outside this repository, and never
    commit credentials, account data, or the results of real tool calls.
 2. **Choose the audience.** `tools.json` documents what a customer can call. Tools that need an
-   administrator, operational and logging tools, help and health tools, and integration endpoints
+   administrator, operational and logging tools, help tools, health tools unless listed as callable `plumbing`, and integration endpoints
    that refuse every caller but one fleet service are excluded, and each excluded bucket is listed
    by name so the count can be audited. Do not infer a tool's audience from its name.
 3. **Update `services/<name>/tools.json`.** Keep each returned description, annotation set and
