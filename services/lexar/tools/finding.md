@@ -38,7 +38,7 @@ Plain-language questions start here. Search source provisions and blocks in Norw
 | `kind` | string | no |  |
 | `language` | string | no |  |
 | `max_bytes` | integer | no |  |
-| `queries` | array | no |  |
+| `queries` | array of string | no |  |
 | `query` | string | no |  |
 | `role` | string | no |  |
 | `snapshot_id` | string | no |  |

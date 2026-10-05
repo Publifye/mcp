@@ -72,15 +72,15 @@ Returns the interior's print_url + a press-ready report (trim size, pages, even-
 | `bleed_mm` | number | no | Bleed added to every edge (0 = 3 mm Lulu/KDP, 5 = Drukātava/EU; 0..10). |
 | `body_font_size` | integer | no | 10..16 |
 | `book_id` | string | yes | The 'idb...' id from book_create.id (or the public UUID). |
-| `cover_bleed_mm` | number | no | The WRAP COVER's own bleed, which is NOT the interior's: 3.175 = US POD, 5 = Drukātava/EU. Getting this wrong prints a white sliver at the trimmed edge on ever… |
-| `crop_marks` | string | no | Trim marks around the WRAP COVER, per printer. "auto" (default) follows the printer preset; "on" forces them; "off" suppresses them even when the preset asks f… |
+| `cover_bleed_mm` | number | no | The WRAP COVER's own bleed, which is NOT the interior's: 3.175 = US POD, 5 = Drukātava/EU. Getting this wrong prints a white sliver at the trimmed edge on every copy. Omit for the preset's value (US default). |
+| `crop_marks` | string | no | Trim marks around the WRAP COVER, per printer. "auto" (default) follows the printer preset; "on" forces them; "off" suppresses them even when the preset asks for them. Lulu and IngramSpark FORBID crop marks; Drukātava asked in writing for files WITHOUT them (they impose the job themselves), so every shipped preset is currently off — use "on" only when your printer asks for marks. |
 | `margins_preset` | string | no |  |
 | `page_size` | string | no | Custom trim: WxH inches (6x9, 5.5x8.5), millimetres (148x210mm), or a named size (A5). Sets print_ready automatically. |
 | `printer` | string | no | Printer preset — expands to the right trim + bleed. Omit to set a custom page_size, or to re-render an already-configured book. |
-| `spine_constant_mm` | number | no | Fixed addend on the spine, independent of page count — the cover boards the block is glued between (e.g. 0.576 = 2×0.288 mm). Most US formulas fold this into t… |
-| `spine_mm` | number | no | THE SPINE WIDTH YOUR PRINTER STATED for this job, in millimetres — e.g. 17 for "for this book, the spine width will be 17 mm". This BEATS every formula (spine_… |
-| `spine_mm_for_pages` | integer | no | The PAGE COUNT the printer quoted spine_mm at (e.g. 310). This is what keeps a fixed spine honest: every render compares the interior's real page count against… |
-| `spine_per_page_mm` | number | no | YOUR PRINTER'S paper bulk in mm per PAGE — the one number that unlocks a wrap cover on a custom trim. A printer quotes caliper per LEAF (a sheet, = 2 pages), s… |
+| `spine_constant_mm` | number | no | Fixed addend on the spine, independent of page count — the cover boards the block is glued between (e.g. 0.576 = 2×0.288 mm). Most US formulas fold this into the per-page figure and want 0. Only read when spine_per_page_mm is also given. |
+| `spine_mm` | number | no | THE SPINE WIDTH YOUR PRINTER STATED for this job, in millimetres — e.g. 17 for "for this book, the spine width will be 17 mm". This BEATS every formula (spine_per_page_mm/spine_constant_mm and the preset's own math): a printer's stated figure is a requirement, not an input to derive from. ALWAYS pass spine_mm_for_pages with it, or junifye cannot tell you when the book outgrows the quote. 0 clears it and returns the book to the formula. |
+| `spine_mm_for_pages` | integer | no | The PAGE COUNT the printer quoted spine_mm at (e.g. 310). This is what keeps a fixed spine honest: every render compares the interior's real page count against it and warns loudly if they differ, because a cover bound to a spine quoted for a different book length is a ruined print run that looks fine on screen. 0 clears it. |
+| `spine_per_page_mm` | number | no | YOUR PRINTER'S paper bulk in mm per PAGE — the one number that unlocks a wrap cover on a custom trim. A printer quotes caliper per LEAF (a sheet, = 2 pages), so HALVE it: 0.099 mm/leaf becomes 0.0495. Reference: 0.0495 = Serixo 80 g by their calculator (Drukātava's own QUOTES solve to 0.052222 — trust the quote), 0.0572 = US POD white, 0.0635 = US cream. Persisted on the book and it OVERRIDES the preset (your actual stock beats the preset's assumed one), but a stated spine_mm beats BOTH. Omit to use the preset's. |
 
 ## `publish_request`
 
@@ -125,6 +125,8 @@ The retail terms an AUTHOR accepts before a book goes on sale, plus the version 
 YOU CANNOT ACCEPT THESE FOR SOMEONE. There is no tool that lets an assistant agree on an author's behalf at any access level. The author accepts on their own book page in the junifye web UI. If they gave their agreement out of band (an email, a signed message), an operator writes it down with retail_record_acceptance and it is labelled as operator-recorded.
 
 Returns {version, terms}.
+
+*No parameters.*
 
 ## `store_readiness`
 

@@ -37,7 +37,7 @@ Freeze a complete document revision and create optional signing requests for sel
 | `document` | object | no | Complete document with named, unfilled signature slots (or give id instead) |
 | `expires_in_minutes` | integer | no | Signing link lifetime in minutes (default 25, min 5, max 1440) |
 | `id` | string | no | Instead of document: the id of an issued document whose source was retained (e.g. from doc_compose_credit with issue:true) |
-| `slot_ids` | array | yes | Exactly the signature slot IDs to request; other slots remain untouched |
+| `slot_ids` | array of string | yes | Exactly the signature slot IDs to request; other slots remain untouched |
 
 ## `signature_request_get`
 

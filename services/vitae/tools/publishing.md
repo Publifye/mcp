@@ -86,7 +86,7 @@ Copy account contact details into the CV's basics: {cv_id, contact:{name?, label
 |---|---|---|---|
 | `contact` | object | yes |  |
 | `cv_id` | string | yes |  |
-| `langs` | array | no | editions to update; omit for all |
+| `langs` | array of string | no | editions to update; omit for all |
 
 ## `cv_render`
 

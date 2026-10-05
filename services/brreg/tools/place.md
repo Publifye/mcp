@@ -32,7 +32,7 @@ Example: entity_nearby orgnr="964338531" radius_km=2 org_form=["AS"]. Next: enti
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
 | `employees_max` | integer | no | Maximum employees. |
 | `employees_min` | integer | no | Minimum employees. |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `kind` | string | no | Default all. |
 | `lat` | number | no | Centre latitude, decimal degrees. Coordinates only — for a place use entity_search with municipality, city or postcode. |
 | `limit` | integer | no | Items per page (1-100, default 20). |
@@ -40,7 +40,7 @@ Example: entity_nearby orgnr="964338531" radius_km=2 org_form=["AS"]. Next: enti
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `municipality` | string | no | Municipality number or name. |
 | `nace` | string | no | NACE code prefix, e.g. 84 or 84.110. |
-| `org_form` | array | no | Org form codes, e.g. AS, ENK (see code_list). |
+| `org_form` | array of string | no | Org form codes, e.g. AS, ENK (see code_list). |
 | `orgnr` | string | no | Anchor: centre on THIS entity's registered address instead of lat/lon. It is never in its own results. |
 | `parent_orgnr` | string | no | Only direct children of this orgnr. |
 | `postcode` | string | no | Four-digit postcode. |
@@ -50,7 +50,6 @@ Example: entity_nearby orgnr="964338531" radius_km=2 org_form=["AS"]. Next: enti
 | `snapshot_id` | string | no | Pin a snapshot (else snapshot_expired). |
 | `status` | string | no | Default active. |
 | `vat_registered` | boolean | no | VAT-registered (true) or not (false). |
-
 
 ## `entity_distance`
 
@@ -71,7 +70,7 @@ Example: entity_distance from={"orgnr":"964338531","label":"office"} to=[{"orgnr
 | `from` | object | yes | Measure from here: {orgnr} or {lat, lon} (optional label). |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `snapshot_id` | string | no | Pin a snapshot (else snapshot_expired). |
-| `to` | array | yes | Measure to these, answered nearest first: [{orgnr}] or [{lat, lon}]. |
+| `to` | array of object | yes | Measure to these, answered nearest first: [{orgnr}] or [{lat, lon}]. |
 
 ---
 

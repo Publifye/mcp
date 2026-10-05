@@ -18,11 +18,15 @@ See [connect](../../../docs/connect.md) to get a key.
 
 THE one-stop authoring guide — read this ONCE before writing a dictionary and you have everything: lexifye's conventions (the translit-always rule, Darash Strong's enrichment + strongs_depth/dict_enrich, universal optimistic locking, definition version history, private notes, and the access model — owner ∪ guest editors ∪ group members, with no public dictionary and nothing to make public) AND the complete markup grammar (the same content as source_syntax, appended). No arguments.
 
+*No parameters.*
+
 ## `source_syntax`
 
 **Source Syntax** — read-only, idempotent, closed-world.
 
 Return the grammar of the round-trippable definition markup used by definition_get_source (read) and definition_set_source / definition_add_source (write): block prefixes (#/##/### headings, - list items, plain paragraphs) and inline spans (*emph*, **bold**, [H1234] Strong's — case- and zero-padding-insensitive on input, canonical on output, [h:hebrew], [g:greek], [ref:John 3:16]). Call this once before authoring so the source you write validates. No arguments.
+
+*No parameters.*
 
 ## `trash_list`
 

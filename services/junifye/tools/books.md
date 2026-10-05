@@ -69,7 +69,7 @@ Returns {refreshed:true, title_scale, title_bold} on success, or reason no_store
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id of YOUR book. Not the public UUID, and not a sibling edition. |
 | `title_bold` | boolean | no | Set the title in bold. Omit to keep the book's current setting. |
-| `title_scale` | number | no | Title size as a MULTIPLIER of the size junifye fits by itself. 1.0 is that fitted size — already the largest the band holds — so this dial mostly goes DOWN. Ra… |
+| `title_scale` | number | no | Title size as a MULTIPLIER of the size junifye fits by itself. 1.0 is that fitted size — already the largest the band holds — so this dial mostly goes DOWN. Range 0.5-1.2; outside that it is REFUSED, not clamped. Omit to keep the book's current scale. |
 
 ## `book_cover_restore`
 
@@ -131,9 +131,9 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id of the book to set the cover for. |
-| `compose_title` | boolean | no | The pushed image is BARE ARTWORK and junifye should set the title and author over it, storing the result at the retail 1600x2560. Default false, which stores t… |
+| `compose_title` | boolean | no | The pushed image is BARE ARTWORK and junifye should set the title and author over it, storing the result at the retail 1600x2560. Default false, which stores the bytes unmodified. Pass true when you generated a picture and need it turned into a cover; leave it false for a finished cover that already carries type, or the title appears twice. |
 | `title_bold` | boolean | no | Set the title in bold. Default false. Stored on the book alongside title_scale. Meaningless without compose_title=true. |
-| `title_scale` | number | no | Title size, as a MULTIPLIER of the size junifye fits by itself. 1.0 (the default) is that fitted size, which is already the largest the title band holds — so t… |
+| `title_scale` | number | no | Title size, as a MULTIPLIER of the size junifye fits by itself. 1.0 (the default) is that fitted size, which is already the largest the title band holds — so this dial mostly goes DOWN. Range 0.5-1.2; anything outside is REFUSED, not clamped. Use it when the fitted title crowds the subject of the artwork. Stored on the book, so book_cover_refresh and the automatic recompose after a rename keep the size you chose. Meaningless without compose_title=true. |
 
 ## `book_cover_versions`
 
@@ -171,20 +171,20 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `author` | string | no | Author name as it should appear (plain text). |
-| `book_type` | string | no | book = classical multi-chapter style (cover page + TOC + numbered chapters + page break per chapter). document = plain title + flowing sections (no cover, no T… |
+| `book_type` | string | no | book = classical multi-chapter style (cover page + TOC + numbered chapters + page break per chapter). document = plain title + flowing sections (no cover, no TOC, no chapter numbering). Default is book. |
 | `cover_url` | string | no | Optional external cover image URL (http(s)); uploading via book_cover_upload_begin is preferred. |
-| `language` | string | no | BCP-47 language code. Omit to default to en (English, LTR). RTL codes: he (Hebrew), ar (Arabic), fa (Farsi/Persian), ur (Urdu). nb = Norwegian Bokmål, nn = Nor… |
-| `origin` | string | no | PROVENANCE — whose words are these? original (DEFAULT) = the owner's own authored work. transcript = captured EXTERNAL material copied in verbatim (e.g. a YouT… |
+| `language` | string | no | BCP-47 language code. Omit to default to en (English, LTR). RTL codes: he (Hebrew), ar (Arabic), fa (Farsi/Persian), ur (Urdu). nb = Norwegian Bokmål, nn = Norwegian Nynorsk. Latin-script codes share Crimson Pro; he uses Ezra SIL; ar/fa/ur use Amiri; other scripts have web-font reader support (PDF falls back to English hyphenation until a script body-font is bundled). |
+| `origin` | string | no | PROVENANCE — whose words are these? original (DEFAULT) = the owner's own authored work. transcript = captured EXTERNAL material copied in verbatim (e.g. a YouTube talk): someone else's words. A transcript doc is SOURCE material — quote it WITH attribution, never present its text as the owner's writing, and it can NEVER be published/listed (the publish gate rejects it). ALWAYS set origin=transcript when creating a book from an external video/audio/talk transcript. |
 | `origin_label` | string | no | For origin=transcript: short human attribution, e.g. 'YouTube — <channel name>' (max 120 chars). |
 | `origin_url` | string | no | For origin=transcript: the canonical source link (e.g. the YouTube video URL). http(s) only. |
 | `slug` | string | no | Optional URL slug; auto-derived from the title when omitted. |
-| `subtitle` | string | no | Optional descriptive line under the title on the cover + title page (max 140 chars). This is where a longer explanatory phrase belongs, e.g. 'A Biblical Theolo… |
+| `subtitle` | string | no | Optional descriptive line under the title on the cover + title page (max 140 chars). This is where a longer explanatory phrase belongs, e.g. 'A Biblical Theology of Sexual Holiness'. |
 | `title` | string | yes | Book title — the cover headline (max 60 chars). Keep it SHORT and punchy; put the longer descriptive line in subtitle. |
-| `translation_of` | string | no | Optional: the 'idb...' id of an EXISTING book this new book is a translation/edition of. Links them as language editions of one title — a language picker on th… |
+| `translation_of` | string | no | Optional: the 'idb...' id of an EXISTING book this new book is a translation/edition of. Links them as language editions of one title — a language picker on the reader + library card lets readers switch between them. The original must not itself be a translation (editions form a flat star, one original + N editions). Can also be set/changed later via book_set_translation_of. |
 
 ## `book_delete`
 
-**Book Delete** — writes, closed-world.
+**Book Delete** — writes, destructive, closed-world.
 
 Soft-delete a book into a trash window of 30 days (restore with book_restore). The book is removed from all listings immediately; after that it is permanently purged. A public (listed) book can ONLY be deleted by an admin — owners cannot remove published work. A book under an ADMIN HOLD (book_freeze) cannot be deleted at all, by its owner OR by an admin: the refusal quotes the hold's date and reason. Lift it with book_unfreeze first, or use admin_book_delete for an erasure that must proceed despite the hold.
 
@@ -259,10 +259,10 @@ Read MANY chapters' round-trippable source in ONE call — the whole book by def
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id. |
-| `chapter_ids` | array | no | Optional exact subset of 'idc...' chapter ids to read (returned in book order). Takes precedence over from_index/limit. Every id must belong to this book. |
+| `chapter_ids` | array of string | no | Optional exact subset of 'idc...' chapter ids to read (returned in book order). Takes precedence over from_index/limit. Every id must belong to this book. |
 | `from_index` | integer | no | Optional 0-based position in book order to start from. Use next_from_index from a truncated response to page through a large book. |
 | `limit` | integer | no | Optional max number of chapters to return (still also bounded by the byte cap). |
-| `shape` | string | no | Which form of each chapter's text to return — never both, since one is derivable from the other. 'blocks' (default) = every block with its block_id, type and s… |
+| `shape` | string | no | Which form of each chapter's text to return — never both, since one is derivable from the other. 'blocks' (default) = every block with its block_id, type and source; the ids are how you write back and are the reader anchors. 'flat' = the whole-chapter source only: the leanest form, so the most chapters per call, written back with chapter_set_source. The flat form is exactly the per-block sources joined by a blank line. |
 
 ## `book_grep`
 
@@ -281,9 +281,9 @@ Pair with block_patch_text: grep to find the exact block ids, then patch each on
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id (NOT the public uuid). |
-| `chapter_ids` | array | no | Restrict to these chapters. Empty = whole book. |
+| `chapter_ids` | array of string | no | Restrict to these chapters. Empty = whole book. |
 | `exclude_bible_headers` | boolean | no | Skip the citation of scripture blocks, keep the verse text. |
-| `limit` | integer | no | Max matches per page (default 500, max 2000). A COUNT, not a size — the response is ALSO capped on measured bytes, so a page may come back shorter than the lim… |
+| `limit` | integer | no | Max matches per page (default 500, max 2000). A COUNT, not a size — the response is ALSO capped on measured bytes, so a page may come back shorter than the limit you asked for; read returned, truncated and next_offset rather than assuming. |
 | `offset` | integer | no | Matches to skip, for paging. |
 | `pattern` | string | yes | Literal text, or an RE2 pattern when regex=true. |
 | `regex` | boolean | no | Treat pattern as RE2. Not folded. |
@@ -311,7 +311,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `book_group_remove`
 
-**Book Group Remove** — writes, closed-world.
+**Book Group Remove** — writes, destructive, closed-world.
 
 Detach a GROUP from a book — its members lose the group-derived edit access to that book (any who are ALSO individual guests, or members of another attached group, keep access via that path). Book owner only. Idempotent.
 
@@ -377,10 +377,10 @@ List books with sort + pagination + visibility filter. PROVENANCE: every row car
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `detail` | string | no | Per-book detail. lean (DEFAULT) returns just the browse-and-pick fields (id, title, author, book_type, listed, owner_id, updated_at, url) — small enough that a… |
-| `limit` | integer | no | Max results per page (1..100; higher values are capped to 100 — the response echoes the applied limit). Omit it, or pass 0, for the tool's default. A NEGATIVE … |
+| `detail` | string | no | Per-book detail. lean (DEFAULT) returns just the browse-and-pick fields (id, title, author, book_type, listed, owner_id, updated_at, url) — small enough that a large library never bloats the response. full returns the complete book record (render settings, margins, print flags, timestamps, vet state). For ONE book's full detail + all artifact URLs use book_get. |
+| `limit` | integer | no | Max results per page (1..100; higher values are capped to 100 — the response echoes the applied limit). Omit it, or pass 0, for the tool's default. A NEGATIVE limit is rejected, not clamped: it has no reading, and silently substituting the default would answer a question nobody asked. |
 | `offset` | integer | no | 0-based pagination offset. Omit it for the first page. A NEGATIVE offset is rejected rather than treated as 0 — see `limit`. |
-| `origin_filter` | string | no | Provenance filter: all (default) mixes both with each row TAGGED by origin; original = only the owner's authored works; transcript = only captured external mat… |
+| `origin_filter` | string | no | Provenance filter: all (default) mixes both with each row TAGGED by origin; original = only the owner's authored works; transcript = only captured external material. |
 | `sort` | string | no |  |
 | `visibility_filter` | string | no |  |
 
@@ -413,7 +413,7 @@ Cheap PLANNING view of a book BEFORE reading content: each chapter's size + bloc
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id. |
-| `shape` | string | no | Plan for this book_get_source shape. 'blocks' (default) counts the per-block envelope; 'flat' counts the prose alone. Must match the shape you will actually ca… |
+| `shape` | string | no | Plan for this book_get_source shape. 'blocks' (default) counts the per-block envelope; 'flat' counts the prose alone. Must match the shape you will actually call book_get_source with. |
 
 ## `book_publish_to_store`
 
@@ -429,9 +429,9 @@ Returns {book_id, sku, storefront, object_key, published:true, warnings}.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `allow_shrink` | boolean | no | Publish even though the new EPUB is far smaller than the one on sale. The size floor exists because a half-finished render still produces a VALID, small EPUB, … |
+| `allow_shrink` | boolean | no | Publish even though the new EPUB is far smaller than the one on sale. The size floor exists because a half-finished render still produces a VALID, small EPUB, and the replacement reaches every buyer including people who already paid. Pass true only when the book genuinely got shorter. |
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the public uuid). |
-| `prices` | object | no | OPTIONAL per-currency price in MINOR units keyed by lowercase ISO 4217, e.g. {"nok":8900,"eur":799}. A storefront lists a product in a country ONLY if it holds… |
+| `prices` | object | no | OPTIONAL per-currency price in MINOR units keyed by lowercase ISO 4217, e.g. {"nok":8900,"eur":799}. A storefront lists a product in a country ONLY if it holds a price in that country's currency, so a book with USD alone appears in the USD feed and NOWHERE else. Omit only if you mean that. |
 
 ## `book_questions`
 
@@ -445,7 +445,7 @@ List every question this book answers (across all its chapters + any whole-book 
 
 ## `book_replace`
 
-**Book Replace** — writes, closed-world.
+**Book Replace** — writes, destructive, closed-world.
 
 Find-and-replace a LITERAL text string across EVERY chapter of a book — fix a recurring typo, rename a term, update a date. Case-sensitive, literal (not regex). Operates on each chapter's source text and re-validates: a chapter whose result would be malformed is REJECTED (atomic — that chapter is left unchanged), never silently corrupted. Returns a per-chapter manifest: applied (with count) | skipped-unchanged | rejected-invalid | not-editable. Each changed chapter is checksum-gated and creates a new revertable version (see chapter_history/chapter_revert). By DEFAULT it matches WHOLE WORDS ONLY (word boundaries): find="Gen" hits "Gen" but NEVER "Genesis" or any substring -- the safe way to rename, thinking around words not blind characters (set whole_word=false for a raw substring replace). ALWAYS preview first: preview=true is a DRY RUN that returns per-chapter match counts and changes NOTHING; then re-run without preview to apply.
 
@@ -479,7 +479,7 @@ Restore a soft-deleted book within its trash window (30 days) — re-adds it to 
 
 ## `book_retract_from_store`
 
-**Book Retract From Store** — writes, closed-world.
+**Book Retract From Store** — writes, destructive, closed-world.
 
 Take this book OFF the shelf. It is unlinked from the storefront and marked not-purchasable, which removes it from the shop's catalogue and from its Google product feed.
 
@@ -544,7 +544,7 @@ Search visible books. Matches title + author always; pass content=true to also s
 | `content` | boolean | no | also search inside book body text (slower disk scan) |
 | `detail` | string | no | Per-hit detail: lean (default, browse fields) or full (complete record). |
 | `language` | string | no | optional ISO code filter, e.g. en, fa, ar |
-| `limit` | integer | no | Max results per page (1..100; higher values are capped to 100 — the response echoes the applied limit). Omit it, or pass 0, for the tool's default. A NEGATIVE … |
+| `limit` | integer | no | Max results per page (1..100; higher values are capped to 100 — the response echoes the applied limit). Omit it, or pass 0, for the tool's default. A NEGATIVE limit is rejected, not clamped: it has no reading, and silently substituting the default would answer a question nobody asked. |
 | `offset` | integer | no | 0-based pagination offset. Omit it for the first page. A NEGATIVE offset is rejected rather than treated as 0 — see `limit`. |
 | `q` | string | yes | The search text. Matching is case-, diacritic- and accent-insensitive substring ('dap' finds 'dåp') — multi-word queries must match contiguously. |
 | `scope` | string | no | local=books you own or are a guest editor on, public=listed books from anyone, all=both (default) |
@@ -670,7 +670,7 @@ Duplicate labels are rejected. Max 36 links — a runaway guard, not a target; m
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the public uuid). |
-| `links` | array | yes | The COMPLETE list, replacing whatever is stored. Empty array clears all buy links. |
+| `links` | array of object | yes | The COMPLETE list, replacing whatever is stored. Empty array clears all buy links. |
 
 ## `book_set_translation_of`
 

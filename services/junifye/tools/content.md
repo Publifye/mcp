@@ -173,17 +173,17 @@ Add a tabular grid in ONE call. rows = array of rows, each row = array of cell s
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `align` | array | no | Optional per-column alignment; omit for left. |
+| `align` | array of string | no | Optional per-column alignment; omit for left. |
 | `caption` | string | no | Optional caption text shown under the block. |
 | `chapter_id` | string | yes | The 'idc...' chapter id (from chapter_list / chapter_create — NOT a book id or block id). |
-| `header` | array | no | Optional column headers. |
+| `header` | array of string | no | Optional column headers. |
 | `insert_after` | string | no | Optional 'blk...' id — place the new block immediately AFTER this block. Omit both insert_* args to append at the chapter end; passing both is rejected. |
 | `insert_before` | string | no | Optional 'blk...' id — place the new block immediately BEFORE this block. Omit both insert_* args to append at the chapter end; passing both is rejected. |
-| `rows` | array | yes | Body rows; each row is an array of cell strings. |
+| `rows` | array of array | yes | Body rows; each row is an array of cell strings. |
 
 ## `block_delete`
 
-**Block Delete** — writes, closed-world.
+**Block Delete** — writes, destructive, closed-world.
 
 Delete a block by its stable id (e.g. blk7a91...). Returns error if no block has that id (e.g. another writer deleted it). Any notes pinned to this block follow to the next block (or the previous if it was last).
 
@@ -248,7 +248,7 @@ Find an edit's exact block ids with book_grep first. For TABLE/STAT blocks use b
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `chapter_id` | string | yes | The idc… chapter holding every block in the batch. |
-| `patches` | array | yes | The edits, applied in order to one in-memory copy. |
+| `patches` | array of object | yes | The edits, applied in order to one in-memory copy. |
 | `preview` | boolean | no | Report what would change and write nothing. |
 
 ## `block_patch_text`
@@ -261,7 +261,7 @@ Surgically edit ONE block: replace `find` with `replace` inside that block's SOU
 |---|---|---|---|
 | `block_id` | string | yes | The blk… id of the block to patch (from block_list / block_get_source). |
 | `chapter_id` | string | yes | The idc… chapter that holds the block. |
-| `find` | string | yes | Exact source text to replace; must occur EXACTLY ONCE in the block's source. Use '…' (or '...') to span a long run: 'left…right' replaces from the unique left … |
+| `find` | string | yes | Exact source text to replace; must occur EXACTLY ONCE in the block's source. Use '…' (or '...') to span a long run: 'left…right' replaces from the unique left anchor through the unique right anchor (inclusive). |
 | `replace` | string | yes | Replacement text. May be empty to delete the matched span. |
 
 ## `block_set_source`
@@ -298,12 +298,12 @@ Replace an existing TABLE block's contents from STRUCTURED data — the only way
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `align` | array | no | Optional per-column alignment; omit for all-left. |
+| `align` | array of string | no | Optional per-column alignment; omit for all-left. |
 | `block_id` | string | yes | The 'blk...' block id (from block_list, or returned by the block_add_* call that created it). |
 | `caption` | string | no | Optional caption text shown under the block. |
 | `chapter_id` | string | yes | The 'idc...' chapter id (from chapter_list / chapter_create — NOT a book id or block id). |
-| `header` | array | no | Optional column headers; each ≤24 characters. |
-| `rows` | array | yes | Body rows; each row is an array of cell strings. |
+| `header` | array of string | no | Optional column headers; each ≤24 characters. |
+| `rows` | array of array | yes | Body rows; each row is an array of cell strings. |
 
 ## `block_transfer`
 
@@ -313,11 +313,11 @@ MOVE whole sections (blocks) from one chapter to another — the two chapters ma
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `block_ids` | array | yes | The 'blk...' ids to move, from block_list(from_chapter). They are moved in the order they appear in the SOURCE chapter, not the order given here. |
+| `block_ids` | array of string | yes | The 'blk...' ids to move, from block_list(from_chapter). They are moved in the order they appear in the SOURCE chapter, not the order given here. |
 | `from_chapter` | string | yes | The 'idc...' chapter the blocks are currently in (from chapter_list / block_list). |
 | `insert_after` | string | no | Optional. A block id in the TARGET chapter; the moved blocks land immediately after it. Omit to append at the end. |
 | `position` | string | no | Where to place them when insert_after is not given: 'end' (default) or 'start'. |
-| `to_chapter` | string | yes | The 'idc...' chapter to move them into. MAY belong to a different book — that is the point of this tool. Create it first with chapter_create if it does not exi… |
+| `to_chapter` | string | yes | The 'idc...' chapter to move them into. MAY belong to a different book — that is the point of this tool. Create it first with chapter_create if it does not exist. |
 
 ## `list_add_item`
 
@@ -334,7 +334,7 @@ Append (or insert at at_idx) a new row to a list block. Each new row is initiali
 
 ## `list_delete_item`
 
-**List Delete Item** — writes, closed-world.
+**List Delete Item** — writes, destructive, closed-world.
 
 Delete row item_idx from a list block.
 
@@ -487,7 +487,7 @@ Append (or insert at at_idx) a plain-text span. Use this for normal prose.
 
 ## `span_delete`
 
-**Span Delete** — writes, closed-world.
+**Span Delete** — writes, destructive, closed-world.
 
 Delete the span at idx within the target block. For list blocks pass item_idx (selects the row); for paragraph/footnote omit it.
 

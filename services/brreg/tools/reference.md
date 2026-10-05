@@ -24,7 +24,7 @@ Example: code_list list=org_form query=aksje. Next: entity_search org_form=[<cod
 |---|---|---|---|
 | `compact` | boolean | no | One-line text summary, not duplicated JSON. |
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `limit` | integer | no | Items per page (1-100, default 50). |
 | `list` | string | yes | Which code list. |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |

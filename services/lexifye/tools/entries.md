@@ -37,7 +37,7 @@ Add a definition to an entry. content is an array of blocks (paragraph|heading|l
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `content` | array | yes |  |
+| `content` | array of object | yes |  |
 | `dict_id` | string | yes |  |
 | `entry_id` | string | yes |  |
 
@@ -53,15 +53,15 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
-| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
+| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
+| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
 | `dict_id` | string | yes |  |
 | `entry_id` | string | yes |  |
 | `source` | string | yes | The definition's full text as markup source; PARSED, not stored verbatim. See source_syntax. |
 
 ## `definition_delete`
 
-**Definition Delete** — writes, closed-world.
+**Definition Delete** — writes, destructive, closed-world.
 
 Delete a definition. sha256_of_old MUST match the current stored sha256.
 
@@ -79,7 +79,7 @@ Delete a definition. sha256_of_old MUST match the current stored sha256.
 | `dict_id` | string | yes |  |
 | `entry_id` | string | yes |  |
 | `purge` | boolean | no | IRREVERSIBLE hard delete, version history included. Omit for the recoverable default. |
-| `sha256` | string | no | Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors f… |
+| `sha256` | string | no | Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors from this tool name sha256_of_old. |
 | `sha256_of_old` | string | yes |  |
 
 ## `definition_diff`
@@ -159,7 +159,7 @@ Restore a soft-deleted definition to its original position in its entry's sense 
 
 ## `definition_revert`
 
-**Definition Revert** — writes, closed-world.
+**Definition Revert** — writes, destructive, closed-world.
 
 Restore a definition to a past version n (from definition_history), recorded as a NEW version — history is never destroyed. Carries the SAME optimistic lock as an edit: sha256 MUST match the definition's CURRENT sha256 (from dict_get). Returns the new current definition.
 
@@ -186,8 +186,8 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
-| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
+| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
+| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
 | `definition_id` | string | yes |  |
 | `dict_id` | string | yes |  |
 | `entry_id` | string | yes |  |
@@ -202,12 +202,12 @@ Replace a definition's content. sha256_of_old MUST match the current stored sha2
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `content` | array | yes |  |
+| `content` | array of object | yes |  |
 | `def_id` | string | no | DEPRECATED ALIAS for definition_id. Still accepted; pass definition_id instead. |
 | `definition_id` | string | yes |  |
 | `dict_id` | string | yes |  |
 | `entry_id` | string | yes |  |
-| `sha256` | string | no | Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors f… |
+| `sha256` | string | no | Accepted alias for sha256_of_old — the same optimistic-lock token, under the name definition_set_source / definition_revert / entry_rename use for it. Errors from this tool name sha256_of_old. |
 | `sha256_of_old` | string | yes |  |
 
 ## `entry_add`
@@ -224,8 +224,8 @@ Add a term entry to a dict. term must be unique within the dict (case-insensitiv
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
-| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolv… |
+| `body` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
+| `content` | string | no | Accepted ALIAS for source — the same field, under the name a sibling tool uses for it. Pass source; passing two spellings at once is refused rather than resolved. |
 | `dict_id` | string | yes |  |
 | `source` | string | no | Optional. The entry's first definition as markup source (blank-line-separated blocks); PARSED, not stored verbatim. See source_syntax. |
 | `term` | string | yes |  |
@@ -233,7 +233,7 @@ Add a term entry to a dict. term must be unique within the dict (case-insensitiv
 
 ## `entry_delete`
 
-**Entry Delete** — writes, closed-world.
+**Entry Delete** — writes, destructive, closed-world.
 
 Delete an entry and all of its definitions from a dict.
 
@@ -332,7 +332,7 @@ entry_ids is the new order, first to last. It must name EVERY entry of the dict 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `dict_id` | string | yes |  |
-| `entry_ids` | array | yes | Every entry id of the dict exactly once, in the desired display order. |
+| `entry_ids` | array of string | yes | Every entry id of the dict exactly once, in the desired display order. |
 
 ## `entry_restore`
 

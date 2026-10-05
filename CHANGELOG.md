@@ -4,6 +4,14 @@ Dates are the date the change was made, not the date it was written up.
 
 ## 2026-10-06
 
+- **Reference tooling and maintenance guide.** `scripts/render_reference.py` rebuilds every tool section
+  on the per-service pages from that server's `tools.json`, and `--check` fails if any page has drifted
+  from it or if a tool is on no page. [docs/maintaining.md](docs/maintaining.md) documents capturing,
+  regenerating and validating. The first run corrected the pages to match `tools.json`: parameter cells
+  that had been cut at 160 characters are now complete, array parameters show their item type, tools
+  with no parameters say so, `destructive` and `open-world` annotations are stated, and one table row
+  that had split across lines is repaired. New page `services/darash/tools/session.md` documents Darash's
+  8 session, figure and health tools, which `tools.json` already listed but no page covered.
 - **`LAUNCHGUIDE.md` added per server** (all ten) for import into MCP Marketplace. Each follows the
   marketplace template and is built only from that server's `server.json`, README and `tools.json`.
 

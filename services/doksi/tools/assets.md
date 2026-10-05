@@ -7,9 +7,7 @@ See [connect](../../../docs/connect.md) to sign in.
 | Tool | Access | What it does |
 |---|---|---|
 | [`asset_upload_begin`](#asset_upload_begin) | write | Reserve an id for a mark — a signature, a logo, a seal, a letterhead, or corner artwork —… |
-| [`asset_status`](#asset_status) | read | Where a mark is: awaiting_upload, processing, ready, or failed with the reason.
-
-A docum… |
+| [`asset_status`](#asset_status) | read | Where a mark is: awaiting_upload, processing, ready, or failed with the reason |
 
 ---
 
@@ -33,7 +31,7 @@ Then POST the bytes; HTTP 202 means stored and processing asynchronously. Poll a
 |---|---|---|---|
 | `keep_background` | boolean | no | Do not key out the background. For a mark designed on a coloured field. |
 | `slot` | string | no | One of: signature, logo, seal, letterhead, artwork |
-| `slots` | array | no | Several slots in one call, instead of `slot`. |
+| `slots` | array of string | no | Several slots in one call, instead of `slot`. |
 
 ## `asset_status`
 

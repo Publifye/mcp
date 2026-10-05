@@ -99,7 +99,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `dict_group_remove`
 
-**Dict Group Remove** — writes, closed-world.
+**Dict Group Remove** — writes, destructive, closed-world.
 
 Detach a GROUP from a dict — its members lose the group-derived edit access to that dict (any who are ALSO individual guests, or members of another attached group, keep access via that path). Dict owner only. Idempotent.
 
@@ -143,7 +143,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `dict_replace`
 
-**Dict Replace** — writes, closed-world.
+**Dict Replace** — writes, destructive, closed-world.
 
 Find-and-replace a LITERAL string across EVERY definition of a dictionary — fix a recurring typo, rename a term, update a date. One call instead of one edit per definition.
   ALWAYS PREVIEW FIRST: preview=true is a DRY RUN that reports what WOULD change and writes nothing. Then re-run without it.
@@ -220,7 +220,7 @@ Hand ownership of YOUR dictionary to another user. Owner only — the mirror of 
 |---|---|---|---|
 | `dict_id` | string | yes | The 'idy...' id of a dict you own (NOT the uuid). |
 | `new_owner_id` | string | no | DEPRECATED ALIAS for to_owner. Still accepted; pass to_owner instead. |
-| `to_owner` | string | yes | The recipient's lexifye user id (pubhub 'idu...') from guest_list or guest_find_user. NOT an email. (admin_dict_transfer's to_owner also resolves a username; t… |
+| `to_owner` | string | yes | The recipient's lexifye user id (pubhub 'idu...') from guest_list or guest_find_user. NOT an email. (admin_dict_transfer's to_owner also resolves a username; this owner-facing door takes the id.) |
 
 ---
 

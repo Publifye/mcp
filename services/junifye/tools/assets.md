@@ -44,6 +44,8 @@ Chapter id is 'idc...', block id is 'blk...', dict entry is its term string. Alw
 There is no explicit render tool. Every mutation auto-bumps book.version; the next fetch of
 https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders if drifted.
 
+*No parameters.*
+
 ## `author_page_set`
 
 **Author Page Set** — writes, closed-world.
@@ -64,7 +66,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 |---|---|---|---|
 | `bio` | string | no | Author-page bio, max 2000 chars. Empty string clears it. |
 | `page_name` | string | no | Display-name override (e.g. an organisation/church name), max 120 chars. Empty string clears it. |
-| `public` | boolean | no | Author pages are opt-in (hidden by default). true publishes /a/<handle> — world-readable and added to the sitemap for search engines; false returns it to previ… |
+| `public` | boolean | no | Author pages are opt-in (hidden by default). true publishes /a/<handle> — world-readable and added to the sitemap for search engines; false returns it to preview (404 for everyone but the author, out of the sitemap). DO NOT PASS THIS UNLESS THE AUTHOR EXPLICITLY ASKED to go live or to unpublish. Editing a bio or an image is NOT a request to publish. Omit the field to leave the current state untouched. |
 
 ## `authors_list`
 
@@ -122,14 +124,14 @@ Create a new Dictionary entry. body is plain-text/markdown — split on blank li
 
 ## `dict_delete`
 
-**Dict Delete** — writes, closed-world.
+**Dict Delete** — writes, destructive, closed-world.
 
 Delete a Dictionary entry. term addresses ONE entry by the entry's own term as the glossary spells it, or by its stored key (normalized_term, from dict_list). A term that folds onto SEVERAL entries (two vowel/accent-distinct words sharing one lookup form) is REFUSED with both candidates named — NOTHING is deleted; re-issue naming one of them. Also rejected if any chapter still references the entry via \gref{} (error includes chapter list).
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
-| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guess… |
+| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guessed. |
 
 ## `dict_get`
 
@@ -140,7 +142,7 @@ Get a Dictionary entry. body is the markdown reconstructed from the entry's stor
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
-| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guess… |
+| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guessed. |
 
 ## `dict_list`
 
@@ -164,7 +166,7 @@ Set the manual sequence for all Dictionary entries. terms MUST contain EVERY ter
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
-| `terms` | array | yes | The FULL list of headwords in the desired order — every existing term exactly once. |
+| `terms` | array of string | yes | The FULL list of headwords in the desired order — every existing term exactly once. |
 
 ## `dict_update`
 
@@ -176,7 +178,7 @@ Replace a Dictionary entry's body. body is markdown; paragraphs are blank-line s
 |---|---|---|---|
 | `body` | string | yes | The entry's body text (markdown-lite, same grammar as source_syntax prose). |
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
-| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guess… |
+| `term` | string | yes | The entry's own term as the glossary spells it, or its stored key (normalized_term, from dict_list). A form that folds onto two entries is refused, never guessed. |
 
 ## `figure_upload_begin`
 
@@ -204,6 +206,8 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 **House Style** — read-only, idempotent, closed-world.
 
 THE one-stop authoring guide — read this ONCE before writing or vetting a book and you have everything: Junifye's editorial ruleset (what a publishable book is — finished edited prose, never raw transcripts/stutters/leftover HTML entities like &gt;&gt;), structure (book vs document, chapters + sub-chapter headings), scripture conventions (real faithfully-cited refs; ONE quote per :bible block, commentary in its own paragraph), a worked example of a simple chapter, how glossary terms link (and how a \gref{…} reference addresses exactly one entry), AND the complete block/span markup grammar (the same content as source_syntax, appended). The vetter judges on these same grounds. No arguments.
+
+*No parameters.*
 
 ## `image_upload_begin`
 
@@ -242,11 +246,15 @@ Chapter id is 'idc...', block id is 'blk...', dict entry is its term string. Alw
 There is no explicit render tool. Every mutation auto-bumps book.version; the next fetch of
 https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders if drifted.
 
+*No parameters.*
+
 ## `source_syntax`
 
 **Source Syntax** — read-only, idempotent, closed-world.
 
 Return the grammar of the round-trippable block source used by block_get_source / chapter_get_source (read) and block_set_source (write): block prefixes (#, :bible, :quote, :footnote, :list, :math) and inline spans (*emph*, **strong**, [H1234], [h:hebrew], [g:greek], [l:latin], [ref:…], [a:text|url]), plus how a glossary reference (\gref{…}) resolves to ONE Glossary entry — including addressing a specific entry by its stored key when several share a lookup form. Call this once before authoring or translating so the source you write validates. No arguments.
+
+*No parameters.*
 
 ## `sync_resolve`
 
@@ -257,7 +265,7 @@ Mark a chapter (or the whole book) reconciled across all language editions — i
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | Any edition's 'idb…' id. The whole translation family is resolved together. |
-| `chapter_id` | string | no | Optional. A chapter id ('idc…') in ANY edition: resolves that one chapter pair across all editions. Omit to seed/refresh the baseline for the entire book famil… |
+| `chapter_id` | string | no | Optional. A chapter id ('idc…') in ANY edition: resolves that one chapter pair across all editions. Omit to seed/refresh the baseline for the entire book family. |
 
 ## `sync_status`
 
@@ -274,6 +282,8 @@ Cross-edition drift report for a TRANSLATED book: which chapters were edited in 
 **User Contact Get** — read-only, idempotent, closed-world.
 
 Get the CALLER's own contact info from pubcontacts (name, email, phone, address, bio, etc.). Derived from authenticated user_id — there is no parameter for specifying a different user. Auto-registers a minimal Contact in pubcontacts if the PubHub user has none (creates with just email from the PubHub user record).
+
+*No parameters.*
 
 ## `user_contact_set_field`
 

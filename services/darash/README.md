@@ -55,7 +55,7 @@ distinction is the whole reason this server exists.
 ## What the tools do
 
 Every tool is documented with its exact description, annotations and input schema —
-34 in all, generated from the service's own `tools/list`, never written by hand.
+42 in all (34 capability, 8 session and figure tools), generated from the service's own `tools/list`, never written by hand.
 
 | Area | The question it answers | Tools |
 |---|---|---|
@@ -64,6 +64,7 @@ Every tool is documented with its exact description, annotations and input schem
 | **[Study and cross-reference](tools/study.md)** | What else does Scripture say about this, and which words move together? | 6 |
 | **[Dictionaries](tools/dictionaries.md)** | What do the reference works say, and which work is it? | 4 |
 | **[Search](tools/search.md)** | Find it by wording, by meaning, or by how rare it is. | 4 |
+| **[Session, figures and health](tools/session.md)** | How do I check the service, send feedback, and manage the figures I have stored? | 8 |
 
 Machine-readable: **[tools.json](tools.json)** carries all 42 callable tools (34 capability, 8 session/cache) with full JSON Schema, plus every excluded bucket listed by name so the count is auditable.
 

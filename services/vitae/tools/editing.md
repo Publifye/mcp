@@ -47,7 +47,7 @@ Replace a whole non-work section in one edition: {cv_id, lang, section, items}.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `cv_id` | string | yes |  |
-| `items` | array | no | for skills/languages/certificates; "Name: a, b, c" is split into name and keywords |
+| `items` | array of string | no | for skills/languages/certificates; "Name: a, b, c" is split into name and keywords |
 | `lang` | string | yes |  |
 | `section` | string | yes |  |
 | `text` | string | no | for summary |

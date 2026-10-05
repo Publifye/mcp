@@ -66,11 +66,11 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in PDF URLs). |
 | `editor_name` | string | no | Optional display name of the human author, e.g. 'Øivind' — shown for presence and recorded as the version author. |
 | `idle_minutes` | integer | no | Optional idle auto-lock window in minutes (5–1440). Omit to use the author's remembered preference, or the default. |
-| `open_at` | string | no | Optional section id (a 'blk...' id — e.g. the one in the editor's copyable id-chip) to open the editor AT: appends #<id> so the link lands on that section. Omi… |
+| `open_at` | string | no | Optional section id (a 'blk...' id — e.g. the one in the editor's copyable id-chip) to open the editor AT: appends #<id> so the link lands on that section. Omit to open the author's last-edited section for this book. |
 
 ## `edit_session_revoke`
 
-**Edit Session Revoke** — writes, closed-world.
+**Edit Session Revoke** — writes, destructive, closed-world.
 
 Immediately disable a web-editor link previously minted by edit_session_create (e.g. once the author is finished). After this the URL shows the locked page. Idempotent — revoking an already-expired/unknown session still returns ok.
 
@@ -131,8 +131,8 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid). |
-| `editor` | string | no | Primary editor NAME — a soft guide (who should edit it), not an access lock. Pass "" to clear. Ignored if editor_user_id is given (the name is taken from that … |
-| `editor_user_id` | string | no | Assign this Junifye user as the editor and (unless they're the owner) auto-add them as a guest editor so they gain edit access + see it in their editorial_list… |
+| `editor` | string | no | Primary editor NAME — a soft guide (who should edit it), not an access lock. Pass "" to clear. Ignored if editor_user_id is given (the name is taken from that user). |
+| `editor_user_id` | string | no | Assign this Junifye user as the editor and (unless they're the owner) auto-add them as a guest editor so they gain edit access + see it in their editorial_list. Owner-only. Resolve a name via guest_find_user. |
 | `note` | string | no | Optional one-line brief for the editor. Pass "" to clear. |
 | `status` | string | no | ready = ready for editorial review; approved = editor signed off (set after editing); none = clear the workflow. |
 
@@ -245,7 +245,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `group_delete`
 
-**Group Delete** — writes, closed-world.
+**Group Delete** — writes, destructive, closed-world.
 
 Delete a group. Owner only. This detaches the group from every book it is attached to (those books lose group-editing) and removes it for all members. Irreversible.
 
@@ -306,7 +306,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `group_invite_cancel`
 
-**Group Invite Cancel** — writes, closed-world.
+**Group Invite Cancel** — writes, destructive, closed-world.
 
 Withdraw a pending group invite. Owner or admin only. Idempotent.
 
@@ -327,7 +327,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `group_leave`
 
-**Group Leave** — writes, closed-world.
+**Group Leave** — writes, destructive, closed-world.
 
 Leave a group you are a member of. Leaving also DETACHES the group from every book YOU own. The owner cannot leave — transfer the group (group_transfer) or delete it (group_delete) first.
 
@@ -368,7 +368,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `group_member_remove`
 
-**Group Member Remove** — writes, closed-world.
+**Group Member Remove** — writes, destructive, closed-world.
 
 Remove a member from a group. The OWNER may remove any member (except themselves — use group_transfer or group_delete); an ADMIN may remove only non-admin members. Removing a member also DETACHES the group from every book that member OWNS (their books stop being group-editable); books owned by others stay attached.
 
@@ -494,7 +494,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `guest_remove`
 
-**Guest Remove** — writes, closed-world.
+**Guest Remove** — writes, destructive, closed-world.
 
 Remove a GUEST EDITOR from a book — revokes their content access and drops the book from their library. Owner-only. Idempotent.
 
@@ -515,7 +515,7 @@ https://junifye.publifye.com/<uuid>-light.pdf (or -dark.pdf) lazily re-renders i
 
 ## `note_delete`
 
-**Note Delete** — writes, closed-world.
+**Note Delete** — writes, destructive, closed-world.
 
 Delete one authoring NOTE, addressed by anchor / block_id / key (same handle used to set it).
 
@@ -575,13 +575,13 @@ Create, replace, or append an authoring NOTE — private scratch for you and the
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `anchor` | string | yes | WHERE the note attaches: a chapter id (idc…) for a chapter or section note, or a book id (idb…) for a book-wide note. A block id (blk…) is NOT an anchor — pass… |
-| `block_id` | string | no | Optional. Pin the note to a section: a blk… id (from block_list) WITHIN the chapter anchor. If that block is deleted the note follows to the next block; a full… |
+| `anchor` | string | yes | WHERE the note attaches: a chapter id (idc…) for a chapter or section note, or a book id (idb…) for a book-wide note. A block id (blk…) is NOT an anchor — pass the chapter as anchor and the block as block_id. |
+| `block_id` | string | no | Optional. Pin the note to a section: a blk… id (from block_list) WITHIN the chapter anchor. If that block is deleted the note follows to the next block; a full chapter rewrite promotes it to a chapter note — never lost. |
 | `content` | string | yes | The note text. Plain readable UTF-8; never rendered into the book. |
 | `key` | string | no | Optional slot (default 'main'). Use a distinct slug like 'todo' to keep more than one note at the same anchor/section. |
 | `mode` | string | no | replace (default) overwrites the note; append adds a new line onto the existing body. |
 | `subject` | string | no | Optional short one-line header shown in note_list / block_list so the note is findable without reading its body. |
-| `work` | boolean | no | Set true to make this a WORK note — shared across ALL language editions of the title (anchor just identifies the family). Title-level, so block_id is not allow… |
+| `work` | boolean | no | Set true to make this a WORK note — shared across ALL language editions of the title (anchor just identifies the family). Title-level, so block_id is not allowed. |
 
 ## `question_add`
 
@@ -592,12 +592,12 @@ Create a discoverable question (e.g. "What does the Bible say about baptism?"). 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `lang` | string | no | Optional BCP-47 language code, e.g. "en" or "nb". |
-| `tags` | array | no | Optional topic labels, e.g. ["baptism","sacraments"]. |
+| `tags` | array of string | no | Optional topic labels, e.g. ["baptism","sacraments"]. |
 | `text` | string | yes | The question as a reader would phrase it. |
 
 ## `question_delete`
 
-**Question Delete** — writes, closed-world.
+**Question Delete** — writes, destructive, closed-world.
 
 Permanently delete a question and all its answer edges (the referenced books/chapters are untouched). To remove only YOUR book's association, prefer question_unlink. Requires admin, or write access to a book this question answers.
 
@@ -652,12 +652,12 @@ Edit a question's text/tags/lang. The slug is permanent (permalinks must not rot
 |---|---|---|---|
 | `id` | string | yes | The 'idq...' question id. |
 | `lang` | string | no | Optional BCP-47 language code, e.g. "en". |
-| `tags` | array | no | Replacement topic labels (replaces the existing set). |
+| `tags` | array of string | no | Replacement topic labels (replaces the existing set). |
 | `text` | string | yes | The revised question text. |
 
 ## `question_unlink`
 
-**Question Unlink** — writes, closed-world.
+**Question Unlink** — writes, destructive, closed-world.
 
 Detach one answer edge (book_id, optionally chapter_id) from a question. Removing the last answer leaves the question orphaned (its text is kept for re-linking), not deleted. Requires WRITE access to the book.
 
@@ -686,8 +686,8 @@ Report the verdict of an agentic publication-vetting session for a book. GATED B
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id of the book being vetted (from the vetting prompt). |
-| `history` | string | no | ADMIN-ONLY internal audit summary (optional): WHAT you verified and HOW — your method, the specific darash lookups you ran, and what you found / any problems. … |
-| `reason` | string | no | PUBLIC verdict explanation — the owner reads it via vet_status. REQUIRED on reject — cite the specific problem (chapter + the inaccurate reference/wording). Op… |
+| `history` | string | no | ADMIN-ONLY internal audit summary (optional): WHAT you verified and HOW — your method, the specific darash lookups you ran, and what you found / any problems. The owner and public never see this (only reason is public); admins read it via vet_status for retrospect. It persists past the decision. |
+| `reason` | string | no | PUBLIC verdict explanation — the owner reads it via vet_status. REQUIRED on reject — cite the specific problem (chapter + the inaccurate reference/wording). Optional on approve. |
 | `result` | string | yes | approve = the scriptural content is sound + accurately cited → the book goes public; reject = keep it private with a reason. |
 | `token` | string | yes | The one-time round token from the vetting prompt — echo it back VERBATIM. It ties this verdict to the current pending round; a stale/unknown token is rejected. |
 

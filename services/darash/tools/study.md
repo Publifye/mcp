@@ -65,6 +65,8 @@ Get the semantic-neighbour set for a Strong's number, computed from the in-memor
 
 Health check for the synonym graph built at startup. Returns node counts, edge counts, mean/max degree per language, and build time. Use once to confirm the graph is populated; then use get_synonyms for actual queries.[END]
 
+*No parameters.*
+
 ## `co_occurrence`
 
 **Co Occurrence** — read-only, idempotent, closed-world.

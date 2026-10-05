@@ -60,6 +60,8 @@ Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (
 Client Registration; Darash, Junifye and Lexifye also take a personal API key. See
 **[docs/connect.md](docs/connect.md)**.
 
+To update or check the tool references, see **[docs/maintaining.md](docs/maintaining.md)**.
+
 ---
 
 ## Darash — the Hebrew and Greek text, as data

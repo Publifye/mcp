@@ -79,7 +79,7 @@ A personal download link for recorded chapters, as an .opus file (one chapter) o
 | `bible` | string | no | Which Bible: web, nb2026. Default web (the first offered). |
 | `book` | string | no | Book slug such as 'genesis', 'john' or 'first-samuel'. Common names ('1 sam', 'psalm') are resolved. Call list_books for all 66. |
 | `chapter` | integer | no | Chapter number within the book, starting at 1. |
-| `chapters` | array | no | Several chapters for one ZIP, each 'book/chapter' such as 'john/3' (Annual plan). Use instead of book+chapter. |
+| `chapters` | array of string | no | Several chapters for one ZIP, each 'book/chapter' such as 'john/3' (Annual plan). Use instead of book+chapter. |
 | `expires_in_seconds` | integer | no | Link lifetime, 60 to 86400. Default 3600. |
 | `voice` | string | no | Optional voice option id (the voice the user chose; omitted: the Bible's default voice). get_chapter lists the voices offered. |
 

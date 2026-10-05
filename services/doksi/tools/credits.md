@@ -18,6 +18,7 @@ See [connect](../../../docs/connect.md) to sign in.
 
 What YOUR account gets for a covenant right now: print_ready true (a Doksi plan, a live marriage pass) or false (watermarked previews; one credit per print-ready covenant with doc_compose_credit), and where to buy. Read it before composing so the answer is no surprise. Requires a customer login.
 
+*No parameters.*
 
 ## `doc_credit_balance`
 
@@ -25,6 +26,7 @@ What YOUR account gets for a covenant right now: print_ready true (a Doksi plan,
 
 Read your remaining compilation credits, reserved credits, and each pack's expiry. Only your authenticated customer account can be read.
 
+*No parameters.*
 
 ## `doc_compose_credit`
 
@@ -35,7 +37,7 @@ Compile one PDF using ONE purchased credit. Optional alternative to the allowanc
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `document` | object | yes | Complete document object |
-| `include` | array | no | pdf and/or json; defaults to pdf |
+| `include` | array of string | no | pdf and/or json; defaults to pdf |
 | `issue` | boolean | no | Also keep the PDF and create a shareable URL |
 | `name` | string | no | With issue:true: your private name for the kept document (1-80 characters; never printed). Default: the names and date |
 | `request_id` | string | yes | Unique id for this compilation (1..128 letters, digits, dots, hyphens, underscores); reuse on retries |

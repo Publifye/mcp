@@ -31,7 +31,7 @@ Compose a document and typeset it in ONE call: validate, render, and return the 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `document` | object | yes | The whole document object |
-| `include` | array | no | Which representations to return: pdf (base64 bytes), json (canonical document), image (covenants: page 1 as a JPEG, image.bytes_b64). Defaults to pdf. Use issu… |
+| `include` | array of string | no | Which representations to return: pdf (base64 bytes), json (canonical document), image (covenants: page 1 as a JPEG, image.bytes_b64). Defaults to pdf. Use issue:true with include:[json] for a shareable PDF URL. |
 | `issue` | boolean | no | Also ISSUE the document: keep it and mint a capability link you can hand to somebody. Off by default — composing is cheap and repeatable, issuing keeps a copy. |
 | `name` | string | no | With issue:true: your private name for the kept document (1-80 characters; never printed, never in the link). Default for a customer: the names and date |
 | `preview` | boolean | no | Covenants only: return the watermarked preview whatever the account holds. Never kept, never charged; refused with issue:true. |

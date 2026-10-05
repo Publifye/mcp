@@ -13,7 +13,7 @@ See [connect](../../../docs/connect.md) to sign in.
 
 ## `entity_lookup`
 
-**Entity Lookup** — read-only, idempotent.
+**Entity Lookup** — read-only, idempotent, open-world.
 
 Exact lookup by organisasjonsnummer in Enhetsregisteret; never fuzzy.
 ARGS: orgnr (one) or orgnrs (several, answered in input order); spaces and dots tolerated. include_subunits adds the first 20 underenheter. live=true (one orgnr only) also checks data.brreg.no now. fields projects any top-level record key (name, org_form, nace, business_address, location, ...).
@@ -30,12 +30,12 @@ Example: entity_lookup orgnr="983 887 457". Next: entity_structure orgnr=<orgnr>
 | `compact` | boolean | no | One-line text summary, not duplicated JSON. |
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
 | `document_year` | integer | no | That year's filed accounts as an expiring link (single orgnr, fields filings). A scanned image: no text to extract. |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `include_subunits` | boolean | no | Add the first 20 underenheter of each enhet. |
 | `live` | boolean | no | Also check data.brreg.no now (single orgnr only; rate limited). |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `orgnr` | string | no | One organisasjonsnummer; spaces and dots tolerated (983 887 457). |
-| `orgnrs` | array | no | Several organisasjonsnummer, results in input order. |
+| `orgnrs` | array of string | no | Several organisasjonsnummer, results in input order. |
 | `snapshot_id` | string | no | Pin a snapshot (else snapshot_expired). |
 
 ## `entity_resolve`
@@ -53,7 +53,7 @@ Example: entity_resolve name="Sosialdepartementet". Next: entity_lookup orgnr=<c
 |---|---|---|---|
 | `compact` | boolean | no | One-line text summary, not duplicated JSON. |
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `include_deleted` | boolean | no | Include deleted entities (default false). |
 | `kind` | string | no | Default all. |
 | `limit` | integer | no | Maximum candidates (1-25, default 10). |

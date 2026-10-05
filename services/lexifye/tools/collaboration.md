@@ -134,7 +134,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `group_delete`
 
-**Group Delete** — writes, closed-world.
+**Group Delete** — writes, destructive, closed-world.
 
 Delete a group. Owner only. This detaches the group from every dict it is attached to (those dicts lose group-editing) and removes it for all members. Irreversible.
 
@@ -174,7 +174,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `group_invite_cancel`
 
-**Group Invite Cancel** — writes, closed-world.
+**Group Invite Cancel** — writes, destructive, closed-world.
 
 Withdraw a pending group invite. Owner or admin only. Idempotent, and HONEST about it: the reply carries cancelled:true only when an invite was actually pending. With nothing pending it returns cancelled:false and the invitee is NOT notified — they never get a 'your invitation was withdrawn' notice for an invitation they never had.
 
@@ -208,9 +208,11 @@ List the GROUPS you belong to — [{id, name, owner, member_count, role, autosha
 --- IDENTIFIERS ---
 Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.
 
+*No parameters.*
+
 ## `group_member_remove`
 
-**Group Member Remove** — writes, closed-world.
+**Group Member Remove** — writes, destructive, closed-world.
 
 Remove a member from a group. The OWNER may remove any member (except themselves — use group_transfer or group_delete); an ADMIN may remove only non-admin members. Removing a member also DETACHES the group from every dict that member OWNS (their dicts stop being group-editable); dicts owned by others stay attached.
 
@@ -295,7 +297,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `guest_remove`
 
-**Guest Remove** — writes, closed-world.
+**Guest Remove** — writes, destructive, closed-world.
 
 Remove a GUEST EDITOR from a dict — revokes their content access and drops the dict from their library. Owner-only. Idempotent.
 
@@ -309,7 +311,7 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 
 ## `note_delete`
 
-**Note Delete** — writes, closed-world.
+**Note Delete** — writes, destructive, closed-world.
 
 Delete a PRIVATE note at (anchor, key). Editor-only.
 
@@ -367,11 +369,11 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 |---|---|---|---|
 | `anchor` | string | yes |  |
 | `append` | string | yes | The text to append to the note's body, as PLAIN TEXT — never parsed as markup, never rendered. |
-| `body` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolv… |
-| `content` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolv… |
+| `body` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved. |
+| `content` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved. |
 | `dict_id` | string | yes |  |
 | `key` | string | no |  |
-| `source` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolv… |
+| `source` | string | no | Accepted ALIAS for append — the same field, under the name a sibling tool uses for it. Pass append; passing two spellings at once is refused rather than resolved. |
 | `subject` | string | no |  |
 
 ## `note_set`
@@ -388,11 +390,11 @@ Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'g
 |---|---|---|---|
 | `anchor` | string | yes | idy… (dict) or idj… (entry) — the note's owner |
 | `append` | boolean | no |  |
-| `body` | string | no | Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than reso… |
+| `body` | string | no | Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than resolved. |
 | `content` | string | yes | The note's body, stored as PLAIN TEXT — never parsed as markup, never rendered. |
 | `dict_id` | string | yes |  |
 | `key` | string | no | slot; default 'main' |
-| `source` | string | no | Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than reso… |
+| `source` | string | no | Accepted ALIAS for content — the same field, under the name a sibling tool uses for it. Pass content; passing two spellings at once is refused rather than resolved. |
 | `subject` | string | no |  |
 
 ## `notice_dismiss`
@@ -404,6 +406,8 @@ Clear ALL of YOUR pending notices (after reading them with notice_list). Idempot
 --- IDENTIFIERS ---
 Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.
 
+*No parameters.*
+
 ## `notice_list`
 
 **Notice List** — read-only, idempotent, closed-world.
@@ -412,6 +416,8 @@ List YOUR pending notices (newest first) — the one-shot lines left when a grou
 
 --- IDENTIFIERS ---
 Dict id = 'idy...', entry id = 'idj...', definition id = 'idf...', group id = 'grp...'. Always pass the type-matching id. A dict also has a uuid (8-4-4-4-12) used ONLY in artifact download URLs (which are NOT public — every one takes the same membership gate), never in MCP calls. A user id is a pubhub 'idu...' value (resolve names with guest_find_user), never an email.
+
+*No parameters.*
 
 ---
 

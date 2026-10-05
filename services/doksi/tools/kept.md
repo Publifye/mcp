@@ -25,7 +25,6 @@ List the documents YOUR customer account has kept (issued), newest first: id, yo
 | `kind` | string | no | Only documents of this kind, e.g. covenant |
 | `occasion` | string | no | Only covenants of this occasion, e.g. marriage |
 
-
 ## `doc_rename`
 
 **Doc Rename** — writes, closed-world · access: `write`.
@@ -36,7 +35,6 @@ Give one of YOUR kept documents a private name (1-80 characters), e.g. "Anna & E
 |---|---|---|---|
 | `id` | string | yes | The document id |
 | `name` | string | yes | The new name |
-
 
 ## `doc_trash`
 
@@ -49,7 +47,6 @@ List YOUR deleted documents that can still be restored, with the moment each is 
 | `kind` | string | no | Only documents of this kind, e.g. covenant |
 | `occasion` | string | no | Only covenants of this occasion, e.g. marriage |
 
-
 ## `doc_delete`
 
 **Doc Delete** — writes, closed-world · access: `write`.
@@ -59,7 +56,6 @@ Delete one of YOUR kept documents. At once its link, every temporary share link 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | The document id |
-
 
 ## `doc_restore`
 

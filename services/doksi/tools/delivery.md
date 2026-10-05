@@ -47,7 +47,7 @@ The link is private and short-lived by design. It is not published anywhere, it 
 | `filename` | string | no | What the person sees when saving, e.g. oppsigelse.pdf |
 | `id` | string | no | Instead of document: the id of a document already issued (e.g. by doc_compose_credit with issue:true); its stored PDF is shared unchanged |
 | `title` | string | no | What the document IS, in human words |
-| `ttl_seconds` | integer | no | How long the link works. Default 3600 (one hour), minimum 60, maximum 604800 (one week). The value actually granted is returned — it is clamped, and reporting … |
+| `ttl_seconds` | integer | no | How long the link works. Default 3600 (one hour), minimum 60, maximum 604800 (one week). The value actually granted is returned — it is clamped, and reporting what was asked for rather than what was allowed is how a person gets told the wrong expiry. |
 
 ## `doc_share_revoke`
 

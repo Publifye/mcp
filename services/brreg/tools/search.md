@@ -33,17 +33,17 @@ Example: entity_search query="tilsyn" public_body=true. Next: entity_lookup orgn
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
 | `employees_max` | integer | no | Maximum employees. |
 | `employees_min` | integer | no | Minimum employees. |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `kind` | string | no | Default all. |
 | `lat` | number | no | Radius centre latitude, decimal degrees; needs lon and radius_km. Coordinates only — for a place use municipality, city or postcode. |
 | `limit` | integer | no | Items per page (1-100, default 20). |
 | `lon` | number | no | Radius centre longitude. |
-| `match` | array | no | Regex filters, AND'ed with the rest: [{"field":"email","pattern":"^post"}]. |
+| `match` | array of object | no | Regex filters, AND'ed with the rest: [{"field":"email","pattern":"^post"}]. |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `municipality` | string | no | Municipality number or name. |
 | `nace` | string | no | NACE code prefix, e.g. 84 or 84.110. |
 | `offset` | integer | no | Skip results (first call only, max 10000). |
-| `org_form` | array | no | Org form codes, e.g. AS, ENK (see code_list). |
+| `org_form` | array of string | no | Org form codes, e.g. AS, ENK (see code_list). |
 | `parent_orgnr` | string | no | Only direct children of this orgnr. |
 | `postcode` | string | no | Four-digit postcode. |
 | `public_body` | boolean | no | Public bodies only (true) or none (false). |
@@ -72,7 +72,7 @@ Example: entity_structure orgnr=983887457 section=children. Next: entity_lookup 
 |---|---|---|---|
 | `compact` | boolean | no | One-line text summary, not duplicated JSON. |
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
-| `fields` | array | no | Item fields to return (orgnr kept). |
+| `fields` | array of string | no | Item fields to return (orgnr kept). |
 | `limit` | integer | no | Items per page (1-100, default 50). |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `orgnr` | string | yes | The organisasjonsnummer whose structure to read. |

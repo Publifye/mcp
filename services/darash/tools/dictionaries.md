@@ -19,6 +19,8 @@ See [connect](../../../docs/connect.md) to get a key.
 
 List all 13 Bible dictionaries. Each carries its full provenance block (work, author, edition, source, method, licence, imported, identification, known gaps) — read it before quoting a definition as a named scholar's work. SHORTCUT: For Greek/Hebrew word study, use word_study tool instead — it combines get_strongs + Thayer + frequency + etymology in one call. For topical research: isbe (deep encyclopedia) → fausset (theology) → easton/smith (concise). For typology: wilsons (what symbols mean). For rhetoric: bullinger (figures of speech). For English: webster (unabridged; edition not pinned). NOTE: 'thayer' is Thayer's Greek-English Lexicon (Harper & Brothers, 1889 Corrected Edition), transcribed from the page images — installed 2026-09-02, replacing a short modern gloss set that had been served under Thayer's name and was not his text.[END]
 
+*No parameters.*
+
 ## `lookup_dictionary`
 
 **Lookup Dictionary** — read-only, idempotent, closed-world.
@@ -27,7 +29,7 @@ Search 13 Bible dictionaries. Every response carries the dictionary's provenance
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `dictionary` | string | yes | Dictionary: thayer (Thayer's Greek-English Lexicon 1889 — the ONLY dict that takes G numbers like 'G26', and it also takes the Greek headword), isbe (encyclope… |
+| `dictionary` | string | yes | Dictionary: thayer (Thayer's Greek-English Lexicon 1889 — the ONLY dict that takes G numbers like 'G26', and it also takes the Greek headword), isbe (encyclopedia), fausset (theology), easton/smith (concise), wilsons (types/symbols), bullinger (figures of speech), navestb (topical verses), hitchcock (names), torrey (outlines), hawker (devotional), ats (general), webster (unabridged English; edition not pinned). All except thayer are keyed by English topic name. |
 | `query` | string | yes | Topic to look up |
 
 ## `multi_dict_lookup`

@@ -29,7 +29,7 @@ Get verse(s) by reference. Supports single verse, verse range within chapter, or
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `bible` | string | yes | Bible translation (e.g., 'kjv', 'asv', 'web') |
-| `count` | integer | no | Number of verses to fetch starting from ref. Enables cross-chapter reading (e.g., ref='John 3:16', count=25 returns through John 4:2). If omitted, uses range f… |
+| `count` | integer | no | Number of verses to fetch starting from ref. Enables cross-chapter reading (e.g., ref='John 3:16', count=25 returns through John 4:2). If omitted, uses range from ref or returns single verse. |
 | `ref` | string | yes | Verse reference (e.g., 'John 3:16', 'Gen 1:1-5') |
 
 ## `get_chapter`
@@ -71,6 +71,8 @@ List all 66 books of the Bible with chapters and testament. LEAN by default (id,
 **List Bibles** — read-only, idempotent, closed-world.
 
 List all 59 Bible translations with metadata (abbreviation, name, language, year)[END]
+
+*No parameters.*
 
 ## `get_bible`
 
@@ -170,8 +172,8 @@ This is a Torah-only tool: positions are letter offsets in the Koren consonant t
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `pos` | integer | yes | 0-indexed letter position in the Koren Torah (range 0..304804). Required. Examples: 0 (first letter of Genesis 1:1), 78064 (start of Exodus), 304804 (last lett… |
-| `target` | string | no | Which Torah text to read the letter from: 'real' (default — actual Koren Torah) or 'shuffled' (deterministically-shuffled control). Verse boundaries are identi… |
+| `pos` | integer | yes | 0-indexed letter position in the Koren Torah (range 0..304804). Required. Examples: 0 (first letter of Genesis 1:1), 78064 (start of Exodus), 304804 (last letter of Deuteronomy 34:12). Out-of-range values return a precise error. |
+| `target` | string | no | Which Torah text to read the letter from: 'real' (default — actual Koren Torah) or 'shuffled' (deterministically-shuffled control). Verse boundaries are identical for both — only the 'letter' field differs. Use 'shuffled' when annotating positions discovered against the shuffled control. |
 
 ---
 

@@ -29,7 +29,7 @@ Create a CV: {cv_id, slug, name, langs[]}. Returns the new document.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `cv_id` | string | yes |  |
-| `langs` | array | yes |  |
+| `langs` | array of string | yes |  |
 | `name` | string | yes | the person's name, as published |
 | `slug` | string | yes | the public URL segment; must be free |
 

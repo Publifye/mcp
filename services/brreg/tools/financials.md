@@ -12,7 +12,7 @@ See [connect](../../../docs/connect.md) to sign in.
 
 ## `entity_financials`
 
-**Entity Financials** — read-only, idempotent.
+**Entity Financials** — read-only, idempotent, open-world.
 
 Money for an organisation: key figures, the years actually filed, the industry benchmark and the filed document. The one tool that reaches upstream for figures.
 ARGS: orgnr (one) or orgnrs (a batch, answered in input order). include selects blocks: key_figures (the default), filings, sector_benchmark. document_year asks for that year's filed document (one orgnr only).
@@ -29,10 +29,10 @@ Example: entity_financials orgnr="983 887 457" include=["key_figures","filings"]
 | `compact` | boolean | no | One-line text summary, not duplicated JSON. |
 | `cursor` | string | no | Next-page token; send it alone (+max_bytes, compact). |
 | `document_year` | integer | no | That year's filed accounts as an expiring link (single orgnr). A scanned image: no text to extract. |
-| `include` | array | no | key_figures (default), filings (years actually filed), sector_benchmark (SSB industry comparison). |
+| `include` | array of string | no | key_figures (default), filings (years actually filed), sector_benchmark (SSB industry comparison). |
 | `max_bytes` | integer | no | Response byte budget (default 24576). |
 | `orgnr` | string | no | One organisasjonsnummer; spaces and dots tolerated (983 887 457). |
-| `orgnrs` | array | no | Several organisasjonsnummer, answers in input order. |
+| `orgnrs` | array of string | no | Several organisasjonsnummer, answers in input order. |
 | `snapshot_id` | string | no | Pin a snapshot (else snapshot_expired). |
 
 ---

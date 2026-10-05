@@ -32,11 +32,11 @@ Add a new empty chapter to a book. book_id MUST be the 'idb...' value from book_
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id returned by book_create.id (NOT the uuid). |
-| `title` | string | yes | Chapter title; must not start with 'Chapter ' (the renderer auto-numbers). Prefer a SHORT title of a few words; long titles wrap in the heading, running head, … |
+| `title` | string | yes | Chapter title; must not start with 'Chapter ' (the renderer auto-numbers). Prefer a SHORT title of a few words; long titles wrap in the heading, running head, and TOC. Be concise but complete. |
 
 ## `chapter_delete`
 
-**Chapter Delete** — writes, closed-world.
+**Chapter Delete** — writes, destructive, closed-world.
 
 Move a chapter to the TRASH. It leaves the book immediately (gone from chapter_list, the reader, the PDF and every export), but its text, its title and its full version history are KEPT for 30 days and can be brought back with chapter_restore — find it again with chapter_list(include_deleted=true). After that it is permanently purged. Its NOTES go to the trash with it and come back on restore — they are destroyed only at purge. Pass delete_notes=false to promote them to book-level notes IMMEDIATELY instead, so they survive the purge too. Question links are the one thing a restore does NOT bring back. A SUBSTANTIAL chapter (many blocks) additionally requires confirm=true, and the refusal tells you exactly how much content and history is at stake. Bumps book.version so the next PDF fetch lazy-re-renders.
 
@@ -44,8 +44,8 @@ Move a chapter to the TRASH. It leaves the book immediately (gone from chapter_l
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
 | `chapter_id` | string | yes | The 'idc...' chapter id (from chapter_list / chapter_create — NOT a book id or block id). |
-| `confirm` | boolean | no | Required (true) only for a chapter with substantial content; a small stub deletes without it. Set it once you have told the user what the refusal said is at st… |
-| `delete_notes` | boolean | no | Default true: the chapter's notes go to the trash with it (restored by chapter_restore, destroyed only when the chapter is purged). Set false to promote them t… |
+| `confirm` | boolean | no | Required (true) only for a chapter with substantial content; a small stub deletes without it. Set it once you have told the user what the refusal said is at stake. |
+| `delete_notes` | boolean | no | Default true: the chapter's notes go to the trash with it (restored by chapter_restore, destroyed only when the chapter is purged). Set false to promote them to book-level notes right away — they then outlive the purge too. |
 
 ## `chapter_diff`
 
@@ -69,7 +69,7 @@ Read the WHOLE chapter at once as round-trippable source — one call instead of
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `chapter_id` | string | yes | The 'idc...' chapter id (from chapter_list / chapter_create — NOT a book id or block id). |
-| `shape` | string | no | Which form of the text to return — pick the one matching your next write. 'blocks' (default) = every block with its block_id, for block_set_source / block_patc… |
+| `shape` | string | no | Which form of the text to return — pick the one matching your next write. 'blocks' (default) = every block with its block_id, for block_set_source / block_patch_text. 'flat' = the whole-chapter source, to hand straight back to chapter_set_source. Never both: the flat form is the per-block sources joined by a blank line. |
 
 ## `chapter_history`
 
@@ -92,7 +92,7 @@ List chapters in book seq order. Returns lean projection per chapter: {id, book_
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `book_id` | string | yes | The 'idb...' id from book_create.id (NOT the uuid that appears in public PDF URLs). |
-| `include_deleted` | boolean | no | Default false. When true, soft-deleted chapters still inside the trash window are appended to the list, each tagged deleted:true — restore one with chapter_res… |
+| `include_deleted` | boolean | no | Default false. When true, soft-deleted chapters still inside the trash window are appended to the list, each tagged deleted:true — restore one with chapter_restore. |
 
 ## `chapter_move`
 
@@ -129,7 +129,7 @@ Bring a soft-deleted chapter back out of the trash — its text, its title, its 
 
 ## `chapter_revert`
 
-**Chapter Revert** — writes, closed-world.
+**Chapter Revert** — writes, destructive, closed-world.
 
 Undo: revert a chapter to a previous version (from chapter_history). NON-DESTRUCTIVE — it restores that version's content as a NEW current version, so the reverted-from edit stays in history and can itself be reverted. The whole chapter is replaced atomically. Errors if the version is no longer available (beyond the book's history_limit — default 120, max 360 — or expired after 7 days).
 
@@ -169,7 +169,7 @@ MOVE a whole chapter into a DIFFERENT BOOK — for splitting a book, lifting a t
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `chapter_id` | string | yes | The 'idc...' chapter to move, from chapter_list. It moves WHOLE — every block goes with it. |
-| `to_book` | string | yes | The 'idb...' id of the book to move it INTO (from book_list / book_create.id — NOT the uuid in public PDF URLs). Must be a different book than the one it is in… |
+| `to_book` | string | yes | The 'idb...' id of the book to move it INTO (from book_list / book_create.id — NOT the uuid in public PDF URLs). Must be a different book than the one it is in now; to reorder a chapter inside its own book use chapter_move. |
 
 ## `chapter_version_get`
 
