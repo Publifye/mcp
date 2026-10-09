@@ -14,7 +14,7 @@ over HTTPS.**
 | Product site | <https://timely.publifye.com> |
 | What it solves | <https://publifye.com/timely> |
 | Capability tools | **31** ([full schemas](tools.json)) |
-| Surface described | generated from source `354ee8b`; the same tool surface is live in production as version 0.1.198 (`9ce28e3`, released 2026-09-23) |
+| Surface described | generated from source `354ee8b`; the same tool surface was live in production as version 0.1.198 (`9ce28e3`, released 2026-09-23). On 2026-10-09, with 0.1.225 the latest release, production listed the same 31 customer tool names; the schemas were not recaptured |
 
 ## Connect
 

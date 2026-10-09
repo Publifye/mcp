@@ -24,7 +24,7 @@ Writing a book with AI, Bible study guides, commentaries, EPUB publishing, print
 - Scripture quotation blocks that can pull the verse text straight from Darash
 - One source, many outputs: reader PDFs in light and dark, a press-ready print interior, a full wrap cover, EPUB 3, TXT, TeX, an HTML reader and a JSON bundle
 - Print setup with printer presets, spine formula, gutter ladder, bleed, PDF/X and a low-DPI press report
-- Real ISBN-13 assignment from an allocated registrant pool, not a placeholder
+- Real ISBN-13 assignment on a paid plan: one ISBN per book, for the digital edition, with Publifye named as its publisher once the author accepts that
 - Right-to-left typesetting for Hebrew, Arabic, Persian and Urdu with an explicit LTR-island span
 - Chapter versioning with word-level diff and revert
 - Linked language editions of the same book

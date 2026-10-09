@@ -23,7 +23,7 @@ Building a dictionary, translation glossaries, Bible word lists, lexicography, t
 - Three-level model: dictionary, entry (lemma) and definition (sense)
 - Round-trippable markup satisfying `parse(render(x)) == x`, so definitions can be read, edited and written back
 - Strong's enrichment from Darash: cite `[H2617]` in a definition and the lemma, SBL transliteration and gloss are written in
-- Six formats from one source: light PDF, dark PDF, a 6x9 inch print interior, EPUB 3, an HTML reader and JSON
+- Seven formats from one source: light PDF, dark PDF, a 6x9 inch print interior, EPUB 3, an HTML reader, LaTeX and JSON
 - Sixteen typesettable scripts, three of them right-to-left (Hebrew, Arabic, Persian)
 - A glyph gate that fails loudly rather than shipping missing characters
 - Version history, diff and revert for every definition, with history never destroyed

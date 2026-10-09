@@ -33,8 +33,8 @@ can be read out, edited and written back without drift.
 **Strong's enrichment from Darash.** Cite `[H2617]` in a definition and the lemma, SBL
 transliteration and gloss are written in for you.
 
-**Six formats from one source** — light PDF, dark PDF, a 6×9″ print interior, EPUB 3, an HTML
-reader and JSON.
+**Seven formats from one source** — light PDF, dark PDF, a 6×9″ print interior, EPUB 3, an HTML
+reader, LaTeX and JSON.
 
 **Sixteen typesettable scripts, three right-to-left** (Hebrew, Arabic, Persian), with real
 bidirectional typesetting and a glyph gate that fails loudly rather than shipping tofu.
@@ -64,9 +64,10 @@ See **[DATA-HANDLING.md](DATA-HANDLING.md)**.
 
 ## Plans
 
-Lexifye is sold on its own and bundled with Junifye, with a free trial.
+Lexifye is sold on its own, bundled with Junifye, and in the Complete Trio (Darash + Junifye +
+Lexifye, USD 24 a month or USD 216 a year), with a free trial.
 **Current plans and prices are on <https://lexifye.publifye.com>**, which is the only place they
-are authoritative. They are deliberately not duplicated here.
+are authoritative; other prices are deliberately not duplicated here.
 
 ## Written about this work
 

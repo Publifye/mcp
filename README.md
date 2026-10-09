@@ -1,9 +1,10 @@
 # Publifye MCP servers
 
-**Eleven MCP servers from Publifye AS, a publishing house in Oslo. Connect them to Claude, Cursor,
+**Thirteen MCP servers from Publifye AS, a publishing house in Oslo. Connect them to Claude, Cursor,
 VS Code or any other MCP client and your assistant can study the Bible in Hebrew and Greek, write
 and publish a book, keep a dictionary, look up Norwegian companies and laws, check exchange rates,
-make PDFs, make a marriage covenant, plan meetings, play the Bible aloud and keep your CV. They all run on our servers, so
+make PDFs, make a marriage covenant, plan meetings, play the Bible aloud, keep your CV, build a Bible
+edition of your own and deliver a finished book to Apple Books. They all run on our servers, so
 there is nothing to install.**
 
 ## Quickstart — connect in under a minute
@@ -25,7 +26,9 @@ and nothing to install.
     "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" },
     "audiobible": { "type": "http", "url": "https://audiobible.publifye.com/mcp" },
     "vitae":      { "type": "http", "url": "https://vitae.publifye.com/mcp" },
-    "marriage":   { "type": "http", "url": "https://marriage.publifye.com/mcp" }
+    "marriage":   { "type": "http", "url": "https://marriage.publifye.com/mcp" },
+    "tringine":   { "type": "http", "url": "https://tringine.publifye.com/mcp" },
+    "apple":      { "type": "http", "url": "https://apple.publifye.com/mcp" }
   }
 }
 ```
@@ -54,9 +57,15 @@ you pay for anything.
 | **Currency** | Exchange rates & buying power | `https://currency.publifye.com/mcp` | 7 | [`pro.publifye/currency`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/currency](services/currency) |
 | **Doksi** | Documents & PDFs | `https://doksi.publifye.com/mcp` | 30 | [`pro.publifye/doksi`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/doksi](services/doksi) |
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
-| **Audio Bible** | Two Bibles, read aloud — WEB and NB2026 | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
+| **Audio Bible** | Five Bibles, read aloud — WEB, NB2026, OPV, RV1909, Luther 1912 | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
 | **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
 | **Marriage Covenant** | Marriage covenants, typeset by Doksi | `https://marriage.publifye.com/mcp` | 19 | not yet published | [services/marriage](services/marriage) |
+| **Tringine** | Your own Bible edition | `https://tringine.publifye.com/mcp` | — | — | [services/tringine](services/tringine) |
+| **Apple Books Delivery** | A Junifye book to your Apple Books account | `https://apple.publifye.com/mcp` | — | — | [services/apple](services/apple) |
+
+Tringine and Apple Books Delivery are newer: their tool schemas have not yet been captured into
+this repository and they are not in the MCP Registry, so their rows carry no count; their pages
+name the tools that matter.
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration; Darash, Junifye and Lexifye also take a personal API key. See
@@ -219,9 +228,11 @@ assistants — or an assistant and a person — cannot quietly overwrite each ot
 
 ## Audio Bible — quoted, heard, kept
 
-Two Bibles as text and sound: the World English Bible and Bibelen Anno 2026 (NB2026, a Norwegian
-Bokmål translation, at <https://audiobible.publifye.com/nb2026>, being recorded now). Every
-capability tool takes an optional `bible` argument to choose between them. `get_chapter` returns
+Five Bibles as text and sound: the World English Bible, Bibelen Anno 2026 (NB2026, a Norwegian
+Bokmål translation, at <https://audiobible.publifye.com/nb/nb2026>), the Old Persian Version
+(OPV, 1895), the Reina Valera (RV1909) and the Lutherbibel (1912). Every capability tool takes an
+optional `bible` argument to choose between them (`web`, `nb2026`, `opv`, `rv1909`,
+`gerlut1912`). `get_chapter` returns
 every verse numbered and tells the assistant to quote it as returned rather than paraphrase it as
 scripture; `listen_link` starts the audio at a given verse with its timing in seconds;
 `prepare_chapter` has a chapter read aloud on demand when it is not yet recorded; `download_link`
@@ -240,6 +251,31 @@ and every change is kept so you can go back. A new CV starts unpublished; a publ
 added to search engines, and you can give it a new address at any time.
 
 → **[services/vitae](services/vitae)** · [tool schemas](services/vitae/tools.json)
+
+---
+
+## Tringine — a Bible edition of your own
+
+Choose the translation — or two or three, aligned verse for verse — the scope (the whole Bible, a
+Testament or any range of books) and the trim, and Tringine typesets a print-ready PDF, light and
+dark reading PDFs and an EPUB 3. Private editions for personal and in-organisation use: not for
+resale, and no ISBN. The assistant can dry-run a build spec, list what can be built, and follow
+builds and their downloads; builds themselves are started in the website wizard. There is no free
+MCP tier: access comes from the free first build credit or a purchase.
+
+→ **[services/tringine](services/tringine)**
+
+---
+
+## Apple Books Delivery — your book, your Apple account
+
+Delivers a book you own in Junifye to Apple Books on your own App Store Connect provider account,
+so the imprint and the royalties stay yours. It is self-serve with your own App Store Connect key;
+the private key is uploaded over HTTPS for each delivery, never sent through MCP, and is not kept.
+Every file passes EPUBCheck, and a dry run validates the whole package against Apple without
+sending anything. The free plan is five completed deliveries a year.
+
+→ **[services/apple](services/apple)**
 
 ---
 
@@ -283,6 +319,8 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Timely | [timely.publifye.com](https://timely.publifye.com) | [publifye.com/timely](https://publifye.com/timely) |
 | Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) · on YouTube: [Ruth, read aloud](https://www.youtube.com/playlist?list=PLafP-kvSDbS8) | — |
 | Vitae | [vitae.publifye.com](https://vitae.publifye.com) | — |
+| Tringine | [tringine.publifye.com](https://tringine.publifye.com) | — |
+| Apple Books Delivery | [apple.publifye.com](https://apple.publifye.com) | — |
 
 The left column sells the product and gates access. The right column is one
 page on the company site saying what the server is for and when one of the

@@ -2,6 +2,26 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-10-11
+
+- **Two servers added: Tringine and Apple Books Delivery.** Tringine builds a private Bible edition
+  (one translation, or two or three aligned verse for verse) as a print-ready PDF, reading PDFs and
+  an EPUB 3; Apple Books Delivery delivers a book you own in Junifye to your own Apple Books account.
+  Both are in the README, the quickstart block and the product table, with a page each under
+  `services/`. Their tool schemas are not yet captured and neither is in the MCP Registry, so they
+  have no `tools.json`. With Marriage Covenant (2026-10-10) the README now counts thirteen servers.
+- **Audio Bible offers five Bibles**, not two: `web`, `nb2026`, `opv`, `rv1909` and `gerlut1912`. The
+  NB2026 link is now <https://audiobible.publifye.com/nb/nb2026>. The tool pages still show the
+  2026-09-29 capture, whose `bible` parameter lists only `web` and `nb2026`. The README no longer gives
+  a number for the excluded admin tools, because the live count has changed since the capture.
+- **Junifye ISBNs** are described as they work now: on a paid plan, one per book, for the digital
+  edition, with Publifye named as publisher once the author accepts that. The "allocated registrant
+  pool" wording is gone. Junifye and Lexifye now mention the Complete Trio (Darash + Junifye +
+  Lexifye, USD 24 a month or USD 216 a year).
+- **Lexifye renders seven formats**, not six. LaTeX was missing from the list.
+- **Lexar's plans link** now goes to <https://lexar.publifye.com/store>.
+- **Timely's "Surface described" row** now records a check of the tool names on 2026-10-09.
+
 ## 2026-10-10
 
 - **Marriage Covenant joins the index**, the eleventh server: `https://marriage.publifye.com/mcp`,

@@ -55,7 +55,8 @@ correct binding gutter, a full wrap cover, EPUB 3, TXT, TeX, an HTML reader and 
 **Print that a printer will accept.** Printer presets, spine formula, gutter ladder, bleed, PDF/X
 and a low-DPI press report before you send the file.
 
-**Real ISBN-13 assignment** from an allocated registrant pool — not a placeholder.
+**Real ISBN-13 assignment** on a paid plan — one ISBN per book, for the digital edition, with
+Publifye named as its publisher once the author has accepted that for the book on the web.
 
 **Right-to-left typesetting for Hebrew, Arabic, Persian and Urdu**, done as real typesetting with
 an explicit LTR-island span, not a CSS direction flip.
@@ -69,6 +70,7 @@ exporting and deleting the material you write.
 
 ## Plans
 
-Junifye is sold on its own and bundled with Lexifye, with a free trial.
+Junifye is sold on its own, bundled with Lexifye, and in the Complete Trio (Darash + Junifye +
+Lexifye, USD 24 a month or USD 216 a year), with a free trial.
 **Current plans and prices are on <https://junifye.publifye.com>**, which is the only place they
-are authoritative. They are deliberately not duplicated here.
+are authoritative; other prices are deliberately not duplicated here.

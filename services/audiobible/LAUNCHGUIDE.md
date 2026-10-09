@@ -1,12 +1,12 @@
 # Audio Bible
 
 ## Tagline
-Two Bibles read aloud for AI: World English Bible and NB2026, with listening links and downloads
+Five Bibles read aloud for AI: World English Bible, NB2026, OPV, RV1909 and Luther 1912, with listening links and downloads
 
 ## Description
 Audio Bible gives an AI assistant a Bible as text and as sound: every verse of a chapter, numbered; a listening link that starts at a given verse with its timing in seconds; a recording made on demand when a chapter has not been read aloud yet; and a personal download link for the result.
 
-It is a hosted server with a Streamable HTTP endpoint at https://audiobible.publifye.com/mcp, so there is nothing to install. Sign in once in the browser. Two Bibles are offered, the World English Bible (English) and Bibelen Anno 2026 (NB2026, Norwegian Bokmål), and every capability tool takes a `bible` argument to choose between them. The assistant is told to quote verses exactly as returned, not paraphrase them as scripture.
+It is a hosted server with a Streamable HTTP endpoint at https://audiobible.publifye.com/mcp, so there is nothing to install. Sign in once in the browser. Five Bibles are offered, the World English Bible (English), Bibelen Anno 2026 (NB2026, Norwegian Bokmål), the Old Persian Version (OPV, 1895), the Reina Valera (RV1909) and the Lutherbibel (1912), and every capability tool takes a `bible` argument to choose between them. The assistant is told to quote verses exactly as returned, not paraphrase them as scripture.
 
 It is for readers, listeners, pastors and teachers. There is no commentary: text and audio only. For the Hebrew and Greek, other translations and lexicons, see Darash.
 
@@ -20,7 +20,7 @@ Content & Media
 Listening to Bible chapters, reading a chapter verse by verse, audio Bible downloads, Norwegian Bible audio, English Bible audio, jumping to a verse in audio, Bible listening for study groups
 
 ## Features
-- Two Bibles: the World English Bible and NB2026 (Bibelen Anno 2026, Norwegian Bokmål)
+- Five Bibles: the World English Bible, NB2026 (Bibelen Anno 2026, Norwegian Bokmål), OPV (Old Persian Version, 1895), RV1909 (Reina Valera) and the Lutherbibel 1912
 - Every capability tool takes an optional `bible` argument; the World English Bible is the default
 - Exact verse text, numbered, with whether the chapter's audio is recorded
 - Listening links: the public reading page with the verse highlighted and the direct stream with the verse's start and end in seconds

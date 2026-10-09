@@ -98,5 +98,5 @@ source text.
 
 ## Plans
 
-**Current plans and prices are on <https://lexar.publifye.com>**, which is the only place they are
+**Current plans and prices are on <https://lexar.publifye.com/store>**, which is the only place they are
 authoritative. They are deliberately not duplicated here.
