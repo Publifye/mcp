@@ -1,0 +1,517 @@
+{
+  "service": "marriage",
+  "endpoint": "https://marriage.publifye.com/mcp",
+  "captured": "2026-10-10",
+  "how_this_was_made": "Captured from the live service's own tools/list on 2026-10-10, version 0.1.38 — the server's actual response, including descriptions, annotations and input schemas — then reduced to the customer surface: tools registered in PubHub at admin or none access level are excluded, and so are the further buckets listed below by name. Nothing here is hand-written. Excluded buckets are listed by name so the count is auditable.",
+  "counts": {
+    "callable_by_a_customer": 20,
+    "capability_tools": 19,
+    "session_and_cache_plumbing": 0,
+    "excluded_help_and_health": 1,
+    "excluded_admin_only": 2,
+    "excluded_ops_and_logging": 10,
+    "total_on_the_wire": 32
+  },
+  "excluded": {
+    "help_and_health": [
+      "service_status"
+    ],
+    "admin_only": [
+      "indexnow_run",
+      "indexnow_status"
+    ],
+    "ops": [
+      "clear_server_logs",
+      "debug_session",
+      "disable_log_writer",
+      "enable_log_writer",
+      "get_log_levels",
+      "get_log_stats",
+      "get_server_logs",
+      "list_log_writers",
+      "set_log_capacity",
+      "set_log_level"
+    ]
+  },
+  "tools": [
+    {
+      "name": "covenant_designs",
+      "title": "Covenant Designs",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the marriage covenant designs: twelve illustrated designs (seven watercolour paintings, five fine-line drawings, among them Star & Blossom for a Jewish marriage) plus the plain and laurel frames and your own artwork, each with a preview image and a sample PDF, the colour palettes of the drawn designs, and which paintings can be swapped or switched off. Free.",
+      "annotations": {
+        "title": "Covenant Designs",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "covenant_requirements",
+      "title": "Covenant Requirements",
+      "kind": "capability",
+      "access": "read",
+      "description": "READ THIS FIRST. Everything a marriage covenant needs: the fields, the full JSON schema, guidance (Scripture — a verse is printed by default and can be swapped or switched off —, vows, designs, A4/A3 and text size), complete examples in English and Norwegian including the 1662 Book of Common Prayer vows, and what is free versus paid with live prices. It is a ceremonial keepsake, not a civil marriage certificate. Free.",
+      "annotations": {
+        "title": "Covenant Requirements",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "covenant_validate",
+      "title": "Covenant Validate",
+      "kind": "capability",
+      "access": "read",
+      "description": "Check a covenant and get EVERY problem at once, each with its JSON path, why it matters and how to fix it (missing = not filled in yet; malformed = filled in wrongly). Nothing is rendered for the couple or kept. Free.",
+      "annotations": {
+        "title": "Covenant Validate",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "object",
+            "description": "The whole covenant JSON, as covenant_requirements describes it. kind and occasion are always covenant and marriage (filled in if you leave them out; anything else is refused)."
+          }
+        },
+        "required": [
+          "document"
+        ]
+      }
+    },
+    {
+      "name": "covenant_preview",
+      "title": "Covenant Preview",
+      "kind": "capability",
+      "access": "read",
+      "description": "Show the couple their covenant WITHOUT keeping it: returns a link to the PDF, valid for one hour. Without a live marriage pass or Doksi plan this is the FREE, WATERMARKED preview (credits pay for covenant_compose, not for previews) — a picture of the page with a preview watermark burned in (PREVIEW on an English covenant, FORHÅNDSVISNING on a Norwegian one), not for printing; tell them so before they open it. With a live pass or plan it is the print-ready page. Counts toward the free daily call allowance.",
+      "annotations": {
+        "title": "Covenant Preview",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "object",
+            "description": "The whole covenant JSON, as covenant_requirements describes it. kind and occasion are always covenant and marriage (filled in if you leave them out; anything else is refused)."
+          }
+        },
+        "required": [
+          "document"
+        ]
+      }
+    },
+    {
+      "name": "covenant_compose",
+      "title": "Covenant Compose",
+      "kind": "capability",
+      "access": "write",
+      "description": "Make the PRINT-READY covenant and keep it as the customer's own: returns its id, a permanent link and its private name. Needs a paid path: a live marriage pass (unlimited marriage covenants for 7 days) or a Doksi plan — or use_credit:true to spend ONE credit. Without one it is refused with where to buy; covenant_access_status shows the customer's status and the live prices, and the watermarked preview stays free. ALWAYS send a request_id (new for each covenant); after a network error retry with the SAME request_id and arguments: you get the same covenant back and are never charged twice. name is an optional private label (1-80 characters, never printed); default: the names and the date. Validate first.",
+      "annotations": {
+        "title": "Covenant Compose",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "object",
+            "description": "The whole covenant JSON (kind covenant, occasion marriage)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional private name for the customer's list, e.g. \"Anna & Erik — church copy\""
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Unique id for this covenant (1-128 letters, digits, . _ -); reuse it on a retry"
+          },
+          "use_credit": {
+            "type": "boolean",
+            "description": "Spend one credit for this covenant (for a customer without a pass or plan)"
+          }
+        },
+        "required": [
+          "document",
+          "request_id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_list",
+      "title": "Covenant List",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the customer's own kept marriage covenants, newest first: id, private name, title, date and link. Deleted ones are in covenant_trash.",
+      "annotations": {
+        "title": "Covenant List",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "covenant_get",
+      "title": "Covenant Get",
+      "kind": "capability",
+      "access": "read",
+      "description": "Read one of the customer's covenants: its link, private name and the exact covenant JSON it was made from. To change it, edit that JSON and compose again (a new covenant); a kept PDF never changes.",
+      "annotations": {
+        "title": "Covenant Get",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_rename",
+      "title": "Covenant Rename",
+      "kind": "capability",
+      "access": "write",
+      "description": "Give one of the customer's covenants a private name (1-80 characters), e.g. \"Anna & Erik — church copy\". Only for their list: never printed, never in the link, never in any mail.",
+      "annotations": {
+        "title": "Covenant Rename",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id"
+          },
+          "name": {
+            "type": "string",
+            "description": "The new name"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
+    },
+    {
+      "name": "covenant_link_rotate",
+      "title": "Covenant Link Rotate",
+      "kind": "capability",
+      "access": "write",
+      "description": "Replace a covenant's link with a new one; the old link stops working at once. Use it when a link went further than intended. It also reinstates a withdrawn link.",
+      "annotations": {
+        "title": "Covenant Link Rotate",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_link_revoke",
+      "title": "Covenant Link Revoke",
+      "kind": "capability",
+      "access": "write",
+      "description": "Withdraw a covenant's link with no replacement. The covenant is kept (covenant_link_rotate gives it a new link later); to remove it, use covenant_delete.",
+      "annotations": {
+        "title": "Covenant Link Revoke",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_mail_to_me",
+      "title": "Covenant Mail To Me",
+      "kind": "capability",
+      "access": "write",
+      "description": "Email a kept covenant (PDF attached, link in the body) to the customer's OWN verified address — the Publifye account they connected with. It cannot go to anyone else and there is no recipient to set; to give it to someone, share the link (covenant_share). Reports 'queued', not delivered. No extra charge.",
+      "annotations": {
+        "title": "Covenant Mail To Me",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_share",
+      "title": "Covenant Share",
+      "kind": "capability",
+      "access": "write",
+      "description": "Make a temporary, private download link for a kept covenant to paste into a chat or an email: one hour by default, at most 7 days. Deleting the covenant kills it at once.",
+      "annotations": {
+        "title": "Covenant Share",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id"
+          },
+          "ttl_seconds": {
+            "type": "integer",
+            "description": "How long the link works: 300 to 604800 seconds (default 3600)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_sign_request",
+      "title": "Covenant Sign Request",
+      "kind": "capability",
+      "access": "write",
+      "description": "Collect signatures on a kept covenant. Name the signature slots to request (their ids are in the covenant's content.signatures: the couple, the witnesses, the officiant). Returns a private overview page and, per signer, a personal signing link and a QR page; links expire after 25 minutes and signers need no account. Nothing is emailed. Then poll covenant_sign_status, and call covenant_sign_render once everyone has signed.",
+      "annotations": {
+        "title": "Covenant Sign Request",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id"
+          },
+          "slot_ids": {
+            "type": "array",
+            "description": "The signature slot ids to request",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slot_ids"
+        ]
+      }
+    },
+    {
+      "name": "covenant_sign_status",
+      "title": "Covenant Sign Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "Status of a signing request: each signer, signed or pending, the deadlines and the links still open.",
+      "annotations": {
+        "title": "Covenant Sign Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The signing request id from covenant_sign_request"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_sign_render",
+      "title": "Covenant Sign Render",
+      "kind": "capability",
+      "access": "write",
+      "description": "Once every requested slot is signed, issue the signed covenant as a new kept covenant with its own link. The signatures are never downloadable separately.",
+      "annotations": {
+        "title": "Covenant Sign Render",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The signing request id"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_delete",
+      "title": "Covenant Delete",
+      "kind": "capability",
+      "access": "write",
+      "description": "Delete one of the customer's covenants. Its link, every share link and every open signing request stop working at once. It stays restorable for 7 days (covenant_trash, covenant_restore); after that it is purged for good.",
+      "annotations": {
+        "title": "Covenant Delete",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_restore",
+      "title": "Covenant Restore",
+      "kind": "capability",
+      "access": "write",
+      "description": "Restore a deleted covenant from the trash within its 7 days. It gets a NEW link; the one it had before stays dead.",
+      "annotations": {
+        "title": "Covenant Restore",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The covenant id (from covenant_compose or covenant_list)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "covenant_trash",
+      "title": "Covenant Trash",
+      "kind": "capability",
+      "access": "read",
+      "description": "List the customer's deleted covenants that can still be restored, with when each is purged for good.",
+      "annotations": {
+        "title": "Covenant Trash",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "covenant_access_status",
+      "title": "Covenant Access Status",
+      "kind": "capability",
+      "access": "read",
+      "description": "What the customer gets right now: print_ready true (a live marriage pass — and until when — or a Doksi plan) or false (free, watermarked previews), their credits, and the live offers with prices and where to buy (marriage.publifye.com/store). Call it before composing, so the answer is no surprise.",
+      "annotations": {
+        "title": "Covenant Access Status",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "inputSchema": {
+        "type": "object"
+      }
+    }
+  ]
+}

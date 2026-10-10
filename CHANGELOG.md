@@ -2,6 +2,19 @@
 
 Dates are the date the change was made, not the date it was written up.
 
+## 2026-10-10
+
+- **Marriage Covenant joins the index**, the eleventh server: `https://marriage.publifye.com/mcp`,
+  19 tools, marriage covenants only, every covenant typeset by Doksi. Captured from the live
+  `tools/list` (version 0.1.38) into `services/marriage`, with a README, five tool pages, a
+  `LAUNCHGUIDE.md`, `server.json` and a server card. It is not yet in the MCP registry; `server.json`
+  is prepared as `pro.publifye/marriage`. The index, the quickstart, the server table and the
+  products table list it.
+- **Doksi: marriage covenants have their own server.** `services/doksi` and the Doksi section said
+  the site used the Doksi server and there was no separate server to connect. The site now has its
+  own marriage-only MCP server; Doksi still makes the same covenant with `doc_compose`, and both
+  pages now say so and link to `services/marriage`.
+
 ## 2026-10-06
 
 - **Reference tooling and maintenance guide.** `scripts/render_reference.py` rebuilds every tool section

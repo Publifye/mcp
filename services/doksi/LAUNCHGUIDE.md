@@ -32,7 +32,7 @@ Formal letters, agreements, meeting agendas, checklists, notices, marriage coven
 - Logo and mark upload for use in documents
 - Kept documents with private names, a trash and restore within 7 days, then an announced purge
 - Credits and access status tell you before composing whether a covenant will be print-ready or a watermarked preview
-- Marriage covenants site, marriage.publifye.com, built on the same server
+- Marriage covenants site, marriage.publifye.com, typeset by Doksi, with its own marriage-only MCP server
 - A document that does not meet its kind's requirements is refused rather than rendered with gaps filled in
 
 ## Getting Started

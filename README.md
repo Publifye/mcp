@@ -1,9 +1,9 @@
 # Publifye MCP servers
 
-**Ten MCP servers from Publifye AS, a publishing house in Oslo. Connect them to Claude, Cursor,
+**Eleven MCP servers from Publifye AS, a publishing house in Oslo. Connect them to Claude, Cursor,
 VS Code or any other MCP client and your assistant can study the Bible in Hebrew and Greek, write
 and publish a book, keep a dictionary, look up Norwegian companies and laws, check exchange rates,
-make PDFs, plan meetings, play the Bible aloud and keep your CV. They all run on our servers, so
+make PDFs, make a marriage covenant, plan meetings, play the Bible aloud and keep your CV. They all run on our servers, so
 there is nothing to install.**
 
 ## Quickstart — connect in under a minute
@@ -24,7 +24,8 @@ and nothing to install.
     "doksi":   { "type": "http", "url": "https://doksi.publifye.com/mcp" },
     "timely":  { "type": "http", "url": "https://timely.publifye.com/mcp" },
     "audiobible": { "type": "http", "url": "https://audiobible.publifye.com/mcp" },
-    "vitae":      { "type": "http", "url": "https://vitae.publifye.com/mcp" }
+    "vitae":      { "type": "http", "url": "https://vitae.publifye.com/mcp" },
+    "marriage":   { "type": "http", "url": "https://marriage.publifye.com/mcp" }
   }
 }
 ```
@@ -55,6 +56,7 @@ you pay for anything.
 | **Timely** | Meeting programmes | `https://timely.publifye.com/mcp` | 31 | [`pro.publifye/timely`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/timely](services/timely) |
 | **Audio Bible** | Two Bibles, read aloud — WEB and NB2026 | `https://audiobible.publifye.com/mcp` | 10 | [`pro.publifye/audiobible`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/audiobible](services/audiobible) |
 | **Vitae** | Your CV, in several languages | `https://vitae.publifye.com/mcp` | 42 | [`pro.publifye/vitae`](https://registry.modelcontextprotocol.io/v0/servers?search=publifye) | [services/vitae](services/vitae) |
+| **Marriage Covenant** | Marriage covenants, typeset by Doksi | `https://marriage.publifye.com/mcp` | 19 | not yet published | [services/marriage](services/marriage) |
 
 Transport is Streamable HTTP throughout. Authentication is OAuth 2.1 with PKCE (S256) and Dynamic
 Client Registration; Darash, Junifye and Lexifye also take a personal API key. See
@@ -174,13 +176,25 @@ Signing is a request with a lifecycle, not a flag on a document: create, describ
 render, mail. A signer gets an individual link or a QR code, and a revoked link stops working. What you issue is
 kept on your account, where you can list, rename, delete and restore it.
 
-**Marriage covenants.** [marriage.publifye.com](https://marriage.publifye.com) uses Doksi to make a
-marriage covenant: the couple's own vows, a Bible verse, their witnesses and one of twelve painted or
-drawn designs, typeset as a one-page PDF to sign and frame. It is a keepsake, not a civil
-certificate. The assistant connects to the same Doksi server; there is nothing extra to install.
-[More in services/doksi](services/doksi#marriage-covenants-marriagepublifyecom).
+**Marriage covenants** are a Doksi kind, and they have a server of their own too —
+[Marriage Covenant](#marriage-covenant--your-own-vows-typeset-to-frame), below.
 
 → **[services/doksi](services/doksi)** · [tool schemas](services/doksi/tools.json)
+
+---
+
+## Marriage Covenant — your own vows, typeset to frame
+
+[marriage.publifye.com](https://marriage.publifye.com) makes a marriage covenant: the couple's own
+vows, a Bible verse, their witnesses and one of twelve painted or drawn designs, typeset by Doksi
+as a one-page PDF in A4, or A3 for framing, to sign in ink or by link. It is a keepsake, not a civil
+certificate. Its own MCP server carries marriage covenants and nothing else — nineteen tools, from
+`covenant_requirements` to a free watermarked `covenant_preview` and the print-ready
+`covenant_compose` — so an assistant has a short list to follow; every other document is made with
+Doksi. No assistant? The same covenant can be made in the browser at
+[marriage.publifye.com/create](https://marriage.publifye.com/create).
+
+→ **[services/marriage](services/marriage)** · [tool schemas](services/marriage/tools.json)
 
 ---
 
@@ -264,7 +278,8 @@ Each server has a site of its own — what it is for, what it costs, and how to 
 | Brreg | [brreg.publifye.com](https://brreg.publifye.com) | [publifye.com/brreg](https://publifye.com/brreg) |
 | Lexar | [lexar.publifye.com](https://lexar.publifye.com) | [publifye.com/lexar](https://publifye.com/lexar) |
 | Currency | [currency.publifye.com](https://currency.publifye.com) | [publifye.com/currency](https://publifye.com/currency) |
-| Doksi | [doksi.publifye.com](https://doksi.publifye.com) · marriage covenants: [marriage.publifye.com](https://marriage.publifye.com) | [publifye.com/doksi](https://publifye.com/doksi) |
+| Doksi | [doksi.publifye.com](https://doksi.publifye.com) | [publifye.com/doksi](https://publifye.com/doksi) |
+| Marriage Covenant | [marriage.publifye.com](https://marriage.publifye.com) · [connect](https://marriage.publifye.com/connector) | — |
 | Timely | [timely.publifye.com](https://timely.publifye.com) | [publifye.com/timely](https://publifye.com/timely) |
 | Audio Bible | [audiobible.publifye.com](https://audiobible.publifye.com) · on YouTube: [Ruth, read aloud](https://www.youtube.com/playlist?list=PLafP-kvSDbS8) | — |
 | Vitae | [vitae.publifye.com](https://vitae.publifye.com) | — |

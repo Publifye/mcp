@@ -79,9 +79,11 @@ get back a typeset one-page PDF in A4, or A3 for framing, to sign and hang on th
 - **Private.** A finished covenant is emailed only to the account that asked for it, and its link
   is never listed or indexed.
 
-There is no separate server to connect. The site uses the Doksi server above: the assistant calls
-`doc_requirements` with `kind: covenant` to learn the fields, then `doc_compose` with
-`content.occasion: marriage`. Designing, checking the wording and a full preview marked PREVIEW are free with
+The site has its own marriage-only MCP server, `https://marriage.publifye.com/mcp`, documented in
+**[services/marriage](../marriage)**: nineteen `covenant_*` tools that hand every covenant to Doksi to
+typeset. The Doksi server above makes the same covenant: the assistant calls `doc_requirements`
+with `kind: covenant` to learn the fields, then `doc_compose` with `content.occasion: marriage`.
+A covenant can also be made in the browser at <https://marriage.publifye.com/create>. Designing, checking the wording and a full preview marked PREVIEW are free with
 a Publifye account. The print-ready covenant needs a 7-day marriage pass, a Doksi credit or a Doksi
 plan; current prices are on <https://marriage.publifye.com/store>.
 

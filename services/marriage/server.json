@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "pro.publifye/marriage",
+  "title": "Marriage Covenant",
+  "description": "Marriage covenants with your AI: your own vows, a Bible verse, twelve designs, a PDF to sign",
+  "version": "1.0.0",
+  "websiteUrl": "https://marriage.publifye.com",
+  "repository": {
+    "url": "https://github.com/Publifye/mcp",
+    "source": "github",
+    "subfolder": "services/marriage"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://marriage.publifye.com/mcp"
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://marriage.publifye.com/static/mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ]
+}
